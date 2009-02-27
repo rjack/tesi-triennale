@@ -1,0 +1,72 @@
+% vim: tabstop=2
+\documentclass[12pt,a4paper,openright,twoside]{book}
+\usepackage[italian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{fancyhdr}
+\usepackage{indentfirst}
+\usepackage{graphicx}
+
+\oddsidemargin=30pt
+\evensidemargin=20pt
+
+% Sillabazione
+\hyphenation{}
+
+% Interlinea
+\linespread{1.3}
+
+\begin{document}
+
+%
+% Dedica
+%
+\begin{titlepage}
+	% No numero di pagina
+	\thispagestyle{empty}
+	\topmargin=6.5cm
+	\raggedleft
+	\large
+	\em
+	A Chiara\\
+	Al fratello
+\end{titlepage}
+
+\pagenumbering{roman}
+
+\chapter*{Introduzione}
+\addcontentsline{toc}{chapter}{Introduzione}
+
+	Di tre pagine, da fare per ultima insieme alle conclusioni, così per passare
+	il tempo.
+
+\tableofcontents
+
+\chapter{Scenario}
+\pagenumbering{arabic}
+
+	Presentazione dello scenario del problema, degli obiettivi (5/10 pp).
+
+\chapter{Dettagli tecnici}
+
+	Come funziona il meccanismo del TED, dell'IM, etc. Riferimento articolo
+	dott. Ghini. (10/15 pp)
+
+\chapter{Progettazione}
+
+	Obiettivi a cui punto. Spiegazione soluzioni, algoritmi e scelte effettuate.
+
+\chapter{simulatore}
+
+	Implementazione del simulatore.
+
+\chapter{Valutazioni}
+
+	Metriche con cui valuto il mio sistema.\\
+	Deduzioni su misurazioni effettuate.\\
+	Perchè ho misurato certe cose e non altre.
+
+\chapter{Conclusioni e sviluppi futuri}
+
+	Un temerario che scriva una patch per ns2.
+
+\end {document}
