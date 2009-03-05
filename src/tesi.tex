@@ -27,8 +27,9 @@
 	\raggedleft
 	\large
 	\em
-	A Chiara\\
-	Al fratello
+	%A Chiara\\
+	%Al fratello
+	TODO: dedica
 \end{titlepage}
 
 \pagenumbering{roman}
@@ -36,15 +37,55 @@
 \chapter*{Introduzione}
 \addcontentsline{toc}{chapter}{Introduzione}
 
-	Di tre pagine, da fare per ultima insieme alle conclusioni, così per passare
-	il tempo.
+	VoIP funziona su Internet: audio, video, testo e mail tutto in uno a prezzo
+	della connessione o poco più.
+
+	+ più potente della telefonia fissa
+	+ flessibile
+	+ individuale
+
+	- mobile della telefonia mobile.
+
+	Cellulari possono cambiare ripetitore al volo, i ripetitori sono distribuiti
+	su gran parte del territorio.
+
+	Connessione a Internet è legata all'indirizzo IP assegnato dal provider.
+	Un dispositivo Wi-Fi è confinato nell'area di copertura della rete a cui è
+	connesso. Cambiare rete significa cambiare indirizzo IP e quindi
+	interrompere la connessione. Una chiamata VoIP si interrope!
+
+	Scenario futuro in cui le città sono coperte da tante reti wireless con
+	diversi proprietari. Spostarsi nella città = cambiare spesso connessione
+	wireless = comunicazione interrotta di continuo.
+
+	Pausa tra disconnessione e riconnessione risolta con dispositivo
+	multi-homed. Serve middleware che nasconda le più interfacce wireless in una
+	sola (ULB)
+
+	Cambiamento di indirizzo IP risolto con Proxy Server.
+
+	Connessione wifi anello debole del percorso = serve meccanismo di
+	ritrasmissione veloce in modo da non avere ritardi audio/video (TED)
 
 \tableofcontents
 
 \chapter{Scenario}
 \pagenumbering{arabic}
 
-	Presentazione dello scenario del problema, degli obiettivi (5/10 pp).
+	\begin{verbatim}
+           +-----------------+                   +-------+
+SOFTPHONE  |          iface0 +----AP0------------+       |
+ |         |                 |                   |       |
+ |         |          iface1 +----AP1------------+       |
+ +---lo----+ LOAD            |        INTERNET   | PROXY +-...
+           | BALANCER   ...  | ................. |       |
+ +-MSG_ERR-+                 |                   |       |
+ |         |          ifacen +----APn------------+       |
+KERNEL     +-------------+---+                   +-------+
+                         |
+                    INTERFACE
+                     MANAGER
+\end{verbatim}
 
 \chapter{Dettagli tecnici}
 
