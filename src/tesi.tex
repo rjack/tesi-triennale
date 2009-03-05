@@ -6,11 +6,20 @@
 \usepackage{indentfirst}
 \usepackage{graphicx}
 
+\pagestyle{fancy}
+
 \oddsidemargin=30pt
 \evensidemargin=20pt
 
 % Sillabazione
 \hyphenation{}
+
+% Intestazione e piè di pagina
+\pagestyle{fancy}\addtolength{\headwidth}{20pt}
+\renewcommand{\chaptermark}[1]{\markboth{\thechapter.\ #1}{}}
+\renewcommand{\sectionmark}[1]{\markright{\thesection \ #1}{}}
+\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
+\cfoot{}
 
 % Interlinea
 \linespread{1.3}
@@ -35,6 +44,10 @@
 \pagenumbering{roman}
 
 \chapter*{Introduzione}
+\rhead[\fancyplain{}{\bfseries
+INTRODUZIONE}]{\fancyplain{}{\bfseries\thepage}}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries
+INTRODUZIONE}}
 \addcontentsline{toc}{chapter}{Introduzione}
 
 	VoIP funziona su Internet: audio, video, testo e mail tutto in uno a prezzo
@@ -67,9 +80,15 @@
 	Connessione wifi anello debole del percorso = serve meccanismo di
 	ritrasmissione veloce in modo da non avere ritardi audio/video (TED)
 
+% Indice
 \tableofcontents
+\rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries
+INDICE}}
 
+% Capitoli
 \chapter{Scenario}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
 \pagenumbering{arabic}
 
 	\begin{verbatim}
@@ -106,7 +125,12 @@ KERNEL     +-------------+---+                   +-------+
 	Deduzioni su misurazioni effettuate.\\
 	Perchè ho misurato certe cose e non altre.
 
-\chapter{Conclusioni e sviluppi futuri}
+\chapter*{Conclusioni}
+\rhead[\fancyplain{}{\bfseries
+CONCLUSIONI}]{\fancyplain{}{\bfseries\thepage}}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries
+CONCLUSIONI}}
+\addcontentsline{toc}{chapter}{Conclusioni}
 
 	Un temerario che scriva una patch per ns2.
 
