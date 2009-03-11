@@ -1,4 +1,3 @@
-% vim: tabstop=2
 \documentclass[12pt,a4paper,openright,twoside]{book}
 \usepackage[italian]{babel}
 \usepackage[utf8]{inputenc}
@@ -21,15 +20,14 @@
 % Dedica
 %
 \begin{titlepage}
-	% No numero di pagina
-	\thispagestyle{empty}
-	\topmargin=6.5cm
-	\raggedleft
-	\large
-	\em
-	%A Chiara\\
-	%Al fratello
-	TODO: dedica
+  % No numero di pagina
+  \thispagestyle{empty}
+  \topmargin=6.5cm
+  \raggedleft
+  \large
+  \em
+  A Chiara\\
+  A mio fratello
 \end{titlepage}
 
 \pagenumbering{roman}
@@ -37,42 +35,42 @@
 \chapter*{Introduzione}
 \addcontentsline{toc}{chapter}{Introduzione}
 
-	VoIP funziona su Internet: audio, video, testo e mail tutto in uno a prezzo
-	della connessione o poco più.
+VoIP funziona su Internet: audio, video, testo e mail tutto in uno a
+prezzo della connessione o poco più.
 
-	+ più potente della telefonia fissa
-	+ flessibile
-	+ individuale
++ più potente della telefonia fissa
++ flessibile
++ individuale
 
-	- mobile della telefonia mobile.
+- mobile della telefonia mobile.
 
-	Cellulari possono cambiare ripetitore al volo, i ripetitori sono distribuiti
-	su gran parte del territorio.
+Cellulari possono cambiare ripetitore al volo, i ripetitori sono distribuiti
+su gran parte del territorio.
 
-	Connessione a Internet è legata all'indirizzo IP assegnato dal provider.
-	Un dispositivo Wi-Fi è confinato nell'area di copertura della rete a cui è
-	connesso. Cambiare rete significa cambiare indirizzo IP e quindi
-	interrompere la connessione. Una chiamata VoIP si interrope!
+Connessione a Internet è legata all'indirizzo IP assegnato dal provider.
+Un dispositivo Wi-Fi è confinato nell'area di copertura della rete a cui è
+connesso. Cambiare rete significa cambiare indirizzo IP e quindi
+interrompere la connessione. Una chiamata VoIP si interrope!
 
-	Scenario futuro in cui le città sono coperte da tante reti wireless con
-	diversi proprietari. Spostarsi nella città = cambiare spesso connessione
-	wireless = comunicazione interrotta di continuo.
+Scenario futuro in cui le città sono coperte da tante reti wireless con
+diversi proprietari. Spostarsi nella città = cambiare spesso connessione
+wireless = comunicazione interrotta di continuo.
 
-	Pausa tra disconnessione e riconnessione risolta con dispositivo
-	multi-homed. Serve middleware che nasconda le più interfacce wireless in una
-	sola (ULB)
+Pausa tra disconnessione e riconnessione risolta con dispositivo
+multi-homed. Serve middleware che nasconda le più interfacce wireless in una
+sola (ULB)
 
-	Cambiamento di indirizzo IP risolto con Proxy Server.
+Cambiamento di indirizzo IP risolto con Proxy Server.
 
-	Connessione wifi anello debole del percorso = serve meccanismo di
-	ritrasmissione veloce in modo da non avere ritardi audio/video (TED)
+Connessione wifi anello debole del percorso = serve meccanismo di
+ritrasmissione veloce in modo da non avere ritardi audio/video (TED)
 
 \tableofcontents
 
 \chapter{Scenario}
 \pagenumbering{arabic}
 
-	\begin{verbatim}
+\begin{verbatim}
            +-----------------+                   +-------+
 SOFTPHONE  |          iface0 +----AP0------------+       |
  |         |                 |                   |       |
@@ -89,25 +87,25 @@ KERNEL     +-------------+---+                   +-------+
 
 \chapter{Dettagli tecnici}
 
-	Come funziona il meccanismo del TED, dell'IM, etc. Riferimento articolo
-	dott. Ghini. (10/15 pp)
+Come funziona il meccanismo del TED, dell'IM, etc. Riferimento
+articolo dott. Ghini. (10/15 pp)
 
 \chapter{Progettazione}
 
-	Obiettivi a cui punto. Spiegazione soluzioni, algoritmi e scelte effettuate.
+Obiettivi a cui punto. Spiegazione soluzioni, algoritmi e scelte
+effettuate.
 
 \chapter{simulatore}
 
-	Implementazione del simulatore.
+Implementazione del simulatore.
 
 \chapter{Valutazioni}
 
-	Metriche con cui valuto il mio sistema.\\
-	Deduzioni su misurazioni effettuate.\\
-	Perchè ho misurato certe cose e non altre.
+Metriche con cui valuto il mio sistema. Deduzioni su misurazioni
+effettuate. Perchè ho misurato certe cose e non altre.
 
 \chapter{Conclusioni e sviluppi futuri}
 
-	Un temerario che scriva una patch per ns2.
+Un temerario che scriva una patch per ns2.
 
 \end {document}
