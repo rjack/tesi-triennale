@@ -4,7 +4,7 @@ OUTPUT=tesi.pdf
 all	: $(OUTPUT)
 
 %.pdf	: %.tex
-	pdflatex $<
+	for i in `seq 1 3` ; do pdflatex $< ; done
 
 clean	:
 	rm -f $(JUNK) $(OUTPUT)
