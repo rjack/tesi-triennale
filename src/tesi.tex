@@ -34,8 +34,7 @@
   \topmargin=6.5cm
   \raggedleft
   \large
-  \em
-  A Chiara\\
+  \em A Chiara\\
   A mio fratello
 \end{titlepage}
 
@@ -47,8 +46,8 @@ INTRODUZIONE}]{\fancyplain{}{\bfseries\thepage}}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries
 INTRODUZIONE}}
 \addcontentsline{toc}{chapter}{Introduzione}
-
 VoIP funziona su Internet: audio, video, testo e mail tutto in uno a
+
 prezzo della connessione o poco più.
 
 + più potente della telefonia fissa
@@ -105,21 +104,46 @@ KERNEL     +-------------+---+                   +-------+
 \end{verbatim}
 
 \chapter{Dettagli tecnici}
-
 Come funziona il meccanismo del TED, dell'IM, etc. Riferimento
 articolo dott. Ghini. (10/15 pp)
 
 \chapter{Progettazione}
+% Obiettivi a cui punto. Spiegazione soluzioni, algoritmi e scelte
+% effettuate.
+ULB sede dell'algoritmo di QoS.
 
-Obiettivi a cui punto. Spiegazione soluzioni, algoritmi e scelte
-effettuate.
+Necessario confrontare diversi algoritmi, simulando il sistema perchè
+impossibile sperimentare nella realtà in modo soddisfacente.
+
+No puntare al realismo: per quello c'e' NS2.
+
+Parametro riassuntivo della qualità di un collegamento: percentuale di
+pacchetti persi. Questo parametro comprende tutte le cause che possono
+portare alla perdita di pacchetti: interferenze, collisioni, distanza
+dall'access point, etc.
+
+\section{Obiettivi simulatore}
+Deve poter gestire eventi, permettere di descrivere scenari in modo
+semplice, permettere di sostituire diversi algoritmi nella simulazione
+dell'ULB, dare in output una descrizione dettagliata e formattata di
+tutto ciò che ha simulato. Questo output deve poter essere analizzato
+con l'aiuto di utility come awk, perl, gnuplot.
+
+\section{Obiettivi simulazione}
+Confrontare i risultati:
+
+\begin{itemize}
+\item stesso scenario, algoritmi ULB differenti
+\item stesso scenario, stesso algoritmo, parametri algoritmo differenti
+\item scenari diversi per lo stesso algoritmo
+\end{itemize}
+
+Da tutto questo tirare fuori l'algoritmo migliore.
 
 \chapter{simulatore}
-
 Implementazione del simulatore.
 
 \chapter{Valutazioni}
-
 Metriche con cui valuto il mio sistema. Deduzioni su misurazioni
 effettuate. Perchè ho misurato certe cose e non altre.
 
@@ -129,7 +153,6 @@ CONCLUSIONI}]{\fancyplain{}{\bfseries\thepage}}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries
 CONCLUSIONI}}
 \addcontentsline{toc}{chapter}{Conclusioni}
-
 Un temerario che scriva una patch per ns2.
 
 \end {document}
