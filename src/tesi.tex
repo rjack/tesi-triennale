@@ -140,6 +140,32 @@ Confrontare i risultati:
 
 Da tutto questo tirare fuori l'algoritmo migliore.
 
+\section{Problemi}
+Questa sezione illustra i problemi che devono essere affrontati dagli
+algoritmi implementati nell'ULB. La sezione successiva mostrerà alcune
+soluzioni e le confronterà tra loro.
+
+\subsection{Ritrasmissione in tempi brevi}
+ULB deve attendere le notifiche del TED e ritrasmettere i datagram che
+sono stati segnalati come persi, ma senza superare i 150ms di ritardo.
+
+\subsection{Rilevazione delle capacità del firmware}
+I firmware delle schede di rete wireless sono in grado di notificare
+sia l'avvenuta trasmissione di un datagram (ACK), sia la mancata
+trasmissione (NAK). Putroppo non esiste uniformità di comportamento
+tra i vari modelli sul mercato, ed è possibile che il firmware di una
+scheda sia in grado di notificare solo ACK, oppure solo NAK, oppure
+entrambi.
+
+Mancando un meccanismo nel kernel Linux per conoscere con certezza le
+capacità di ogni firmware, ULB deve dedurle dal comportamento
+osservato.
+
+\subsubsection{Firmware solo ACK}
+
+
+\subsubsection{Firmware solo NAK}
+
 \chapter{simulatore}
 Implementazione del simulatore.
 
