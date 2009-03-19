@@ -149,6 +149,16 @@ soluzioni e le confronterà tra loro.
 ULB deve attendere le notifiche del TED e ritrasmettere i datagram che
 sono stati segnalati come persi, ma senza superare i 150ms di ritardo.
 
+\subsection{Valutazione interfacce}
+ULB deve monitorare il comportamento delle varie interfacce dell'host
+su cui viene eseguito e valutarne la qualità. L'interfaccia che
+risulta essere la migliore viene utilizzata per l'invio dei dati. È
+necessario definire sia quali siano i parametri secondo cui valutare
+la qualità di un'interfaccia, sia le strategie di monitoraggio e
+misurazione di questi parametri. La valutazione comprende sia
+l'attività \emph{first hop} tra interfaccia e access point, sia quella
+\emph{full path} tra interfaccia e Proxy Server.
+
 \subsection{Rilevazione delle capacità del firmware}
 I firmware delle schede di rete wireless sono in grado di notificare
 sia l'avvenuta trasmissione di un datagram (ACK), sia la mancata
@@ -167,13 +177,23 @@ rilevare:
 \begin{enumerate}
 \item quando una connessione pessima, che perde tutti i pacchetti,
   viene gestita da un firmware ACK che notifica solo successi, oppure
-\item quando una connessione ottimale, che non perde nessun pacchetto,
+\item quando una connessione ottima, che non perde nessun pacchetto,
   viene gestita da un firmware NAK che notifica solo fallimenti.
 \end{enumerate}
 Non esiste un comportamento predefinito che soddisfi entrambe le
 situazioni: la strategia del ritrasmettere ogni datagram che non
 riceva notifiche entro un certo timeout funziona solo nella prima
 situazione e risulta completamente inadeguato nella seconda.
+
+\subsection{Conversazione unidirezionale}
+Poichè l'host su cui risiede il softphone è dotato di più interfacce,
+il Proxy Server si trova nella necessità di scegliere a quale tra
+queste debba inviare i dati. Normalmente la scelta cade
+sull'interfaccia che ha spedito gli ultimi dati ricevuti: se ULB l'ha
+scelta come interfaccia migliore, il Proxy Server può fidarsi. Può
+però accadere che il softphone non invii alcun dato perchè l'utente si
+limita ad ascoltare; in questo caso il Proxy Server non ha cognizione
+di quale sia l'interfaccia a cui inviare i dati.
 
 \chapter{simulatore}
 Implementazione del simulatore.
