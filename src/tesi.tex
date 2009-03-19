@@ -155,16 +155,25 @@ sia l'avvenuta trasmissione di un datagram (ACK), sia la mancata
 trasmissione (NAK). Putroppo non esiste uniformità di comportamento
 tra i vari modelli sul mercato, ed è possibile che il firmware di una
 scheda sia in grado di notificare solo ACK, oppure solo NAK, oppure
-entrambi.
+entrambi. Mancando un meccanismo nel kernel Linux per conoscere con
+certezza le capacità di ogni firmware, ULB deve dedurle dal
+comportamento osservato.
 
-Mancando un meccanismo nel kernel Linux per conoscere con certezza le
-capacità di ogni firmware, ULB deve dedurle dal comportamento
-osservato.
-
-\subsubsection{Firmware solo ACK}
-
-
-\subsubsection{Firmware solo NAK}
+\subsubsection{Il problema del firmware silenzioso}
+Il tipo di firmware si deduce dal tipo di notifiche ricevute dallo
+stesso ed è quindi un meccanismo banale. Esistono però due casi in cui
+il firmware può rimanere ``silenzioso'' e quindi impossibile da
+rilevare:
+\begin{enumerate}
+\item quando una connessione pessima, che perde tutti i pacchetti,
+  viene gestita da un firmware ACK che notifica solo successi, oppure
+\item quando una connessione ottimale, che non perde nessun pacchetto,
+  viene gestita da un firmware NAK che notifica solo fallimenti.
+\end{enumerate}
+Non esiste un comportamento predefinito che soddisfi entrambe le
+situazioni: la strategia del ritrasmettere ogni datagram che non
+riceva notifiche entro un certo timeout funziona solo nella prima
+situazione e risulta completamente inadeguato nella seconda.
 
 \chapter{simulatore}
 Implementazione del simulatore.
