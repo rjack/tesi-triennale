@@ -195,6 +195,26 @@ però accadere che il softphone non invii alcun dato perchè l'utente si
 limita ad ascoltare; in questo caso il Proxy Server non ha cognizione
 di quale sia l'interfaccia a cui inviare i dati.
 
+\section{Soluzioni}
+Tutti gli algoritmi sono stati progettati in modo da essere il più
+possibile economici in termini di banda, tempi e energia.
+
+Economia di banda significa limitare al minimo indispensabile
+l'overhead nelle trasmissioni. In un contesto \emph{multi-homed} dove
+ogni host possiede mediamente dalle due alle quattro interfacce,
+ognuna di queste genera il proprio overhead che si va a sommare a
+quello generato dalle altre.
+
+L'economia di tempi è richiesta dalla caratterizzazione \emph{soft
+  real-time} del problema, per cui un risultato ottenuto in ritardo
+diventa inutilizzabile o fuorviante.
+
+L'economia di energia dipende dalla natura dei client, che sono
+tipicamente dispositivi mobili alimentati a batteria. Le interfacce
+wireless sono periferiche avide di consumi e moltiplicandone il numero
+si rischia di abbattere l'autonomia del client. Ancora una volta,
+limitare l'overhead è l'unica via.
+
 \chapter{simulatore}
 Implementazione del simulatore.
 
