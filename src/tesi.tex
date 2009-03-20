@@ -215,6 +215,29 @@ wireless sono periferiche avide di consumi e moltiplicandone il numero
 si rischia di abbattere l'autonomia del client. Ancora una volta,
 limitare l'overhead è l'unica via.
 
+\subsection{Ritrasmissione in tempi brevi}
+Fissato il ritardo massimo a 150ms, ULB associa un timeout di tale
+durata ad ogni datagram ricevuto dal softphone. Scaduto il timeout il
+datagram viene scartato.
+
+\subsection{Valutazione interfacce}
+Si è scelto di suddividere la valutazione di ogni interfaccia WiFi in
+due sottovalutazioni differenti: una che considera il comportamento
+nel \emph{first hop} e un'altra che considera quello nel \emph{full
+  path}.
+
+\subsubsection{First hop}
+La valutazione \emph{first hop} rappresenta la qualità del
+collegamento wireless tra interfaccia e access point, ed è una
+funzione delle notifiche TED.
+% TODO formula.
+
+\subsubsection{Full path}
+La valutazione \emph{full path} rappresenta l'affidabilità di tutto il
+percorso dall'interfaccia al proxy server e ritorno. Ogni interfaccia
+spedisce ogni 500ms un datagram che viene rispedito indietro dal Proxy
+Server, come un semplice ping.
+
 \chapter{simulatore}
 Implementazione del simulatore.
 
