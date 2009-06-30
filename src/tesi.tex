@@ -47,7 +47,6 @@ INTRODUZIONE}]{\fancyplain{}{\bfseries\thepage}}
 INTRODUZIONE}}
 \addcontentsline{toc}{chapter}{Introduzione}
 VoIP funziona su Internet: audio, video, testo e mail tutto in uno a
-
 prezzo della connessione o poco più.
 
 + più potente della telefonia fissa
@@ -110,17 +109,29 @@ articolo dott. Ghini. (10/15 pp)
 \chapter{Progettazione}
 % Obiettivi a cui punto. Spiegazione soluzioni, algoritmi e scelte
 % effettuate.
-ULB sede dell'algoritmo di QoS.
+ULB e Proxy Server sono i componenti del sistema che eseguono le
+scelte necessarie a garantire una migliore qualità del
+servizio. Mentre i componenti Interface Manager, Linux Kernel,
+Softphone, Wireless Interface e Access Point hanno comportamenti
+predefiniti e sostanzialmente non modificabili, ULB e PS possono
+implementare  diverse tecniche di analisi della qualità delle
+connessioni e varie strategie di recupero degli errori.
 
-Necessario confrontare diversi algoritmi, simulando il sistema perchè
-impossibile sperimentare nella realtà in modo soddisfacente.
+Compito del simulatore è fornire un ambiente virtuale in cui questi
+diversi algoritmi possano essere eseguiti, analizzati e confrontati.
 
-No puntare al realismo: per quello c'e' NS2.
-
-Parametro riassuntivo della qualità di un collegamento: percentuale di
-pacchetti persi. Questo parametro comprende tutte le cause che possono
-portare alla perdita di pacchetti: interferenze, collisioni, distanza
-dall'access point, etc.
+È importante notare che, a questo stadio di sviluppo, il simulatore
+non punta al realismo della simulazione. Per esempio, lo scenario
+wireless è di molto semplificato, non venendo presi in considerazione
+parametri fisici come la qualità del segnale radio in relazione alla
+distanza di un client dall'access point. Tutti i dettagli di un link
+wireless sono astratti dietro ai parametri di banda, latenza e
+probabilità di errore; in particolare l'ultimo parametro sarà
+fondamentale per determinare la scelta dell'interfaccia migliore. In
+quest'ottica, per simulare un calo di qualità del segnale wireless
+dovuto all'aumentare della distanza tra client e access point è
+sufficiente decidere quanto questo evento incida sulla probabilità
+d'errore del collegamento e modificarla di conseguenza.
 
 \section{Obiettivi simulatore}
 Deve poter gestire eventi, permettere di descrivere scenari in modo
