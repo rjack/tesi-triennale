@@ -134,21 +134,41 @@ sufficiente decidere quanto questo evento incida sulla probabilità
 d'errore del collegamento e modificarla di conseguenza.
 
 \section{Obiettivi simulatore}
-Deve poter gestire eventi, permettere di descrivere scenari in modo
-semplice, permettere di sostituire diversi algoritmi nella simulazione
-dell'ULB, dare in output una descrizione dettagliata e formattata di
-tutto ciò che ha simulato. Questo output deve poter essere analizzato
-con l'aiuto di utility come awk, perl, gnuplot.
+Il simulatore è stato progettato secondo i principi di
+\begin{itemize}
+\item modularità
+\item componibilità
+\item generalità
+\end{itemize}
+
+\subsection{Modularità}
+Modularità significa che i simulatori possono essere combinati tra di
+loro per rappresentare nuovi scenari con componenti esistenti; per
+esempio un'oggetto simulante un'interfaccia wireless in modo
+soddisfacente, è autonomo e riutilizzabile in ogni scenario che
+necessiti di un'interfaccia wireless. Questo permette il riuso del
+codice in modo estremamente diretto.
+
+\subsection{Componibilità}
+Componibilità significa che ogni simulatore che partecipa in una
+simulazione può essere a sua volta composto da più simulatori che
+costituiscono le sue parti interne; questo permette di mantenere
+gestibile la complessità della simulazione, senza dover sacrificare il
+livello di dettaglio voluto.
+
+\subsection{Generalità}
+Il simulatore vuole essere un framework il più possibile
+generale. L'obiettivo è essere utilizzabile in qualsiasi contesto in
+cui il problema sia definibile in termini di eventi discreti.
+
 
 \section{Obiettivi simulazione}
 Confrontare i risultati:
-
 \begin{itemize}
 \item stesso scenario, algoritmi ULB differenti
 \item stesso scenario, stesso algoritmo, parametri algoritmo differenti
 \item scenari diversi per lo stesso algoritmo
 \end{itemize}
-
 Da tutto questo tirare fuori l'algoritmo migliore.
 
 \section{Problemi}
