@@ -87,6 +87,54 @@ INDICE}}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
 \pagenumbering{arabic}
 
+Lo scenario da considerare è illustrato in figura
+[TODO-FIGURASCENARIO] e descritto in [TODO-REFPAPERGHINI]. Si assuma
+che esista una comunicazione vocale tra due sistemi A e B. Il sistema
+A è un dispositivo mobile dotato di più di un'interfaccia wireless,
+ognuna delle quali è connessa a un access point. I vari access point
+possono appartenere a infrastrutture di rete e domini differenti e
+quindi essere completamente indipendenti l'uno dall'altro. Gli access
+point sono connessi a Internet attraverso una connessione via cavo. Il
+sistema B è un dispositivo fisso, connesso a Internet via cavo.
+
+La comunicazione VoIP tra i sistemi A e B si affida quindi a due tipi
+di connessione: quella wireless, tra A e gli access point, e quella
+via cavo tra gli access point e B; di queste la prima la più
+problematica, perchè soffre dei seguenti inconvenienti:
+
+\begin{enumerate}
+\item alta latenza
+\item frequenti errori di trasmissione
+\item disconnessione e riconnessione nel cambiare access point.
+\end{enumerate}
+
+I primi due problemi possono degradare la qualità di una comunicazione
+VoIP via wireless fino a renderla impossibile; il terzo impedisce la
+mobilità del sistema obbligandolo a rimanere connesso sempre alla
+stessa infrastruttura wireless, pena disconnessione e conseguente
+interruzione della comunicazione.
+
+Per avere una buona qualità del servizio, TODO-REFPAPERGHINI impone i
+seguenti vincoli:
+\begin{enumerate}
+\item latenza da sistema a sistema sotto i 150ms
+\item percentuale di pacchetti persi sotto il 10\%.
+\item riconnessione trasparente in caso di cambio di access point.
+\end{enumerate}
+
+Il sistema RWMA descritto in TODO-REFPAPERGHINI è costituito da un
+insieme di componenti che mira a risolvere o mitigare i problemi
+detti:
+
+\begin{itemize}
+\item Transmission Error Detection.
+\item UDP Load Balancer
+\item Monitor
+\item Proxy Server
+\end{itemize}
+
+CONTINUA QUI
+
 \begin{verbatim}
            +-----------------+                   +-------+
 SOFTPHONE  |          iface0 +----AP0------------+       |
@@ -103,10 +151,9 @@ KERNEL     +-------------+---+                   +-------+
 \end{verbatim}
 
 \chapter{Dettagli tecnici}
-Come funziona il meccanismo del TED, dell'IM, etc. Riferimento
-articolo dott. Ghini. (10/15 pp)
 
-\chapter{Progettazione}
+
+\chapter{Simulazione}
 % Obiettivi a cui punto. Spiegazione soluzioni, algoritmi e scelte
 % effettuate.
 ULB e Proxy Server sono i componenti del sistema che eseguono le
@@ -126,11 +173,11 @@ wireless è di molto semplificato, non venendo presi in considerazione
 parametri fisici come la qualità del segnale radio in relazione alla
 distanza di un client dall'access point. Tutti i dettagli di un link
 wireless sono astratti dietro ai parametri di banda, latenza e
-probabilità di errore; in particolare l'ultimo parametro sarà
-fondamentale per determinare la scelta dell'interfaccia migliore. In
-quest'ottica, per simulare un calo di qualità del segnale wireless
-dovuto all'aumentare della distanza tra client e access point è
-sufficiente decidere quanto questo evento incida sulla probabilità
+probabilità di errore; in particolare la rilevazione dell'ultimo
+parametro sarà fondamentale per determinare la scelta dell'interfaccia
+migliore. In quest'ottica, per simulare un calo di qualità del segnale
+wireless dovuto all'aumentare della distanza tra client e access point
+è sufficiente decidere quanto questo evento incida sulla probabilità
 d'errore del collegamento e modificarla di conseguenza.
 
 \section{Obiettivi simulatore}
