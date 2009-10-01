@@ -51,8 +51,9 @@ INTRODUZIONE}}
 quest'ottica, negli ultimi anni, si è diffusa rapidamente la
 comunicazione vocale su sistemi VoIP, comunemente nota come
 ``telefonia via Internet''. Questa tecnologia permette conversazioni
-audio/video tra due o più partecipanti, al prezzo di una normale
-connessione Internet a banda larga e di un computer.
+audio/video tra due o più partecipanti senza limiti di distanza e di
+tempo, al prezzo di una normale connessione Internet a banda larga e
+di un computer.
 
 Contemporaneamente e indipendentemente si sono affermate le reti senza
 fili su protocollo 802.11, le reti wireless. L'uso combinato delle due
@@ -62,30 +63,43 @@ partecipanti. Esistono però due limitazioni castranti per questo tipo
 di applicazione: lo scarso raggio di copertura degli apparecchi
 wireless e l'eterogeneità delle reti senza fili. I dispositivi WiFi,
 limitati a un raggio d'azione tipicamente circoscritto alla pianta di
-un edificio, escono duramente sconfitti di fronte alla mobilità di
-apparecchi come i tradizionali cellulari, capaci di restare
-costantemente connessi alla rete telefonica anche durante spostamenti
-con distanze nazionali e internazionali. Tecnicamente l'accesso a una
-rete WiFi viene fornito da un dispositivo chiamato \emph{access
-  point}, che permette ai dispositivi 802.11 di collegarsi via
-radio. Il raggio del segnale molto ridotto, entro i 300 metri, e di
-una suscettibilità molto alta alle interferenze e agli ostacoli fisici
-intralciano la mobilità. Supplire alla scarsa portata passando di rete
-in rete durante gli spostamenti non è comunque facile, perché ogni
-rete senza fili è un mondo a sè; a differenza di un cellulare, che può
-cambiare ripetitore rimanendo sempre identificato dallo stesso numero
-di telefono, le interfacce WiFi cambiando access point cambiano
-infrastruttura di rete, indirizzo IP e quindi identità, rendendo
-impossibile una comunicazione senza interruzioni.
+un edificio, escono duramente sconfitti dal confronto con la capacità
+dei tradizionali cellulari di restare costantemente connessi alla rete
+telefonica nazionale e internazionale durante ogni tipo di
+spostamento. Tecnicamente l'accesso a una rete WiFi viene fornito da
+un dispositivo chiamato \emph{access point}, che permette ai vari
+dispositivi 802.11 di collegarsi via radio. Il raggio del segnale
+molto ridotto, entro i 300 metri, e una suscettibilità molto alta alle
+interferenze e agli ostacoli fisici intralciano la mobilità. Supplire
+alla scarsa portata passando di rete in rete durante gli spostamenti
+non è comunque facile, perché ogni rete senza fili è un mondo a sè; a
+differenza di un cellulare, che può via via associarsi a diversi
+ripetitori rimanendo sempre identificato dallo stesso numero di
+telefono, le interfacce WiFi cambiano indirizzo IP, e quindi identità,
+ogni volta che si associano con un access point di una rete
+differente, rendendo impossibile la comunicazione continua, costante e
+senza interruzioni necessaria per una conversazione telefonica.
 
-Pausa tra disconnessione e riconnessione risolta con dispositivo
-multi-homed. Serve middleware che nasconda le più interfacce wireless in una
-sola (ULB)
+Il progetto Robust Wireless Medium Access punta a risolvere questi due
+problemi con un approccio \emph{cross layer}: l'alta percentuale
+d'errore nel collegamento senza fili viene mitigata da un meccanismo
+di rilevazione d'errore e ritrasmissione installato nel dispositivo
+dell'utente; l'impossibilità di cambiare rete WiFi senza interruzioni
+viene risolta utilizzando più interfacce di rete per dispositivo e
+utilizzando un Proxy Server che gestisca in modo trasparente i
+cambiamenti di indirizzo IP nelle interfacce del client.
 
-Cambiamento di indirizzo IP risolto con Proxy Server.
+Il meccanismo di \emph{error recovery} e \emph{load balancing} può
+applicare diversi algoritmi, che devono essere confrontati per
+individuare il più adatto. La struttura del progetto rende molto
+difficile, se non praticamente impossibile, condurre delle prove nella
+realtà; per questo si è scelto di eseguire dei test in una simulazione.
 
-Connessione wifi anello debole del percorso = serve meccanismo di
-ritrasmissione veloce in modo da non avere ritardi audio/video (TED)
+In questo documento (TODO: tesi, lavoro, opera?) descriverò il
+funzionamento di questo progetto e mostrerò l'implementazione di un
+simulatore ad eventi discreti che implementi i suddetti meccanismi di
+load balancing ed error recovery, confrontandoli e mostrando punti
+forti e limitazioni.
 
 % Indice
 \tableofcontents
