@@ -112,19 +112,21 @@ INDICE}}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
 \pagenumbering{arabic}
 
-Lo scenario da considerare è illustrato in figura
-[TODO-FIGURASCENARIO] e descritto in [TODO-REFPAPERGHINI]. Si assuma
+Lo scenario da considerare è illustrato in figura (TODO: figura
+scenario) e descritto in (TODO: riferimento articolo RWMA). Si assuma
 che esista una comunicazione vocale tra due sistemi A e B. Il sistema
 A è un dispositivo mobile dotato di più di un'interfaccia wireless,
-ognuna delle quali è connessa a un access point. I vari access point
-possono appartenere a infrastrutture di rete e domini differenti e
-quindi essere completamente indipendenti l'uno dall'altro. Gli access
-point sono connessi a Internet attraverso una connessione via cavo. Il
-sistema B è un dispositivo fisso, connesso a Internet via cavo.
+ognuna delle quali è associata con un diverso access point. I vari
+access point possono appartenere a infrastrutture di rete e domini
+differenti e quindi essere completamente indipendenti l'uno
+dall'altro. Gli access point sono connessi a Internet attraverso una
+connessione via cavo. Il sistema B è un dispositivo fisso, connesso a
+Internet via cavo attraverso una comune allacciamento Internet a banda
+larga, come ADSL o fibra ottica.
 
 La comunicazione VoIP tra i sistemi A e B si affida quindi a due tipi
 di connessione: quella wireless, tra A e gli access point, e quella
-via cavo tra gli access point e B; di queste la prima la più
+via cavo tra gli access point e B; di queste la prima è la più
 problematica, perchè soffre dei seguenti inconvenienti:
 
 \begin{enumerate}
@@ -139,23 +141,25 @@ mobilità del sistema obbligandolo a rimanere connesso sempre alla
 stessa infrastruttura wireless, pena disconnessione e conseguente
 interruzione della comunicazione.
 
-Per avere una buona qualità del servizio, TODO-REFPAPERGHINI impone i
-seguenti vincoli:
+Per garantire una buona qualità del servizio, (TODO: riferimento
+articolo RWMA) impone i seguenti vincoli:
 \begin{enumerate}
 \item latenza da sistema a sistema sotto i 150ms
 \item percentuale di pacchetti persi sotto il 10\%.
 \item riconnessione trasparente in caso di cambio di access point.
 \end{enumerate}
 
-Il sistema RWMA descritto in TODO-REFPAPERGHINI è costituito da un
-insieme di componenti che mira a risolvere o mitigare i problemi
-detti:
+(TODO: riferimento articolo RWMA) propone un sistema \emph{cross
+  layer} chiamato ``Robust Wireless Medium Access'' (di seguito RWMA)
+che mira a risolvere o mitigare detti problemi.
+
+RWMA è costituito da più componenti:
 
 \begin{itemize}
-\item Transmission Error Detection.
-\item UDP Load Balancer
-\item Monitor
-\item Proxy Server
+\item TED (Transmission Error Detection)
+\item ULB (UDP Load Balancer)
+\item IM (Interface Monitor)
+\item PS (Proxy Server)
 \end{itemize}
 
 CONTINUA QUI
@@ -341,7 +345,7 @@ percorso dall'interfaccia al proxy server e ritorno. Ogni interfaccia
 spedisce ogni 500ms un datagram che viene rispedito indietro dal Proxy
 Server, come un semplice ping.
 
-\chapter{simulatore}
+\chapter{Simulatore}
 Implementazione del simulatore.
 
 \chapter{Valutazioni}
