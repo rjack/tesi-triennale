@@ -34,8 +34,7 @@
   \topmargin=6.5cm
   \raggedleft
   \large
-  \em A Chiara\\
-  A mio fratello
+  \em A Chiara
 \end{titlepage}
 
 \pagenumbering{roman}
@@ -90,16 +89,23 @@ utilizzando un Proxy Server che gestisca in modo trasparente i
 cambiamenti di indirizzo IP nelle interfacce del client.
 
 Il meccanismo di \emph{error recovery} e \emph{load balancing} può
-applicare diversi algoritmi, che devono essere confrontati per
-individuare il più adatto. La struttura del progetto rende molto
-difficile, se non praticamente impossibile, condurre delle prove nella
-realtà; per questo si è scelto di eseguire dei test in una simulazione.
+applicare diversi algoritmi, che devono essere analizzati e
+confrontati per individuare il più adatto. La struttura del progetto
+rende molto difficile, se non praticamente impossibile, condurre delle
+prove nella realtà; per questo si è scelto di eseguire dei test in una
+simulazione.
 
-In questo documento (TODO: tesi, lavoro, opera?) descriverò il
-funzionamento di questo progetto e mostrerò l'implementazione di un
-simulatore ad eventi discreti che implementi i suddetti meccanismi di
-load balancing ed error recovery, confrontandoli e mostrando punti
-forti e limitazioni.
+In questo documento (TODO: tesi, lavoro, opera?) descriverò
+inizialmente il funzionamento del meccanismo RWMA, per poi presentare
+il progetto e l'implementazione di un simulatore a eventi discreti che
+possa modellare i vari componenti di rete con i rispettivi algoritmi
+di QoS.
+
+TODO: nel primo capitolo
+
+TODO: nel secondo capitolo
+
+TODO: etc.
 
 % Indice
 \tableofcontents
@@ -112,48 +118,84 @@ INDICE}}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
 \pagenumbering{arabic}
 
-Lo scenario da considerare è illustrato in figura (TODO: figura
-scenario) e descritto in (TODO: riferimento articolo RWMA). Si assuma
-che esista una comunicazione vocale tra due sistemi A e B. Il sistema
-A è un dispositivo mobile dotato di più di un'interfaccia wireless,
-ognuna delle quali è associata con un diverso access point. I vari
-access point possono appartenere a infrastrutture di rete e domini
-differenti e quindi essere completamente indipendenti l'uno
-dall'altro. Gli access point sono connessi a Internet attraverso una
-connessione via cavo. Il sistema B è un dispositivo fisso, connesso a
-Internet via cavo attraverso una comune allacciamento Internet a banda
-larga, come ADSL o fibra ottica.
+Lo scenario da considerare è illustrato in figura \ref{fig:scenario} e
+originariamente presentato nell'articolo di ricerca ``Robust Wireless
+Medium Access for VoWLAN Applications: A Cross--Layer QoS Mechanism''
+\cite{bib:rwma}. Si assuma che esista una comunicazione vocale tra due
+sistemi A e B, in figura rappresentati come ``Alice'' e ``Bob''. Il
+sistema A è un dispositivo mobile dotato di più di un'interfaccia
+wireless, ognuna delle quali è associata con un diverso access
+point. I vari access point possono appartenere a infrastrutture di
+rete e domini differenti e quindi essere completamente indipendenti
+l'uno dall'altro. Gli access point sono connessi a Internet attraverso
+una connessione via cavo. Il sistema B è un dispositivo fisso,
+connesso a Internet via cavo attraverso una comune allacciamento
+Internet a banda larga, come ADSL o fibra ottica.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{img/scenario}
+\caption{Scenario}
+\label{fig:scenario}
+\end{figure}
 
 La comunicazione VoIP tra i sistemi A e B si affida quindi a due tipi
 di connessione: quella wireless, tra A e gli access point, e quella
-via cavo tra gli access point e B; di queste la prima è la più
-problematica, perchè soffre dei seguenti inconvenienti:
+via cavo tra gli access point e B.
 
-\begin{enumerate}
-\item alta latenza
-\item frequenti errori di trasmissione
-\item disconnessione e riconnessione nel cambiare access point.
-\end{enumerate}
+\section{Vincoli qualitativi}
 
-I primi due problemi possono degradare la qualità di una comunicazione
-VoIP via wireless fino a renderla impossibile; il terzo impedisce la
-mobilità del sistema obbligandolo a rimanere connesso sempre alla
-stessa infrastruttura wireless, pena disconnessione e conseguente
-interruzione della comunicazione.
+Come mostrato, il percorso dei dati da un sistema VoIP all'altro deve
+attraversare segmenti camblati e altri senza fili; di questi gli
+ultimi sono i più problematici, perchè soffrono di tre gravi
+inconvenienti: alta latenza, frequenti errori di trasmissione e
+interruzione e ripristino della connessione nel cambiare access
+point. Latenza ed errori frequenti possono degradare la qualità di una
+comunicazione VoIP via wireless fino a renderla inintelleggibile,
+mentre l'interruzione della connessione durante il passaggio da un
+access point a un altro impedisce la mobilità del sistema obbligando
+l'utente a restare nei pressi del ripetitore wireless in uso, pena la
+disconnessione e l'interruzione della comunicazione.
 
-Per garantire una buona qualità del servizio, (TODO: riferimento
-articolo RWMA) impone i seguenti vincoli:
-\begin{enumerate}
-\item latenza da sistema a sistema sotto i 150ms
-\item percentuale di pacchetti persi sotto il 10\%.
-\item riconnessione trasparente in caso di cambio di access point.
-\end{enumerate}
+Per garantire una buona qualità del servizio, il sistema RWMA deve
+operare soddisfando vincoli di interattività, affidabilità e mobilità.
 
-(TODO: riferimento articolo RWMA) propone un sistema \emph{cross
-  layer} chiamato ``Robust Wireless Medium Access'' (di seguito RWMA)
-che mira a risolvere o mitigare detti problemi.
+\subsection{Interattività}
+L'interattività di una conversazione VoIP è influenzata dalla latenza
+dei pacchetti che ne compongono il flusso di rete. La latenza di
+trasmissione è definita come il tempo trascorso dall'istante del
+campionamento della voce sul sistema di origine all'instante di
+riproduzione audio della stessa voce sul sistema di destinazione. Le
+raccomandazioni ITU--T \cite{itu-t} indicano 150 ms come latenza
+massima di una comunicazione VoIP soddisfacente; al di sopra di questa
+soglia l'interattività della conversazione non è più accettabile.
 
-RWMA è costituito da più componenti:
+\subsection{Affidabilità}
+L'affidabilità di una conversazione VoIP dipende dalla capacità della
+rete di portare a destinazione quanti più pacchetti possibili. Un
+pacchetto è considerato perso quanto viene trasmesso dal sistema
+origine e non viene ricevuto dal sistema destinazione. Per condurre
+una conversazione comprensibile è necessario che la percentuale di
+pacchetti persi resti al di sotto del 10\% \cite{itu-t}.
+
+\subsection{Mobilità}
+La mobilità dell'utente è fortemente limitata dallo scarso raggio
+d'azione offerto dalle attuali apparecchiature WiFi. Le interfacce
+WiFi sono in grado di interrompere l'associazione con l'access point
+in uso per crearne una nuova con un secondo solo quando i suddetti
+access point sono parte della stessa infrastruttura di rete. Questa
+limitazione deriva direttamente dal funzionamento del protocollo IP:
+cambiando rete di accesso l'interfaccia wireless riceve un nuovo
+indirizzo IP e deve reinstaurare la connessione da zero. Ciò che si
+vuole è invece un processo di disconnessione e riconnessione
+trasparente all'applicazione, in modo che la chiamata VoIP non venga
+interrotta, e rapido, in modo da non violare il requisito di
+interattività precedentemente esposto.
+
+\section{Il meccanismo RWMA}
+Il meccanismo RWMA, schematizzato in figura \ref{fig:rwma} mira a
+risolvere i tre problemi di interattività, affidabilità e mobilità
+utilizzando un approccio TODO CONTINUA QUI
 
 \begin{itemize}
 \item TED (Transmission Error Detection)
@@ -162,7 +204,7 @@ RWMA è costituito da più componenti:
 \item PS (Proxy Server)
 \end{itemize}
 
-CONTINUA QUI
+TODO
 
 \begin{verbatim}
            +-----------------+                   +-------+
@@ -190,7 +232,7 @@ scelte necessarie a garantire una migliore qualità del
 servizio. Mentre i componenti Interface Manager, Linux Kernel,
 Softphone, Wireless Interface e Access Point hanno comportamenti
 predefiniti e sostanzialmente non modificabili, ULB e PS possono
-implementare  diverse tecniche di analisi della qualità delle
+implementare diverse tecniche di analisi della qualità delle
 connessioni e varie strategie di recupero degli errori.
 
 Compito del simulatore è fornire un ambiente virtuale in cui questi
@@ -360,4 +402,33 @@ CONCLUSIONI}}
 \addcontentsline{toc}{chapter}{Conclusioni}
 Un temerario che scriva una patch per ns2.
 
-\end {document}
+\renewcommand{\chaptermark}[1]{\markright{\thechapter \ #1}{}}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
+\appendix
+\chapter{Codice de-sim}
+\rhead[\fancyplain{}{\bfseries Appendice \thechapter: Codice de-sim}]{\fancyplain{}{\bfseries\thepage}}
+prova
+
+\chapter{Codice ulb-sim}
+\rhead[\fancyplain{}{\bfseries Appendice \thechapter: Codice ulb-sim}]{\fancyplain{}{\bfseries\thepage}}
+prova
+
+\begin{thebibliography}{90}
+\rhead[\fancyplain{}{\bfseries \leftmark}]{\fancyplain{}{\bfseries
+\thepage}}
+\addcontentsline{toc}{chapter}{Bibliografia}
+\bibitem{bib:rwma} V. Ghini, G. Lodi, F. Panzieri, ``Robust Wireless
+  Medium Access for VoWLAN Applications: A Cross--Layer QoS
+  Mechanism'', Maggio 2008
+\bibitem{itu-t} ITU--T Recommendation G. 114, ``One--way Transmission
+  Time'', May 2003
+\bibitem{al} V. Ghini, G. Lodi, F. Panzieri, ``Always Best Packet
+  Switching: the Mobile VoIP Case Study'', Achademy Plublisher,
+  Journal of Communications, accepted for publication.
+\end{thebibliography}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+\chapter*{Ringraziamenti}
+\thispagestyle{empty}
+Grazie, grazie al cazzo.
+\end{document}
