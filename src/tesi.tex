@@ -193,16 +193,40 @@ interrotta, e rapido, in modo da non violare il requisito di
 interattività precedentemente esposto.
 
 \section{Il meccanismo RWMA}
-Il meccanismo RWMA, schematizzato in figura \ref{fig:rwma} mira a
-risolvere i tre problemi di interattività, affidabilità e mobilità
-utilizzando un approccio TODO CONTINUA QUI
+Il meccanismo RWMA è costituito da più componenti, schematizzati in
+figura \ref{fig:rwma}, che cooperano per risolvere i tre problemi di
+interattività, affidabilità e mobilità. Questa sezione presenta
+brevemente i componenti e illustra il loro ruolo nel progetto.
 
-\begin{itemize}
-\item TED (Transmission Error Detection)
-\item ULB (UDP Load Balancer)
-\item IM (Interface Monitor)
-\item PS (Proxy Server)
-\end{itemize}
+\subsection{Transmission Error Detection (TED)}
+Questo componente software è integrato nel kernel del sistema
+operativo del dispositivo mobile ed è responsabile di tenere sotto
+costante osservazione l'esito dell'invio dei pacchetti sulle
+interfaccie wireless. Quando un'interfaccia WiFi invia un \emph{frame}
+802.11, attende che l'access point risponda con un frame di
+\emph{acknowledgment} che confermi l'avvenuta ricezione. Nel caso in
+cui questo frame non venga ricevuto entro un certo periodo di tempo,
+l'interfaccia ritenta la trasmissione fino a un certo limite di volte,
+raggiunto il quale il frame viene scartato. Se l'interfaccia riceve
+l'ACK, il firmware notifica il kernel dell'avvenuta ricezione; al
+contrario, se il numero massimo di tentativi viene raggiunto senza che
+l'interfaccia abbia ricevuto un ACK, il firmware notifica il kernel
+del fallimento. Compito del TED è rilevare queste notifiche positive e
+negative e metterle a disposizione di applicazioni in \emph{user
+  space}.
+
+\subsection{UDP Load Balancer (ULB)}
+Questo componente software è un'applicazione in \emph{user space}
+eseguita sul dispositivo mobile e ha il compito di rilevare le
+notifiche del TED, in base alle quali può decidere se rispedire i
+datagram che non sono stati ricevuti dall'access point; inoltre deve
+valutare di volta in volta quale sia l'interfaccia WiFi migliore da
+impiegare per l'invio dei datagram.
+
+\subsection{Interface Monitor (IM)}
+Questo componente TODO: da qui
+
+\subsection{Proxy Server}
 
 TODO
 
