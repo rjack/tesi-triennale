@@ -28,14 +28,14 @@
 %
 % Dedica
 %
-\begin{titlepage}
+%\begin{titlepage}
   % No numero di pagina
-  \thispagestyle{empty}
-  \topmargin=6.5cm
-  \raggedleft
-  \large
-  \em A Chiara
-\end{titlepage}
+%  \thispagestyle{empty}
+%  \topmargin=6.5cm
+%  \raggedleft
+%  \large
+%  \em A Chiara
+%\end{titlepage}
 
 \pagenumbering{roman}
 
@@ -119,26 +119,25 @@ INDICE}}
 \pagenumbering{arabic}
 
 Lo scenario da considerare è illustrato in figura \ref{fig:scenario} e
-originariamente presentato nell'articolo di ricerca ``Robust Wireless
-Medium Access for VoWLAN Applications: A Cross--Layer QoS Mechanism''
-\cite{bib:rwma}. Si assuma che esista una comunicazione vocale tra due
-sistemi A e B, in figura rappresentati come ``Alice'' e ``Bob''. Il
-sistema A è un dispositivo mobile dotato di più di un'interfaccia
-wireless, ognuna delle quali è associata con un diverso access
-point. I vari access point possono appartenere a infrastrutture di
-rete e domini differenti e quindi essere completamente indipendenti
+originariamente presentato negli articoli \emph{Robust Wireless Medium
+  Access for VoWLAN Applications: A Cross--Layer QoS Mechanism}
+\cite{bib:rwma} e \emph{Always Best Packet Switching: the mobile VoIP
+  case study} \cite{bib:abps}. Si assuma che esista una comunicazione
+vocale tra due sistemi A e B, in figura rappresentati come ``Alice'' e
+``Bob''. Il sistema A è un dispositivo mobile dotato di più di
+un'interfaccia wireless, ognuna delle quali è associata con un diverso
+access point. I vari access point possono appartenere a infrastrutture
+di rete e domini differenti e quindi essere completamente indipendenti
 l'uno dall'altro. Gli access point sono connessi a Internet attraverso
 una connessione via cavo. Il sistema B è un dispositivo fisso,
 connesso a Internet via cavo attraverso una comune allacciamento
 Internet a banda larga, come ADSL o fibra ottica.
-
 \begin{figure}[t]
 \centering
 \includegraphics[width=\textwidth]{img/scenario}
 \caption{Scenario}
 \label{fig:scenario}
 \end{figure}
-
 La comunicazione VoIP tra i sistemi A e B si affida quindi a due tipi
 di connessione: quella wireless, tra A e gli access point, e quella
 via cavo tra gli access point e B.
@@ -199,6 +198,12 @@ Il meccanismo RWMA è costituito da più componenti, schematizzati in
 figura \ref{fig:rwma}, che cooperano per risolvere i tre problemi di
 interattività, affidabilità e mobilità. Questa sezione presenta
 brevemente i componenti e illustra il loro ruolo nel progetto.
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{img/rwma}
+\caption{Schema del meccanismo RWMA}
+\label{fig:rwma}
+\end{figure}
 
 \subsection{Transmission Error Detection (TED)}
 Questo componente software è integrato nel kernel del sistema
@@ -247,7 +252,6 @@ di ULB non si occupa di ritrasmettere eventuali pacchetti persi.
 \chapter{Simulazione}
 % Obiettivi a cui punto. Spiegazione soluzioni, algoritmi e scelte
 % effettuate.
-
 Tra i componenti del sistema RWMA descritti nel capitolo precedente,
 UDP Load Balancer e Proxy Server ospitano il meccanismo su cui si basa
 la qualità del servizio. Tutti gli altri meccanismi si occupano di
@@ -310,7 +314,8 @@ problematica permette all'altra interfaccia designata per l'invio.
 ULB deve stimare la qualità di ogni interfaccia WiFi osservando le
 notifiche ricevuto da TED.
 
-TODO: algoritmo valutazione interfaccia.
+TODO: algoritmo valutazione interfaccia, lo scrivo per ultimo a scanso
+fix dell'ultimo momento.
 
 \subsection{Rilevazione delle capacità del firmware}
 I firmware delle schede di rete wireless sono in grado di notificare
@@ -394,10 +399,10 @@ C++, mentre gli scenari vengono definiti attraverso script Tcl
 I tre strati sono scritti in Common Lisp \cite{bib:clhs}.
 
 È importante notare che, a questo stadio di sviluppo, il simulatore
-non punta al realismo della simulazione. Per esempio, lo scenario
-wireless è di molto semplificato, non venendo presi in considerazione
-parametri fisici come la qualità del segnale radio in relazione alla
-distanza di un client dall'access point. Tutti i dettagli di un link
+non punta al realismo fisico della simulazione. Per esempio, nelle
+comunicazioni wireless non venendo presi in considerazione parametri
+fisici come la qualità del segnale radio in relazione alla distanza
+del client dall'access point. Tutti i dettagli di una connessione
 wireless sono astratti dietro ai parametri di banda, latenza e
 probabilità di errore; in particolare la rilevazione dell'ultimo
 parametro sarà fondamentale per determinare la scelta dell'interfaccia
@@ -406,37 +411,11 @@ wireless dovuto all'aumentare della distanza tra client e access point
 è sufficiente decidere quanto questo evento incida sulla probabilità
 d'errore del collegamento e modificarla di conseguenza.
 
-\section{Obiettivi simulatore}
-Il simulatore è stato progettato secondo i principi di
-\begin{itemize}
-\item modularità
-\item componibilità
-\item generalità
-\end{itemize}
-
-\subsection{Modularità}
-Modularità significa che i simulatori possono essere combinati tra di
-loro per rappresentare nuovi scenari con componenti esistenti; per
-esempio un'oggetto simulante un'interfaccia wireless in modo
-soddisfacente, è autonomo e riutilizzabile in ogni scenario che
-necessiti di un'interfaccia wireless. Questo permette il riuso del
-codice in modo estremamente diretto.
-
-\subsection{Componibilità}
-Componibilità significa che ogni simulatore che partecipa in una
-simulazione può essere a sua volta composto da più simulatori che
-costituiscono le sue parti interne; questo permette di mantenere
-gestibile la complessità della simulazione, senza dover sacrificare il
-livello di dettaglio voluto.
-
-\subsection{Generalità}
-Il simulatore vuole essere un framework il più possibile
-generale. L'obiettivo è essere utilizzabile in qualsiasi contesto in
-cui il problema sia definibile in termini di eventi discreti.
-
 \chapter{Valutazioni}
-Metriche con cui valuto il mio sistema. Deduzioni su misurazioni
+TODO: Metriche con cui valuto il mio sistema. Deduzioni su misurazioni
 effettuate. Perché ho misurato certe cose e non altre.
+
+TODO: qui non ho la più pallida idea di cosa scrivere.
 
 \chapter*{Conclusioni}
 \rhead[\fancyplain{}{\bfseries
@@ -444,7 +423,7 @@ CONCLUSIONI}]{\fancyplain{}{\bfseries\thepage}}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries
 CONCLUSIONI}}
 \addcontentsline{toc}{chapter}{Conclusioni}
-Un temerario che scriva una patch per ns2.
+TODO: che concludo?
 
 \renewcommand{\chaptermark}[1]{\markright{\thechapter \ #1}{}}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
@@ -474,9 +453,4 @@ prova
   http://www.lispworks.com/documentation/HyperSpec/Front/,
   ottobre 2009
 \end{thebibliography}
-
-\clearpage{\pagestyle{empty}\cleardoublepage}
-\chapter*{Ringraziamenti}
-\thispagestyle{empty}
-Grazie, grazie al cazzo.
 \end{document}
