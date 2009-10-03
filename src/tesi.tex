@@ -144,10 +144,9 @@ di connessione: quella wireless, tra A e gli access point, e quella
 via cavo tra gli access point e B.
 
 \section{Vincoli qualitativi}
-
 Come mostrato, il percorso dei dati da un sistema VoIP all'altro deve
 attraversare segmenti camblati e altri senza fili; di questi gli
-ultimi sono i più problematici, perchè soffrono di tre gravi
+ultimi sono i più problematici, perché soffrono di tre gravi
 inconvenienti: alta latenza, frequenti errori di trasmissione e
 interruzione e ripristino della connessione nel cambiare access
 point. Latenza ed errori frequenti possono degradare la qualità di una
@@ -166,7 +165,7 @@ dei pacchetti che ne compongono il flusso di rete. La latenza di
 trasmissione è definita come il tempo trascorso dall'istante del
 campionamento della voce sul sistema di origine all'instante di
 riproduzione audio della stessa voce sul sistema di destinazione. Le
-raccomandazioni ITU--T \cite{itu-t} indicano 150 ms come latenza
+raccomandazioni ITU--T \cite{bib:itu-t} indicano 150 ms come latenza
 massima di una comunicazione VoIP soddisfacente; al di sopra di questa
 soglia l'interattività della conversazione non è più accettabile.
 
@@ -176,7 +175,10 @@ rete di portare a destinazione quanti più pacchetti possibili. Un
 pacchetto è considerato perso quanto viene trasmesso dal sistema
 origine e non viene ricevuto dal sistema destinazione. Per condurre
 una conversazione comprensibile è necessario che la percentuale di
-pacchetti persi resti al di sotto del 10\% \cite{itu-t}.
+pacchetti persi resti al di sotto del 10\% \cite{bib:itu-t}. Poiché
+per motivi di interattività le comunicazioni VoIP si svolgono su
+protocollo UDP, la rete non offre nessun tipo di servizio di
+trasmissione affidabile.
 
 \subsection{Mobilità}
 La mobilità dell'utente è fortemente limitata dallo scarso raggio
@@ -200,67 +202,196 @@ brevemente i componenti e illustra il loro ruolo nel progetto.
 
 \subsection{Transmission Error Detection (TED)}
 Questo componente software è integrato nel kernel del sistema
-operativo del dispositivo mobile ed è responsabile di tenere sotto
+operativo del dispositivo mobile e ha il compito di tenere sotto
 costante osservazione l'esito dell'invio dei pacchetti sulle
-interfaccie wireless. Quando un'interfaccia WiFi invia un \emph{frame}
-802.11, attende che l'access point risponda con un frame di
-\emph{acknowledgment} che confermi l'avvenuta ricezione. Nel caso in
-cui questo frame non venga ricevuto entro un certo periodo di tempo,
-l'interfaccia ritenta la trasmissione fino a un certo limite di volte,
-raggiunto il quale il frame viene scartato. Se l'interfaccia riceve
-l'ACK, il firmware notifica il kernel dell'avvenuta ricezione; al
-contrario, se il numero massimo di tentativi viene raggiunto senza che
-l'interfaccia abbia ricevuto un ACK, il firmware notifica il kernel
-del fallimento. Compito del TED è rilevare queste notifiche positive e
-negative e metterle a disposizione di applicazioni in \emph{user
-  space}.
+interfaccie wireless. Ogni volta che un'interfaccia WiFi invia un
+\emph{frame} 802.11, questa deve attendere che l'access point risponda
+con un frame di \emph{acknowledgment} che confermi l'avvenuta
+ricezione. Nel caso in cui questo frame non venga ricevuto entro un
+certo periodo di tempo, l'interfaccia ritenta la trasmissione fino a
+un certo limite di volte, raggiunto il quale il frame viene
+scartato. Se l'interfaccia riceve l'ACK, il firmware notifica il
+kernel dell'avvenuta ricezione; al contrario, se il numero massimo di
+tentativi viene raggiunto senza che l'interfaccia abbia ricevuto un
+ACK, il firmware notifica il kernel del fallimento. Compito del TED è
+rilevare queste notifiche positive e negative inviate dal firmware
+dell'interfaccia e metterle a disposizione di applicazioni in
+\emph{user space}.
 
 \subsection{UDP Load Balancer (ULB)}
 Questo componente software è un'applicazione in \emph{user space}
 eseguita sul dispositivo mobile e ha il compito di rilevare le
-notifiche del TED, in base alle quali può decidere se rispedire i
-datagram che non sono stati ricevuti dall'access point; inoltre deve
-valutare di volta in volta quale sia l'interfaccia WiFi migliore da
-impiegare per l'invio dei datagram.
+notifiche di TED, e in base a queste decidere se rispedire i datagram
+che non sono stati ricevuti dall'access point; inoltre deve valutare
+di volta in volta quale sia l'interfaccia WiFi migliore da impiegare
+per l'invio dei datagram.
 
 \subsection{Interface Monitor (IM)}
-Questo componente TODO: da qui
+Questo componente software lavora a stretto contatto con il gestore
+delle interfacce wireless del sistema mobile e notifica ULB
+dell'attivazione e della disattivazione di ogni interfaccia; dalle
+notifiche di IM, ULB è quindi in grado di conoscere in ogni momento
+quali interfacce wireless siano attive e associate a un'access point e
+tra queste scegliere la migliore da usare per l'inoltro dei datagram.
 
-\subsection{Proxy Server}
-
-TODO
-
-\begin{verbatim}
-           +-----------------+                   +-------+
-SOFTPHONE  |          iface0 +----AP0------------+       |
- |         |                 |                   |       |
- |         |          iface1 +----AP1------------+       |
- +---lo----+ LOAD            |        INTERNET   | PROXY +-...
-           | BALANCER   ...  | ................. |       |
- +-MSG_ERR-+                 |                   |       |
- |         |          ifacen +----APn------------+       |
-KERNEL     +-------------+---+                   +-------+
-                         |
-                    INTERFACE
-                     MANAGER
-\end{verbatim}
-
-\chapter{Dettagli tecnici}
-
+\subsection{Proxy Server (PS)}
+Questo componente software ha il compito di nascondere la mobilità del
+sistema A, in modo che questo possa essere continuamente raggiungibile
+dal sistema B. Il sistema B è in comunicazione con PS ed è
+quest'ultimo a occuparsi di tenere traccia dei cambiamenti di
+indirizzo IP che occorrono quando il sistema A cambia rete WiFi o
+riattiva un'interfaccia di rete; come ULB, anche PS deve decidere a
+quale interfaccia inoltrare i datagram ricevuti da B, ma a differenza
+di ULB non si occupa di ritrasmettere eventuali pacchetti persi.
 
 \chapter{Simulazione}
 % Obiettivi a cui punto. Spiegazione soluzioni, algoritmi e scelte
 % effettuate.
-ULB e Proxy Server sono i componenti del sistema che eseguono le
-scelte necessarie a garantire una migliore qualità del
-servizio. Mentre i componenti Interface Manager, Linux Kernel,
-Softphone, Wireless Interface e Access Point hanno comportamenti
-predefiniti e sostanzialmente non modificabili, ULB e PS possono
-implementare diverse tecniche di analisi della qualità delle
-connessioni e varie strategie di recupero degli errori.
 
-Compito del simulatore è fornire un ambiente virtuale in cui questi
-diversi algoritmi possano essere eseguiti, analizzati e confrontati.
+Tra i componenti del sistema RWMA descritti nel capitolo precedente,
+UDP Load Balancer e Proxy Server ospitano il meccanismo su cui si basa
+la qualità del servizio. Tutti gli altri meccanismi si occupano di
+rilevare e trasmettere notifiche di errori o successi durante l'invio
+di un datagram, quindi il comportamento è molto ben definito. ULB e PS
+invece hanno il compito molto generico di dover scegliere
+l'interfaccia \emph{migliore} per l'invio di ogni datagram. Gli
+algoritmi di ULB e PS devono pertanto scegliere una definizione
+operativa di ``migliore'' e applicarla alle interfacce WiFi in
+uso.
+
+In prima approssimazione un'interfaccia WiFi si può definire migliore
+di un'altra quando offre maggiori probabilità di soddisfare i vincoli
+di interattività e affidabilità descritti nel precedente capitolo; in
+altre parole quando le stime di latenza e percentuale di pacchetti
+persi per una data interfaccia sono le più basse tra le stime delle
+altre interfacce attive.
+
+Esistono vari modi per condurre queste stime, difficili da valutare
+senza condurre test e misurazioni sul campo. La simulazione vuole
+essere un banco di prova sperimentale virtuale, in cui condurre test
+in maniera più comoda ed economica che nel mondo reale.
+
+Scopo della simulazione è quindi confrontare diversi algoritmi di
+stima della qualità delle interfacce WiFi per i componenti UDP Load
+Balancer e Proxy Server.
+
+Le sezioni successive mostreranno i problemi incontrati e le soluzioni
+proposte.
+
+\section{UDP Load Balancer}
+Questa sezione illustra i problemi che devono essere affrontati dagli
+algoritmi implementati dal componente ULB.
+
+\subsection{Ritrasmissione in tempi brevi}
+ULB deve attendere le notifiche del TED e ritrasmettere i datagram che
+sono stati segnalati come persi, ma senza superare i 150 ms di
+ritardo. Dopo tale periodo di tempo, un datagram voce viene
+considerato \emph{stale} (scaduto) e quindi scartato. Inoltre la
+ritrasmissione di un datagram causa l'attesa di tutti gli altri
+datagram in coda; se ULB impiega troppi tentativi per ritrasmettere un
+datagram, quelli successivi hanno meno tempo a disposizione per uscire
+dal sistema prima di scadere. Il rischio è di far scadere una serie di
+pacchetti solo per aver impiegato troppo tempo nella ritrasmissione di
+uno. In particolare, ogni datagram contiene circa 40 ms di voce,
+quindi ULB riceve i datagram da inoltrare a intervalli di circa 40 ms;
+ogni datagram ha quindi 40 ms in cui può impegnare l'interfaccia
+designata senza rubare tempo agli altri datagram in coda. Se ULB
+dedica molto più di 40 ms all'invio di un datagram, rischia di
+compromettere l'intera coda.
+
+La soluzione proposta è di permettere una sola ritrasmissione per
+datagram e di assegnare una valutazione negativa all'interfaccia che
+ha ricevuto la notifica d'errore d'invio dal componente TED. In questo
+modo la ritrasmissione di un pacchetto non blocca lo smaltimento degli
+altri pacchetti in coda e la valutazione negativa all'interfaccia
+problematica permette all'altra interfaccia designata per l'invio.
+
+\subsection{Valutazione interfacce -- ULB}
+ULB deve stimare la qualità di ogni interfaccia WiFi osservando le
+notifiche ricevuto da TED.
+
+TODO: algoritmo valutazione interfaccia.
+
+\subsection{Rilevazione delle capacità del firmware}
+I firmware delle schede di rete wireless sono in grado di notificare
+sia l'avvenuta trasmissione di un datagram (ACK), sia la mancata
+trasmissione (NACK). Normalmente le schede WiFi in commercio sono in
+grado di notificare entrambi i casi, ma alcuni firmware sono in grado
+di notificare solo ACK, oppure solo NACK. Mancando un meccanismo nel
+kernel Linux per conoscere con certezza le capacità di ogni firmware,
+ULB deve dedurrne il tipo dalle notifiche ricevute da TED. Conoscere a
+priori il tipo di notifiche che possono giungere da un'interfaccia è
+importante perché in caso di firmware che non possa segnalare i
+fallimenti, ULB deve supplire a questa mancanza impostando un timeout
+di ritrasmissione.
+
+\subsubsection{Il problema del firmware silenzioso}
+Il tipo di firmware si deduce dal tipo di notifiche ricevute dallo
+stesso ed è quindi un meccanismo banale. Esistono però due casi in cui
+il firmware può rimanere ``silenzioso'' e quindi impossibile da
+rilevare: quando una connessione pessima, cioè che perde tutti i
+pacchetti, viene gestita da un firmware ACK che notifica solo
+successi, oppure quando una connessione ottima, ovvero che non perde
+nessun pacchetto, viene gestita da un firmware NACK che notifica solo
+fallimenti.
+
+Non esiste un comportamento predefinito che soddisfi entrambe le
+situazioni: la strategia del ritrasmettere ogni datagram che non
+riceva notifiche entro un certo timeout funziona solo nella prima
+situazione e risulta completamente inadeguato nella seconda.
+
+\subsection{Valutazione interfacce -- PS}
+Poiché il sistema mobile è dotato di più interfacce, PS si trova
+nella necessità di scegliere a quale di queste debba inoltrare i dati
+ricevuti dal sistema fisso.
+
+La soluzione proposta consiste nel rispondere all'interfaccia che ha
+spedito gli ultimi dati ricevuti; in altre parole inviare i dati
+all'ultimo indirizzo IP da cui PS ha ricevuto traffico.
+
+Può però accadere che il sistema mobile non invii alcun dato perché
+l'utente si limita ad ascoltare; in questo caso il PS non ha
+cognizione di quale sia l'interfaccia a cui inviare i dati.
+
+TODO: soluzione PING, forse verrà già detta nella sezione ULB
+
+\chapter{Simulatore}
+Questo capitolo descrive brevemente l'implementazione del simulatore
+progettato per la valutazione degli algoritmi ULB e PS.
+
+Il simulatore è di tipo a eventi discreti ed è costituito da tre
+strati.
+
+Il primo strato è denominato \emph{de-sim} e costituisce un
+\emph{framework} generico che definisce le classi di base da estendere
+per modellare gli oggetti e i collegamenti, implementa la gestione di
+eventi ed errori, l'instaurazione di collegamenti tra oggetti e
+definisce primitive di input e output per lo scambio di oggetti tra
+attori collegati.
+
+Il secondo strato è denominato \emph{ulb-sim} e si basa su de-sim
+estendendone le classi e specializzandone i metodi, per modellare una
+versione semplificata del meccanismo RWMA.
+
+Il terzo strato è denominato \emph{ulb-snr} e descrive lo scenario da
+simulare instanziando le classi definite in ulb-sim e inizializzando
+gli oggetti e gli eventi di partenza.
+
+In altre parole, de-sim definisce come i meccanismi della simulazione,
+ulb-sim gli oggetti partecipanti e infine ulb-snr dispone i
+partecipanti nello scenario che si vuole raffigurare.
+
+L'architettura a strati serve a mantenere indipendenza tra ciò che
+definisce il ``cosa'' (ulb-sim) e ciò che definisce il ``come''
+(ulb-snr): per esempio è possibile costruire nuovi scenari basati su
+ulb-sim senza modificarne il codice.
+
+Questra struttura è simile a quella del simulatore ns-2, in cui gli
+oggetti della simulazione sono definiti da una gerarchia di classi in
+C++, mentre gli scenari vengono definiti attraverso script Tcl
+\cite{bib:ns-2}.
+
+I tre strati sono scritti in Common Lisp \cite{bib:clhs}.
 
 È importante notare che, a questo stadio di sviluppo, il simulatore
 non punta al realismo della simulazione. Per esempio, lo scenario
@@ -303,120 +434,9 @@ Il simulatore vuole essere un framework il più possibile
 generale. L'obiettivo è essere utilizzabile in qualsiasi contesto in
 cui il problema sia definibile in termini di eventi discreti.
 
-
-\section{Obiettivi simulazione}
-Confrontare i risultati:
-\begin{itemize}
-\item stesso scenario, algoritmi ULB differenti
-\item stesso scenario, stesso algoritmo, parametri algoritmo differenti
-\item scenari diversi per lo stesso algoritmo
-\end{itemize}
-Da tutto questo tirare fuori l'algoritmo migliore.
-
-\section{Problemi}
-Questa sezione illustra i problemi che devono essere affrontati dagli
-algoritmi implementati nell'ULB. La sezione successiva mostrerà alcune
-soluzioni e le confronterà tra loro.
-
-\subsection{Ritrasmissione in tempi brevi}
-ULB deve attendere le notifiche del TED e ritrasmettere i datagram che
-sono stati segnalati come persi, ma senza superare i 150ms di ritardo.
-
-\subsection{Valutazione interfacce}
-ULB deve monitorare il comportamento delle varie interfacce dell'host
-su cui viene eseguito e valutarne la qualità. L'interfaccia che
-risulta essere la migliore viene utilizzata per l'invio dei dati. È
-necessario definire sia quali siano i parametri secondo cui valutare
-la qualità di un'interfaccia, sia le strategie di monitoraggio e
-misurazione di questi parametri. La valutazione comprende sia
-l'attività \emph{first hop} tra interfaccia e access point, sia quella
-\emph{full path} tra interfaccia e Proxy Server.
-
-\subsection{Rilevazione delle capacità del firmware}
-I firmware delle schede di rete wireless sono in grado di notificare
-sia l'avvenuta trasmissione di un datagram (ACK), sia la mancata
-trasmissione (NAK). Putroppo non esiste uniformità di comportamento
-tra i vari modelli sul mercato, ed è possibile che il firmware di una
-scheda sia in grado di notificare solo ACK, oppure solo NAK, oppure
-entrambi. Mancando un meccanismo nel kernel Linux per conoscere con
-certezza le capacità di ogni firmware, ULB deve dedurle dal
-comportamento osservato.
-
-\subsubsection{Il problema del firmware silenzioso}
-Il tipo di firmware si deduce dal tipo di notifiche ricevute dallo
-stesso ed è quindi un meccanismo banale. Esistono però due casi in cui
-il firmware può rimanere ``silenzioso'' e quindi impossibile da
-rilevare:
-\begin{enumerate}
-\item quando una connessione pessima, che perde tutti i pacchetti,
-  viene gestita da un firmware ACK che notifica solo successi, oppure
-\item quando una connessione ottima, che non perde nessun pacchetto,
-  viene gestita da un firmware NAK che notifica solo fallimenti.
-\end{enumerate}
-Non esiste un comportamento predefinito che soddisfi entrambe le
-situazioni: la strategia del ritrasmettere ogni datagram che non
-riceva notifiche entro un certo timeout funziona solo nella prima
-situazione e risulta completamente inadeguato nella seconda.
-
-\subsection{Conversazione unidirezionale}
-Poichè l'host su cui risiede il softphone è dotato di più interfacce,
-il Proxy Server si trova nella necessità di scegliere a quale tra
-queste debba inviare i dati. Normalmente la scelta cade
-sull'interfaccia che ha spedito gli ultimi dati ricevuti: se ULB l'ha
-scelta come interfaccia migliore, il Proxy Server può fidarsi. Può
-però accadere che il softphone non invii alcun dato perchè l'utente si
-limita ad ascoltare; in questo caso il Proxy Server non ha cognizione
-di quale sia l'interfaccia a cui inviare i dati.
-
-\section{Soluzioni}
-Tutti gli algoritmi sono stati progettati in modo da essere il più
-possibile economici in termini di banda, tempi e energia.
-
-Economia di banda significa limitare al minimo indispensabile
-l'overhead nelle trasmissioni. In un contesto \emph{multi-homed} dove
-ogni host possiede mediamente dalle due alle quattro interfacce,
-ognuna di queste genera il proprio overhead che si va a sommare a
-quello generato dalle altre.
-
-L'economia di tempi è richiesta dalla caratterizzazione \emph{soft
-  real-time} del problema, per cui un risultato ottenuto in ritardo
-diventa inutilizzabile o fuorviante.
-
-L'economia di energia dipende dalla natura dei client, che sono
-tipicamente dispositivi mobili alimentati a batteria. Le interfacce
-wireless sono periferiche avide di consumi e moltiplicandone il numero
-si rischia di abbattere l'autonomia del client. Ancora una volta,
-limitare l'overhead è l'unica via.
-
-\subsection{Ritrasmissione in tempi brevi}
-Fissato il ritardo massimo a 150ms, ULB associa un timeout di tale
-durata ad ogni datagram ricevuto dal softphone. Scaduto il timeout il
-datagram viene scartato.
-
-\subsection{Valutazione interfacce}
-Si è scelto di suddividere la valutazione di ogni interfaccia WiFi in
-due sottovalutazioni differenti: una che considera il comportamento
-nel \emph{first hop} e un'altra che considera quello nel \emph{full
-  path}.
-
-\subsubsection{First hop}
-La valutazione \emph{first hop} rappresenta la qualità del
-collegamento wireless tra interfaccia e access point, ed è una
-funzione delle notifiche TED.
-% TODO formula.
-
-\subsubsection{Full path}
-La valutazione \emph{full path} rappresenta l'affidabilità di tutto il
-percorso dall'interfaccia al proxy server e ritorno. Ogni interfaccia
-spedisce ogni 500ms un datagram che viene rispedito indietro dal Proxy
-Server, come un semplice ping.
-
-\chapter{Simulatore}
-Implementazione del simulatore.
-
 \chapter{Valutazioni}
 Metriche con cui valuto il mio sistema. Deduzioni su misurazioni
-effettuate. Perchè ho misurato certe cose e non altre.
+effettuate. Perché ho misurato certe cose e non altre.
 
 \chapter*{Conclusioni}
 \rhead[\fancyplain{}{\bfseries
@@ -443,12 +463,16 @@ prova
 \addcontentsline{toc}{chapter}{Bibliografia}
 \bibitem{bib:rwma} V. Ghini, G. Lodi, F. Panzieri, ``Robust Wireless
   Medium Access for VoWLAN Applications: A Cross--Layer QoS
-  Mechanism'', Maggio 2008
-\bibitem{itu-t} ITU--T Recommendation G. 114, ``One--way Transmission
-  Time'', May 2003
-\bibitem{al} V. Ghini, G. Lodi, F. Panzieri, ``Always Best Packet
-  Switching: the Mobile VoIP Case Study'', Achademy Plublisher,
+  Mechanism'', maggio 2008
+\bibitem{bib:itu-t} ITU--T Recommendation G. 114, ``One--way Transmission
+  Time'', maggio 2003
+\bibitem{bib:abps} V. Ghini, G. Lodi, F. Panzieri, ``Always Best
+  Packet Switching: the Mobile VoIP Case Study'', Achademy Plublisher,
   Journal of Communications, accepted for publication.
+\bibitem{bib:ns-2} http://nsnam.isi.edu/nsnam/, ottobre 2009
+\bibitem{bib:clhs}
+  http://www.lispworks.com/documentation/HyperSpec/Front/,
+  ottobre 2009
 \end{thebibliography}
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
