@@ -52,54 +52,63 @@ comunicazione vocale su sistemi VoIP, comunemente nota come
 ``telefonia via Internet''. Questa tecnologia permette conversazioni
 audio/video tra due o più partecipanti senza limiti di distanza e di
 tempo, al prezzo di una normale connessione Internet a banda larga e
-di un computer.
+di un computer. La voce viene digitalizzata dall'apparecchio del
+mittente e incapsulata in pacchetti UDP che vengono inviati al
+destinatario via Internet. Poiché i dati percorrono reti progettate
+per un utilizzo generico, utilizzando il protocollo UDP che non
+fornisce alcun tipo di garanzia, può accadere che in determinate
+circostanze la rete non sia in grado di fornire un servizio adatto a
+una comunicazione VoIP.
 
-Contemporaneamente e indipendentemente si sono affermate le reti senza
-fili su protocollo 802.11, le reti wireless. L'uso combinato delle due
-tecnologie permetterebbe una comunicazione audio-video economica, su
-scala mondiale e non limitata negli spostamenti dei
-partecipanti. Esistono però due limitazioni castranti per questo tipo
-di applicazione: lo scarso raggio di copertura degli apparecchi
-wireless e l'eterogeneità delle reti senza fili. I dispositivi WiFi,
-limitati a un raggio d'azione tipicamente circoscritto alla pianta di
-un edificio, escono duramente sconfitti dal confronto con la capacità
-dei tradizionali cellulari di restare costantemente connessi alla rete
-telefonica nazionale e internazionale durante ogni tipo di
-spostamento. Tecnicamente l'accesso a una rete WiFi viene fornito da
-un dispositivo chiamato \emph{access point}, che permette ai vari
-dispositivi 802.11 di collegarsi via radio. Il raggio del segnale
-molto ridotto, entro i 300 metri, e una suscettibilità molto alta alle
-interferenze e agli ostacoli fisici intralciano la mobilità. Supplire
-alla scarsa portata passando di rete in rete durante gli spostamenti
-non è comunque facile, perché ogni rete senza fili è un mondo a sè; a
-differenza di un cellulare, che può via via associarsi a diversi
-ripetitori rimanendo sempre identificato dallo stesso numero di
-telefono, le interfacce WiFi cambiano indirizzo IP, e quindi identità,
-ogni volta che si associano con un access point di una rete
-differente, rendendo impossibile la comunicazione continua, costante e
-senza interruzioni necessaria per una conversazione telefonica.
+Il traffico VoIP necessita infatti di infrastrutture di rete che
+offrano garanzie di interattività e affidabilità. Con interattività si
+intende un tempo sufficientemente ridotto tra il momento in cui un
+frammento di voce viene pronunciato dal mittente e il momento in cui
+lo stesso frammento viene udito dal destinatario; un ritardo troppo
+marcato renderebbe difficile lo scambio di battute nel dialogo degli
+interlocutori. Con affidabilità si intende invece la capacità della
+rete di portare a destinazione la quasi totalità dei pacchetti
+inviati; un'alta percentuale di perdite di pacchetti renderebbe la
+comunicazione vocale incomprensibile.
 
-Il progetto Robust Wireless Medium Access punta a risolvere questi due
-problemi con un approccio \emph{cross layer}: l'alta percentuale
-d'errore nel collegamento senza fili viene mitigata da un meccanismo
-di rilevazione d'errore e ritrasmissione installato nel dispositivo
-dell'utente; l'impossibilità di cambiare rete WiFi senza interruzioni
-viene risolta utilizzando più interfacce di rete per dispositivo e
-utilizzando un Proxy Server che gestisca in modo trasparente i
-cambiamenti di indirizzo IP nelle interfacce del client.
+Con la diffusione della banda larga (ADSL, fibra ottica), le reti
+pubbliche e private riescono a garantire una qualità di servizio
+adeguata al VoIP. Tuttavia, più recentemente, alle reti cablate a
+banda larga si sono affiancate le reti senza fili (WiFI, 802.11,
+WiMax), che stanno diventando una realtà sempre più diffusa grazie
+alla loro semplicità di installazione, praticità di utilizzo ed
+economicità dei componenti. Lo scenario tipico consiste in una rete
+WiFi che, attraverso uno o più \emph{access point}, offre accesso a
+una rete broad band cablata per svariati dispositivi mobili; in questi
+casi il traffico di rete deve attraversare almeno un segmento do rete
+wireless prima di giungere alla rete via cavo.
 
-Il meccanismo di \emph{error recovery} e \emph{load balancing} può
-applicare diversi algoritmi, che devono essere analizzati e
-confrontati per individuare il più adatto. La struttura del progetto
-rende molto difficile, se non praticamente impossibile, condurre delle
-prove nella realtà; per questo si è scelto di eseguire dei test in una
-simulazione.
+Spesso le reti senza fili non garantiscono la qualità del servizio
+richiesta dalle applicazioni VoIP. Il requisito di affidabilità viene
+minato da interferenze, collisioni tra pacchetti e indebolimento del
+segnale radio con l'aumentare della distanza tra dispositivo e access
+point. Il requisito di interattività viene violato ogniqualvolta vi
+sia la necessità di ritrasmettere i pacchetti che sono stati persi
+durante un'errore di trasmissione. Inoltre, la mobilità dei
+dispositivi senza fili introduce il problema inedito di quella che si
+potrebbe chiamare migrazione trasparente di connettività. Attualmente
+un dispositivo connesso ad una rete senza fili è limitato nella sua
+mobilità alla copertura di rete dell'access point utilizzato: se,
+durante uno spostamento, il dispositivo esce dalla copertura di una
+rete WiFi ed entra nella copertura di una seconda rete WiFi, la
+procedura di disconnessione dalla prima rete e riconnessione alla
+seconda è distruttiva e interrompe ogni tipo di connessione in corso.
 
-In questo documento (TODO: tesi, lavoro, opera?) descriverò
-inizialmente il funzionamento del meccanismo RWMA, per poi presentare
-il progetto e l'implementazione di un simulatore a eventi discreti che
-possa modellare i vari componenti di rete con i rispettivi algoritmi
-di QoS.
+È lecito immaginare che in un futuro prossimo la copertura delle reti
+senza fili diventerà sempre più pervasiva, con città intere costellate
+di punti di accesso a diverse reti wireless, pubbliche e private. In
+questo scenario sono necessari meccanismi e protocolli che permettano
+l'uso di applicazioni VoIP in condizioni di estrema mobilità,
+garantendo le proprietà di interattività e affidabilità necessarie.
+
+In questo documento (TODO: tesi, lavoro, opera?) presenterò diversi
+meccanismi sperimentali che puntano a risolvere questo problema,
+mettendone in luce pregi e difetti e confrontando le varie soluzioni proposte.
 
 TODO: nel primo capitolo
 
