@@ -53,12 +53,11 @@ comunicazione vocale su sistemi VoIP, comunemente nota come
 audio/video tra due o più partecipanti senza limiti di distanza e di
 tempo, al prezzo di una normale connessione Internet a banda larga e
 di un computer. La voce viene digitalizzata dall'apparecchio del
-mittente e incapsulata in pacchetti UDP che vengono inviati al
+mittente e incapsulata in pacchetti che vengono inviati al
 destinatario via Internet. Poiché i dati percorrono reti progettate
-per un utilizzo generico, utilizzando il protocollo UDP che non
-fornisce alcun tipo di garanzia, può accadere che in determinate
-circostanze la rete non sia in grado di fornire un servizio adatto a
-una comunicazione VoIP.
+per un utilizzo generico utilizzando protocolli \emph{best effort},
+può accadere che in determinate circostanze la rete non sia in grado
+di fornire un servizio adatto a una comunicazione VoIP.
 
 Il traffico VoIP necessita infatti di infrastrutture di rete che
 offrano garanzie di interattività e affidabilità. Con interattività si
@@ -74,37 +73,36 @@ comunicazione vocale incomprensibile.
 Con la diffusione della banda larga (ADSL, fibra ottica), le reti
 pubbliche e private riescono a garantire una qualità di servizio
 adeguata al VoIP. Tuttavia, più recentemente, alle reti cablate a
-banda larga si sono affiancate le reti senza fili (WiFI, 802.11,
-WiMax), che stanno diventando una realtà sempre più diffusa grazie
-alla loro semplicità di installazione, praticità di utilizzo ed
-economicità dei componenti. Lo scenario tipico consiste in una rete
-WiFi che, attraverso uno o più \emph{access point}, offre accesso a
-una rete broad band cablata per svariati dispositivi mobili; in questi
-casi il traffico di rete deve attraversare almeno un segmento do rete
-wireless prima di giungere alla rete via cavo.
+banda larga si sono affiancate le reti senza fili, per esempio Mobile
+WiMAX, WiFI (IEEE802.11/a/b/g/n), ZigBee, UMTS, GPRS, che stanno
+diventando una realtà sempre più diffusa grazie alla loro semplicità
+di installazione, praticità di utilizzo ed economicità dei
+componenti. Lo scenario tipico consiste in una rete senza fili che,
+attraverso uno o più \emph{access point}, offre accesso a una rete
+broad band cablata per svariati dispositivi mobili; in questi casi il
+traffico di rete deve attraversare almeno un segmento di rete wireless
+prima di giungere alla rete via cavo.
 
 Spesso le reti senza fili non garantiscono la qualità del servizio
 richiesta dalle applicazioni VoIP. Il requisito di affidabilità viene
-minato da interferenze, collisioni tra pacchetti e indebolimento del
-segnale radio con l'aumentare della distanza tra dispositivo e access
-point. Il requisito di interattività viene violato ogniqualvolta vi
-sia la necessità di ritrasmettere i pacchetti che sono stati persi
-durante un'errore di trasmissione. Inoltre, la mobilità dei
-dispositivi senza fili introduce il problema inedito di quella che si
-potrebbe chiamare migrazione trasparente di connettività. Attualmente
-un dispositivo connesso ad una rete senza fili è limitato nella sua
-mobilità alla copertura di rete dell'access point utilizzato: se,
-durante uno spostamento, il dispositivo esce dalla copertura di una
-rete WiFi ed entra nella copertura di una seconda rete WiFi, la
-procedura di disconnessione dalla prima rete e riconnessione alla
-seconda è distruttiva e interrompe ogni tipo di connessione in corso.
+minato da interferenze, collisioni tra pacchetti e dall'indebolimento
+del segnale radio che si verifica all'aumentare della distanza tra
+dispositivo e access point. Il requisito di interattività viene invece
+violato ogniqualvolta vi sia la necessità di ritrasmettere i pacchetti
+che sono stati persi durante un'errore di trasmissione. Inoltre, i
+dispositivi senza fili sono fisicamente in grado di muoversi
+attraverso le aree di copertura di più reti, ma non possono cambiare
+associazione di rete senza interrompere gli scambi di dati in corso,
+problema che limita fortemente la mobilità e rende impossibile le
+comunicazioni VoIP senza interruzioni.
 
 È lecito immaginare che in un futuro prossimo la copertura delle reti
 senza fili diventerà sempre più pervasiva, con città intere costellate
-di punti di accesso a diverse reti wireless, pubbliche e private. In
-questo scenario sono necessari meccanismi e protocolli che permettano
-l'uso di applicazioni VoIP in condizioni di estrema mobilità,
-garantendo le proprietà di interattività e affidabilità necessarie.
+di punti di accesso a diversi tipi di reti wireless, sia pubbliche che
+private. In questo scenario sono necessari meccanismi e protocolli che
+permettano l'uso di applicazioni VoIP in condizioni di estrema
+mobilità, garantendo le proprietà di interattività e affidabilità
+necessarie.
 
 In questo documento (TODO: tesi, lavoro, opera?) presenterò lo stato
 dell'arte della qualità di servizio su sistemi VoWLAN, analizzando
@@ -125,6 +123,20 @@ TODO: etc.
 INDICE}}
 
 
+\chapter{Panoramica}
+Questo capitolo presenterà brevemente le soluzioni più importanti
+presenti in letteratura, senza entrare nel merito dei singoli dettagli
+tecnici, ma raggruppando e catalogando per tipo i vari approcci.
+
+L'obiettivo comune è di permettere a un MN di muoversi attraverso reti
+wireless di natura eterogenea in maniera trasparente, ovvero senza
+interrompere eventuali connessioni attive. Perché questo sia possibile
+è necessario che ogni MN sia univocamente identificato e univocamente
+raggiungibile dagli altri nodi. Inoltre ogni MN dovrebbe monitorare la
+qualità di ogni connessione wireless per poter individuare la rete che
+offre le migliori garanzie di servizio e, se necessario, eseguire un
+cambio di associazione trasparente per assicurare una comunicazione
+continua su detta rete.
 
 
 
