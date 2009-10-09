@@ -123,21 +123,83 @@ INDICE}}
 
 
 \chapter{Panoramica}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
+\pagenumbering{arabic}
+
+L'obiettivo è di permettere a un MN di muoversi attraverso reti
+wireless di natura eterogenea in maniera trasparente, ovvero senza
+interrompere eventuali connessioni attive durante la transizione da
+una rete all'altra. Perché questo sia possibile è necessario che ogni
+MN sia a) univocamente identificato e b) universalmente raggiungibile
+dagli altri nodi, in qualunque rete si trovi. Inoltre ogni MN dovrebbe
+c) monitorare la qualità di ogni connessione wireless per poter
+individuare la rete che offre le migliori garanzie di servizio e d)
+eseguire un cambio di associazione trasparente per assicurare una
+transizione senza interruzioni da una rete all'altra.
+
+Le architetture proposte non hanno una collocazione ben precisa
+all'interno dello stack di protocolli ISO/OSI.
+
 Questo capitolo presenterà brevemente le soluzioni più importanti
 presenti in letteratura, senza entrare nel merito dei singoli dettagli
-tecnici, ma raggruppando e catalogando per tipo i vari approcci.
+tecnici, ma raggruppando e catalogando per tipo i vari approcci e
+mostrando come ogni soluzione affronti ognuno dei quattro punti
+chiave.
 
-L'obiettivo comune è di permettere a un MN di muoversi attraverso reti
-wireless di natura eterogenea in maniera trasparente, ovvero senza
-interrompere eventuali connessioni attive. Perché questo sia possibile
-è necessario che ogni MN sia univocamente identificato e univocamente
-raggiungibile dagli altri nodi. Inoltre ogni MN dovrebbe monitorare la
-qualità di ogni connessione wireless per poter individuare la rete che
-offre le migliori garanzie di servizio e, se necessario, eseguire un
-cambio di associazione trasparente per assicurare una comunicazione
-continua su detta rete.
+### SOLUZIONI SINGLE LAYER ###
+
+Tutte soluzioni tranne MMUSE hanno problemi con NAT e
+firewall. Bisogna usare TURN e STUN. Tutte soluzioni senza
+multi-homing, tranne MCoA.
+
+Mobile IP v6 (MIP) -- Network layer
+* Home Agent nella rete fa da LR
+* Host parlano IPv6
+* quindi infrastrutture di rete attuali non sono adatte
+* no multi homing, perche' il protocollo non lo permette
+* handover tribolato
+
+Host Identity Protocol (HIP) -- Tra Network e Transport layer
+* server tipo DNS opera fuori dalla rete di accesso
+* mappa identificatori a posizioni
+* il layer aggiuntivo deve essere installato sia nel MN che nel
+  CN.
+* Poco pratico! Non è detto che il CN si prenda la briga di installare
+  il layer aggiuntivo.
+
+Datagram Congestion Control Protocol (DCCP) e Mobile Stream Control
+Transport Protocolol (m-SCTP) -- Transport layer
+* ogni MN annuncia il cambiamento di rete all'altro nodo
+* funziona solo se cambiano rete uno alla volta! Due MN che cambiano
+  rete simultaneamente sono irragiungibili.
+* richiedono modifica delle applicazioni.
+
+Terminal Mobility Support Protocol (TMSP) -- Session layer
+* SIP user agent pubblico fuori dalle reti di accesso, mappa
+  user@foo.com a posizione
+* handover lento! ogni riconfigurazione interrompe la comunicazione
+  finchè MN non ha finito di comunicare con l'user agent pubblico.
+
+MMUSE
+* server SIP, Session Border Controller (SBC) all'interno del
+  sistema autonomo, che può essere composto da più reti wireless
+  eterogenee.
+* permette di attraversare i firewall e di spostarsi da una subnet
+  all'altra all'interno dello stesso AS.
+* MN non si può muovere tra reti di diversi AS.
+
+Multiple Care of Address (MCoA)
+* estensione di MIPv6
+* permette a MN di registrare più IP address con il suo Home Agent
+* FlowMob permette di separare flussi di traffico tra le varie NIC
+* stessi problemi di MIPv6: tutte le infrastrutture da cambiare.
 
 
+### SOLUZIONI CROSS LAYER ###
+
+MONA
+
+ABPS
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                   DA QUI IN POI E' ROBA VECCHIA                   %
