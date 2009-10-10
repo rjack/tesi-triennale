@@ -36,7 +36,11 @@
   \raggedleft
   \large
   \em A Chiara
+  \newpage
+  % Non numera l'ultima pagina a sinistra.
+  \clearpage{\pagestyle{empty}\cleardoublepage}
 \end{titlepage}
+
 
 \pagenumbering{roman}
 
@@ -116,17 +120,20 @@ TODO: nel secondo capitolo
 
 TODO: etc.
 
+% Non numera l'ultima pagina a sinistra.
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
 % Indice
 \tableofcontents
 \rhead[\fancyplain{}{\bfseries\leftmark}]{\fancyplain{}{\bfseries\thepage}}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries
 INDICE}}
-
+% Non numera l'ultima pagina a sinistra.
+\clearpage{\pagestyle{empty}\cleardoublepage}
 
 \chapter{Panoramica}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
 \pagenumbering{arabic}
-
 L'obiettivo è di permettere a un MN di muoversi attraverso reti
 wireless di natura eterogenea in maniera trasparente, ovvero senza
 interrompere eventuali connessioni attive durante la transizione da
@@ -147,7 +154,7 @@ tecnici, ma raggruppando e catalogando per tipo i vari approcci e
 mostrando come ogni soluzione affronti ognuno dei quattro punti
 chiave.
 
-\section{Soluzioni a singolo strato di rete}
+\section{Soluzioni \emph{single layer}}
 Le architetture seguenti sono dette \emph{single layer} perché hanno
 una collocazione ben precisa nello stack ISO/OSI e operano soltanto al
 loro livello. L'analisi di queste soluzioni mostrerà i limiti
@@ -213,25 +220,62 @@ Tutte soluzioni tranne MMUSE hanno problemi con NAT e
 firewall. Bisogna usare TURN e STUN. Tutte soluzioni senza
 multi-homing, tranne MCoA.
 
-\begin{comment}
 
-### SOLUZIONI CROSS LAYER ###
+\section{Soluzioni \emph{cross layer}}
+Le architetture presenti sono dette \emph{cross layer} perché agiscono
+a multipli livelli dello stack ISO/OSI, superando i limiti delle
+architetture \emph{single layer} descritte in precedenza.
 
-MONA (riassunto paper)
-* si concentra sul problema dell'handover, approccio multi-homed
+Il concetto di fondo di queste architetture è utilizzare le
+informazioni disponibili al livello \emph{network} per poter prendere
+decisioni efficaci di qualità di servizio ai livelli più alti.
+
+Questa sezione confronterà le soluzioni ``Media Optimization Network
+Architecture'' (MONA) e ``Always Best Packet Switching'' (ABPS).
+
+\subsection{Media Optimization Network Architecture}
+Veloce panoramica di MONA:\\
+* si concentra sul problema dell'handover, approccio multi-homed\\
 * usa un protocollo cross-layer che usa il numero di ritrasmissioni L2
-  per decidere quando è il momento di fare handoff
-* media selection basata sulla condizione del first-hop
-* no modifica ad applicazioni esistenti
-* selezione del media flow per flow, a seconda del tipo di flow
+  per decidere quando è il momento di fare handoff\\
+* media selection basata sulla condizione del first-hop\\
+* no modifica ad applicazioni esistenti\\
+* selezione del media flow per flow, a seconda del tipo di flow\\
 * cerca di bilanciare il carico di lavoro degli AP con una modifica
-  all'802.11
+  all'802.11\\
 * association raggruppa flow tra due host e viene mantenuta con
-  signalling: no server esterni.
+  signalling: no server esterni.\\
+
+\subsection{Always Best Packet Switching}
+Veloce panoramica di ABPS:\\
+TODO
+
+\subsection{Considerazioni}
+Vantaggi delle due soluzioni rispetto a quelle single layer.
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
 
 
-ABPS
-\end{comment}
+\chapter{Media Optimization Network Architecture}
+Questo capitolo analizzerà nel dettaglio l'architettura MONA.
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+
+\chapter{Always Best Packet Switching}
+Questo capitolo analizzerà nel dettaglio l'architettura ABPS.
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+
+\chapter{Considerazioni finali}
+Riprende superiorità di cross layer su single layer e confronta punti
+forti e deboli di MONA e ABPS.
+
+Propone scenari di test?
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                   DA QUI IN POI E' ROBA VECCHIA                   %
