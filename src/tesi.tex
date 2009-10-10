@@ -4,6 +4,7 @@
 \usepackage{fancyhdr}
 \usepackage{indentfirst}
 \usepackage{graphicx}
+\usepackage{verbatim}
 
 \pagestyle{fancy}
 
@@ -28,14 +29,14 @@
 %
 % Dedica
 %
-%\begin{titlepage}
+\begin{titlepage}
   % No numero di pagina
-%  \thispagestyle{empty}
-%  \topmargin=6.5cm
-%  \raggedleft
-%  \large
-%  \em A Chiara
-%\end{titlepage}
+  \thispagestyle{empty}
+  \topmargin=6.5cm
+  \raggedleft
+  \large
+  \em A Chiara
+\end{titlepage}
 
 \pagenumbering{roman}
 
@@ -146,54 +147,73 @@ tecnici, ma raggruppando e catalogando per tipo i vari approcci e
 mostrando come ogni soluzione affronti ognuno dei quattro punti
 chiave.
 
-### SOLUZIONI SINGLE LAYER ###
+\section{Soluzioni a singolo strato di rete}
+Le architetture seguenti sono dette \emph{single layer} perché hanno
+una collocazione ben precisa nello stack ISO/OSI e operano soltanto al
+loro livello. L'analisi di queste soluzioni mostrerà i limiti
+dell'approccio single layer, limiti che saranno superati dagli
+approcci \emph{cross layer} descritti nella sezione successiva.
 
+Queste architetture coprono i principali strati dello stack ISO/OSI:
+Mobile IPv6 \cite{bib:mipv6} e la sua estensione Multiple Care-of
+Addresses Registration \cite{bib:mcoa} agiscono a livello
+\emph{network}, Host Identity Protocol \cite{bib:hip} definisce un
+livello aggiuntivo tra \emph{network} e \emph{transport}, Datagram
+Congestion Control Protocol \cite{bib:dccp} e Mobile Stream Control
+Transport Protocol \cite{bib:m-sctp} lavorano a livello
+\emph{transport}, infine Terminal Mobility Support Protocol
+\cite{bib:tmsp} e MMUSE \cite{bib:mmuse} agiscono a livello
+\emph{session}.
+
+\subsection{Mobile IPv6 e Multiple Care-of Addresses Registration}
+* Home Agent nella rete fa da LR\\
+* Host parlano IPv6\\
+* quindi infrastrutture di rete attuali non sono adatte\\
+* no multi homing, perche' il protocollo non lo permette\\
+* handover tribolato\\
+MCoA\\
+* estensione di MIPv6\\
+* permette a MN di registrare più IP address con il suo Home Agent\\
+* FlowMob permette di separare flussi di traffico tra le varie NIC\\
+* stessi problemi di MIPv6: tutte le infrastrutture da cambiare.
+
+\subsection{Host Identity Protocol}
+* server tipo DNS opera fuori dalla rete di accesso\\
+* mappa identificatori a posizioni\\
+* il layer aggiuntivo deve essere installato sia nel MN che nel
+  CN.\\
+* Poco pratico! Non è detto che il CN si prenda la briga di installare\\
+  il layer aggiuntivo.\\
+
+\subsection{Datagram Congestion Control Protocol}
+* ogni MN annuncia il cambiamento di rete all'altro nodo\\
+* funziona solo se cambiano rete uno alla volta! Due MN che cambiano
+  rete simultaneamente sono irragiungibili.\\
+* richiedono modifica delle applicazioni.\\
+
+\subsection{Mobile Stream Control Transport Protocol}
+Idem a DCCP.
+
+\subsection{Terminal Mobility Support Protocol}
+* SIP user agent pubblico fuori dalle reti di accesso, mappa
+  user@foo.com a posizione\\
+* handover lento! ogni riconfigurazione interrompe la comunicazione
+  finchè MN non ha finito di comunicare con l'user agent pubblico.
+
+\subsection{MMUSE}
+* server SIP, Session Border Controller (SBC) all'interno del
+  sistema autonomo, che può essere composto da più reti wireless
+  eterogenee.\\
+* permette di attraversare i firewall e di spostarsi da una subnet
+  all'altra all'interno dello stesso AS.\\
+* MN non si può muovere tra reti di diversi AS.\\
+
+\subsection{Considerazioni}
 Tutte soluzioni tranne MMUSE hanno problemi con NAT e
 firewall. Bisogna usare TURN e STUN. Tutte soluzioni senza
 multi-homing, tranne MCoA.
 
-Mobile IP v6 (MIP) -- Network layer
-* Home Agent nella rete fa da LR
-* Host parlano IPv6
-* quindi infrastrutture di rete attuali non sono adatte
-* no multi homing, perche' il protocollo non lo permette
-* handover tribolato
-
-Host Identity Protocol (HIP) -- Tra Network e Transport layer
-* server tipo DNS opera fuori dalla rete di accesso
-* mappa identificatori a posizioni
-* il layer aggiuntivo deve essere installato sia nel MN che nel
-  CN.
-* Poco pratico! Non è detto che il CN si prenda la briga di installare
-  il layer aggiuntivo.
-
-Datagram Congestion Control Protocol (DCCP) e Mobile Stream Control
-Transport Protocolol (m-SCTP) -- Transport layer
-* ogni MN annuncia il cambiamento di rete all'altro nodo
-* funziona solo se cambiano rete uno alla volta! Due MN che cambiano
-  rete simultaneamente sono irragiungibili.
-* richiedono modifica delle applicazioni.
-
-Terminal Mobility Support Protocol (TMSP) -- Session layer
-* SIP user agent pubblico fuori dalle reti di accesso, mappa
-  user@foo.com a posizione
-* handover lento! ogni riconfigurazione interrompe la comunicazione
-  finchè MN non ha finito di comunicare con l'user agent pubblico.
-
-MMUSE
-* server SIP, Session Border Controller (SBC) all'interno del
-  sistema autonomo, che può essere composto da più reti wireless
-  eterogenee.
-* permette di attraversare i firewall e di spostarsi da una subnet
-  all'altra all'interno dello stesso AS.
-* MN non si può muovere tra reti di diversi AS.
-
-Multiple Care of Address (MCoA)
-* estensione di MIPv6
-* permette a MN di registrare più IP address con il suo Home Agent
-* FlowMob permette di separare flussi di traffico tra le varie NIC
-* stessi problemi di MIPv6: tutte le infrastrutture da cambiare.
-
+\begin{comment}
 
 ### SOLUZIONI CROSS LAYER ###
 
@@ -211,11 +231,13 @@ MONA (riassunto paper)
 
 
 ABPS
+\end{comment}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                   DA QUI IN POI E' ROBA VECCHIA                   %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+\begin{comment}
 
 % Capitoli
 \chapter{Scenario}
@@ -540,15 +562,20 @@ prova
 \rhead[\fancyplain{}{\bfseries Appendice \thechapter: Codice ulb-sim}]{\fancyplain{}{\bfseries\thepage}}
 prova
 
+\end{comment}
+
 \begin{thebibliography}{90}
 \rhead[\fancyplain{}{\bfseries \leftmark}]{\fancyplain{}{\bfseries
 \thepage}}
 \addcontentsline{toc}{chapter}{Bibliografia}
-\bibitem{bib:rwma} V. Ghini, G. Lodi, F. Panzieri, ``Robust Wireless
-  Medium Access for VoWLAN Applications: A Cross--Layer QoS
-  Mechanism'', maggio 2008
-\bibitem{bib:itu-t} ITU--T Recommendation G. 114, ``One--way Transmission
-  Time'', maggio 2003
+\bibitem{bib:mipv6} RFC3775, ``Mobility Support in IPv6'',
+  http://tools.ietf.org/html/rfc3775, giugno 2004
+\bibitem{bib:mcoa} RFC5648, ``Multiple Care-of Addresses
+  Registration'', http://tools.ietf.org/html/rfc5648, ottobre 2009
+\bibitem{bib:hip} RFC5201 ``Host Identity Protocol'',
+  http://tools.ietf.org/html/rfc5201, aprile 2008
+\bibitem{bib:itu-t} ITU--T Recommendation G. 114, ``One--way
+  Transmission'', maggio 2003
 \bibitem{bib:abps} V. Ghini, G. Lodi, F. Panzieri, ``Always Best
   Packet Switching: the Mobile VoIP Case Study'', Achademy Plublisher,
   Journal of Communications, accepted for publication.
