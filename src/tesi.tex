@@ -233,22 +233,53 @@ decisioni efficaci di qualità di servizio ai livelli più alti.
 Questa sezione confronterà le soluzioni ``Media Optimization Network
 Architecture'' (MONA) e ``Always Best Packet Switching'' (ABPS).
 
+Entrambe le architetture agiscono in uno scenario in cui ci sono
+numerosi Mobile Node (MN), ognuno dotato di più interaccie di rete
+(NIC), che operano in un ambiente dove sono disponibili più reti
+wireless, eterogenee per tecnologia e dominio. Si immagina che i
+movimenti degli utenti portino i vari MN ad attraversare le aree di
+copertura delle reti wireless, per cui un MN connesso ad una
+determinata rete A potrebbe spostarsi in un'area in cui giungono sia i
+segnali della rete A che quelli di una seconda rete B, per poi
+spostarsi ulteriormente nell'area di copertura della sola rete
+B. Durante questi spostamenti l'utente deve essere in grado di
+utilizzare applicazioni di rete real time, come Voice over IP e Video
+on Demand, senza avere ripercussioni sulla qualità dell'esperienza. Il
+traffico real time deve inoltre coesistere con il traffico non real
+time delle applicazioni TCP/IP tradizionali, senza per questo venirne
+penalizzato.
+
 \subsection{Media Optimization Network Architecture}
-Veloce panoramica di MONA:\\
-* si concentra sul problema dell'handover, approccio multi-homed\\
-* usa un protocollo cross-layer che usa il numero di ritrasmissioni L2
-  per decidere quando è il momento di fare handoff\\
-* media selection basata sulla condizione del first-hop\\
-* no modifica ad applicazioni esistenti\\
-* selezione del media flow per flow, a seconda del tipo di flow\\
-* cerca di bilanciare il carico di lavoro degli AP con una modifica
-  all'802.11\\
-* association raggruppa flow tra due host e viene mantenuta con
-  signalling: no server esterni.\\
+%% Breve panoramica di MONA
+
+\paragraph{Handover.}
+
+Alta mobilità uguale a handover frequenti. Normalmente handover dura
+dai 50 ai 400 ms. L'acquisizione di un indirizzo di rete via DHCP può
+durare secondi; uso di più interfacce di rete (multi--homing) per
+evitare interruzioni nel passaggio tra una rete e l'altra.
+
+\paragraph{Identità.}
+Association raggruppa flow tra due host e viene mantenuta con
+signalling: no server esterni.
+
+\paragraph{Traffico real time non real time.}
+
+Selezione del media flow per flow, a seconda del tipo di flow. Cerca
+di bilanciare il carico di lavoro degli AP con una modifica
+all'802.11.
+
+\paragraph{QoS per collegamento.}
+
+Numero di ritrasmissioni L2 è una metrica migliore della qualità del segnale.
+
+\paragraph{Compatibilità.}
+No modifica ad applicazioni esistenti. Se CN non implementa MONA,
+fallback a IP normale. Se AP non implementa modifica a 802.11, TODO:
+che succede?
 
 \subsection{Always Best Packet Switching}
-Veloce panoramica di ABPS:\\
-TODO
+%% Breve panoramica di ABPS
 
 \subsection{Considerazioni}
 Vantaggi delle due soluzioni rispetto a quelle single layer.
