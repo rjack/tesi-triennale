@@ -252,31 +252,26 @@ penalizzato.
 \subsection{Media Optimization Network Architecture}
 %% Breve panoramica di MONA
 
-\paragraph{Handover.}
+MONA definisce uno strato aggiuntivo, posizionato tra gli strati
+\emph{network} e \emph{transport} e denominato \emph{association
+  layer}, che implementa l'Association Management Protocol (AMP);
+detto protocollo risiete degli host e ne gestisce i singoli
+collegamenti di rete, nascondendone la molteplicità allo strato
+\emph{transport} superiore.
 
-Alta mobilità uguale a handover frequenti. Normalmente handover dura
-dai 50 ai 400 ms. L'acquisizione di un indirizzo di rete via DHCP può
-durare secondi; uso di più interfacce di rete (multi--homing) per
-evitare interruzioni nel passaggio tra una rete e l'altra.
+La molteplicità di collegamenti viene sfruttata per gestire il
+problema dell'\emph{handover}, ovvero del passaggio dall'associazione
+con una rete all'associazione con un'altra. In MONA ogni NIC tenta di
+associarsi al proprio access point, e AMP decide se utilizzare una
+sola NIC, quando il collegamento è soddisfacente, o se utilizzarne più
+d'una contemporaneamente, quando il monitoraggio della NIC mostra
+problemi di degrado delle prestazioni di rete.
 
-\paragraph{Identità.}
-Association raggruppa flow tra due host e viene mantenuta con
-signalling: no server esterni.
-
-\paragraph{Traffico real time non real time.}
-
-Selezione del media flow per flow, a seconda del tipo di flow. Cerca
-di bilanciare il carico di lavoro degli AP con una modifica
-all'802.11.
-
-\paragraph{QoS per collegamento.}
-
-Numero di ritrasmissioni L2 è una metrica migliore della qualità del segnale.
-
-\paragraph{Compatibilità.}
-No modifica ad applicazioni esistenti. Se CN non implementa MONA,
-fallback a IP normale. Se AP non implementa modifica a 802.11, TODO:
-che succede?
+MONA inoltre propone una modifica al comportamento degli access point
+per supportare più efficientemente il traffico bidirezionale tipico
+delle applicazioni VoIP e una aggiunta alle frame di \emph{probe} e
+\emph{beacon} per permettere ai MN di selezionare l'access point con
+migliore \emph{throughput}.
 
 \subsection{Always Best Packet Switching}
 %% Breve panoramica di ABPS
