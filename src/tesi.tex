@@ -273,8 +273,18 @@ delle applicazioni VoIP e una aggiunta alle frame di \emph{probe} e
 \emph{beacon} per permettere ai MN di selezionare l'access point con
 migliore \emph{throughput}.
 
+
 \subsection{Always Best Packet Switching}
 %% Breve panoramica di ABPS
+
+Fixed server, rappresenta MN. Uso simultaneo di tutte le
+NIC. Scorciatoie SIP per evitare dialoghi lenti con server
+SIP. Sicurezza e identificazione: pre-shared key, flow-id e niente
+REINVITE. Meccanismi a disposizione per diverse politiche: VoIP usa
+error detection ed early retransmission, VoD usa più NIC
+contemporaneamente per maggior banda: virtual channels per selezionare
+politiche. Estensioni: ABPS-SIP e ABPS-RTP.
+
 
 \subsection{Considerazioni}
 Vantaggi delle due soluzioni rispetto a quelle single layer.
