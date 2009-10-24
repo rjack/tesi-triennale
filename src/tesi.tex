@@ -299,7 +299,58 @@ Questo capitolo analizzerà nel dettaglio l'architettura MONA.
 
 
 \chapter{Always Best Packet Switching}
-Questo capitolo analizzerà nel dettaglio l'architettura ABPS.
+TODO: breve presentazione. Esempio: Always Best Packet Switching
+(d'ora in avanti ABPS) è frutto di una ricerca in corso all'Università
+di Bologna, etc. etc.
+
+L'obiettivo dell'architettura ABPS è di permettere a un MN di
+scegliere pacchetto per pacchetto quale NIC utilizzare per la
+trasmissione del pacchetto stesso.
+
+La selezione dell'interfaccia dipende dalle preferenze dell'utente,
+dalle necessità intrinseche all'applicazione, dalle caratteristiche
+fisiche ed economiche del collegamento e dalle caratteristiche del
+pacchetto da spedire.
+
+L'architettura si rivolge ai servizi multimediali interattivi basati
+sui protocolli SIP e RTP, con l'obiettivo di permetterne l'utilizzo in
+un contesto di mobilità urbana attraverso reti eterogenee per
+tecnologia, amministrazione e costo, in presenza di NAT e firewall,
+garantendo QoE e sicurezza.
+
+\section{Session Initiation Protocol e Real Time Protocol}
+
+L'uno usato per instaurare sessioni, l'altro per trasportare dati in
+comunicazioni multimediali.
+
+\section{Gestione delle sessioni}
+
+In uno scenario VoIP, l'applicazione utilizza il protocollo SIP per
+inviare al server SIP un messaggio REGISTER, che segnala che l'utente
+è collegato e pronto a ricevere e inviare chiamate. La chiamata viene
+effettuata mediante un messaggio INVITE, che specifica
+l'identificativo dell'utente da contattare e i dati dell'utente
+chiamante; il server recupera l'indirizzo IP dell'utente richiesto, e
+instaura una sessione tra i due partecipanti, che possono comunicare
+direttamente mediante protocollo RTP.
+
+Nel caso in cui il chiamante modifichi il proprio stato durante una
+conversazione, l'applicazione invia un messaggio REINVITE con i nuovi
+parametri, per permettere al server di reinstaurare la sessione con le
+caratteristiche aggiornate.
+
+TODO: controllare meccanismo REINVITE.Il meccanismo REINVITE è
+intrinsecamente lento: il mittente deve contattare il server, il
+server deve a sua volta contattare il destinatario e solo a quel punto
+la comunicazione tra mittente e destinatario può continuare nella
+nuova sessione. Nonostante questo procedimento possa avvenire in
+automatico, ovvero senza intervento manuale dell'utente, la
+comunicazione vocale deve essere interrotta finché non viene
+instaurata la nuova sessione e questo rovina l'esperienza utente.
+
+ABPS definisce delle scorciatoie di segnalazione per rendere il
+procedimento di REINVITE diretto tra i due partecipanti, senza che sia
+quindi necessario interpellare il server SIP.
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
@@ -659,6 +710,8 @@ prova
 \bibitem{bib:abps} V. Ghini, G. Lodi, F. Panzieri, ``Always Best
   Packet Switching: the Mobile VoIP Case Study'', Achademy Plublisher,
   Journal of Communications, accepted for publication.
+\bibitem{bib:abc} E. Gustafsson et al., ``Always Best Connected'',
+  IEEE Comm. Mag., vol. 10, no. 1, Feb 2003, pp. 49--55.
 \bibitem{bib:ns-2} http://nsnam.isi.edu/nsnam/, ottobre 2009
 \bibitem{bib:clhs}
   http://www.lispworks.com/documentation/HyperSpec/Front/,
