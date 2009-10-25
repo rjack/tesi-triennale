@@ -320,13 +320,16 @@ garantendo QoE e sicurezza.
 
 \section{Session Initiation Protocol}
 
-Molti servizi interattivi multimediali su Internet fanno uso del
-Session Initiation Protocol (SIP) per stabilire una sessione di
-comunicazione.
+ABPS utilizza il protocollo SIP e ne definisce un'estensione,
+denominata ABPS-SIP. Per illustrare ABPS è quindi necessario trattare
+il protocollo SIP nei punti salienti che riguardano l'architettura in
+esame.
 
-Questa sezione presenta una breve panoramica del protocollo SIP,
+Questa sezione presenta quindi una panoramica del protocollo SIP,
 mostrando i ruoli degli host, la gestione della sessione e alcuni
-limiti dovuti alla presenza di firewall e NAT.
+limiti dovuti alla presenza di firewall e NAT. Successivamente verrà
+mostrato come ABPS estende il protocollo SIP per superare questi
+limiti.
 
 \subsection{Panoramica}
 
@@ -338,7 +341,7 @@ parametri della sessione di comunicazione, dopo di che il
 trasferimento dati avviene in modo diretto, secondo le modalità
 concordate.
 
-\subsection{Agenti}
+\subsection{Agenti SIP}
 
 Tra i vari ruoli che SIP prevede per gli host in gioco, la trattazione
 di ABPS richiede di illustrare gli User Agent Client (UAC), gli User
@@ -357,59 +360,68 @@ registrazione (Registrar).
 
 \paragraph{Back-to-back User Agent.}
 
-DA QUI
+È definito come un'entità logica che riceve le richieste da un UAC e
+si comporta come se fosse un UAS, ma invece di rispondere
+direttamente, inoltra la richiesta a un UAS effettivo, comportandosi
+da UAC. In altre parole, un B2BUA è un intermediario tra UAC e UAS:
+UAC crede che il B2BUA sia l'UAS, dall'altra parte l'UAS crede che il
+B2BUA sia l'UAC.
 
 \subsection{Gestione delle sessioni SIP}
 
-In uno scenario VoIP, l'applicazione utilizza il protocollo SIP per
-inviare al server SIP un messaggio REGISTER, che segnala che l'utente
-è collegato e pronto a ricevere e inviare chiamate. La chiamata viene
-effettuata mediante un messaggio INVITE, che specifica
-l'identificativo dell'utente da contattare e i dati dell'utente
-chiamante; il server recupera l'indirizzo IP dell'utente richiesto, e
+In uno scenario VoIP, l'applicazione UAC utilizza il protocollo SIP
+per inviare all'UAS un messaggio REGISTER, che segnala che l'utente è
+collegato e pronto a ricevere e inviare chiamate. Dopo che l'UAC si è
+registrato al servizio, può instaurare una sessione mediante un
+messaggio INVITE, che specifica l'identificativo dell'utente da
+contattare e i dati dell'utente chiamante; ricevuta la richiesta
+INVITE, il server recupera l'indirizzo IP dell'utente specificato e
 instaura una sessione tra i due partecipanti, che possono comunicare
 direttamente mediante protocollo RTP.
 
 Nel caso in cui il chiamante modifichi il proprio stato durante una
-conversazione, l'applicazione invia un messaggio REINVITE con i nuovi
-parametri, per permettere al server di reinstaurare la sessione con le
-caratteristiche aggiornate.
+conversazione, l'applicazione invia un nuovo messaggio INVITE
+contentente i parametri aggiornati, per permettere al server di
+reinstaurare la sessione con le nuove caratteristiche.
 
-TODO: controllare meccanismo REINVITE. Il meccanismo REINVITE è
-intrinsecamente lento: il mittente deve contattare il server, il
-server deve a sua volta contattare il destinatario e solo a quel punto
-la comunicazione tra mittente e destinatario può continuare nella
-nuova sessione. Nonostante questo procedimento possa avvenire in
-automatico, ovvero senza intervento manuale dell'utente, la
-comunicazione vocale deve essere interrotta finché non viene
-instaurata la nuova sessione e questo rovina l'esperienza utente.
+Il meccanismo di re-INVITE è intrinsecamente lento: il mittente deve
+contattare il server, il server deve a sua volta contattare il
+destinatario e solo a quel punto la comunicazione tra mittente e
+destinatario può continuare nella nuova sessione. Nonostante questo
+procedimento possa avvenire in automatico, ovvero senza intervento
+manuale dell'utente, la comunicazione vocale deve essere interrotta
+finché non viene instaurata la nuova sessione, condizionando
+l'esperienza utente.
 
-ABPS definisce delle scorciatoie di segnalazione per rendere il
-procedimento di REINVITE diretto tra i due partecipanti, quindi senza
-che sia necessario interpellare il server SIP.
+ABPS definisce delle scorciatoie di segnalazione per rendere diretto il
+procedimento di re-INVITE; i partecipanti possono modificare i
+parametri della sessione in cui sono coinvolti senza dover
+interpellare il server e quindi evitando di dover attendere che la
+sessione sia reinstaurata.
 
 \subsection{Problematiche dovute a Firewall e NAT}
 
-Il protocollo SIP si occupa soltanto di instaurare il contesto della
-comunicazione, permettendo ai partecipanti di specificare le
-caratteristiche della sessione, instaurata la quale lo scambio di dati
-avviene in maniera diretta tra i due host. Alla luce di ciò, NAT e
-firewall sono impedimenti perché non permettono a un host di essere
-direttamente raggiungibile dalla controparte. Firewall e NAT sono
-spesso di proprietà dell'organizzazione che offre connettività,
-soprattutto in un contesto WAN, per cui l'utente non ha possibilità di
-impostare soluzioni di port-forwarding. Il metodo più comune prevede
-che l'utente imposti l'applicazione con l'indirizzo di un server STUN
-o TURN in modo da utilizzare uno di questi servizi. Purtroppo STUN
+Il protocollo SIP si limita a creare il contesto della comunicazione,
+permettendo ai partecipanti di specificare le caratteristiche della
+sessione, instaurata la quale lo scambio di dati avviene in maniera
+diretta tra i due host. Alla luce di ciò, NAT e firewall sono
+impedimenti perché non permettono a un host di essere direttamente
+raggiungibile dalla controparte. Firewall e NAT sono spesso di
+proprietà dell'organizzazione che offre connettività, soprattutto in
+un contesto WAN, per cui l'utente non ha possibilità di impostare
+soluzioni di port-forwarding. Il metodo più comune prevede che
+l'utente imposti l'applicazione con l'indirizzo di un server STUN o
+TURN in modo da utilizzare uno di questi servizi. Purtroppo STUN
 richiede un certo tempo per funzionare, mentre TURN è un vero e
 proprio collo di bottiglia, quindi entrambi i metodi non sono
 compatibili con la necessità di effettuare handover in tempi
 estremamente brevi.
 
-ABPS modifica il server SIP in modo che sia anche relay opaco, ovvero
-che nasconda l'indirizzo IP del sistema utente. In questo modo il
-server ABPS-SIP si occupa di rappresentare pubblicamente il MN, che
-può essere così raggiungibile da altri nodi.
+ABPS impiega un B2BUA modificato, raggiungibile pubblicamente su
+Internet, che nasconde l'indirizzo IP del MN. Grazie a questo B2BUA, i
+MN possono essere rappresentati da un host pubblicamente raggiungibile
+su Internet, quindi evitando in maniera semplice e sicura i problemi
+di NAT e firewall.
 
 \section {Obiettivi di ABPS}
 
@@ -434,8 +446,11 @@ né alle attuali applicazioni.
 L'architettura ABPS propone tre linee guida per affrontare le
 problematiche descritte precedentemente.
 
-\subsection{}
+\subsection{Rappresentanza pubblica per MN}
 
+\subsection{Uso simultaneo di tutte le interfacce dei MN}
+
+\subsection{Segnalazioni rapide tra partecipanti a una sessione}
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
