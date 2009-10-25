@@ -320,11 +320,44 @@ garantendo QoE e sicurezza.
 
 \section{Session Initiation Protocol}
 
-Breve panoramica con pro e contro.
+Molti servizi interattivi multimediali su Internet fanno uso del
+Session Initiation Protocol (SIP) per stabilire una sessione di
+comunicazione.
+
+Questa sezione presenta una breve panoramica del protocollo SIP,
+mostrando i ruoli degli host, la gestione della sessione e alcuni
+limiti dovuti alla presenza di firewall e NAT.
+
+\subsection{Panoramica}
+
+Il protocollo SIP è utilizzato per creare il contesto di una
+comunicazione tra due o più entità di rete.
+
+Per mezzo di SIP due host possono venire in contatto e accordarsi sui
+parametri della sessione di comunicazione, dopo di che il
+trasferimento dati avviene in modo diretto, secondo le modalità
+concordate.
 
 \subsection{Agenti}
 
-User Agent, SIP Server, B2B Agent.
+Tra i vari ruoli che SIP prevede per gli host in gioco, la trattazione
+di ABPS richiede di illustrare gli User Agent Client (UAC), gli User
+Agent Server (UAS) e i Back-to-back User Agent (B2BUA).
+
+\paragraph{User Agent Client.}
+È definito come un'entità logica che crea nuove richieste SIP e le
+invia sulla rete all'User Agent Server. Per esempio, un softphone che
+inizi una chiamata VoIP prende il ruolo di UAC, perché genera e
+spedisce la richiesta di invito.
+
+\paragraph{User Agent Server.}
+È definito come un'entità logica che crea le risposte alla richieste
+ricevute. Un esempio di UAS è il server che risponde alle richieste di
+registrazione (Registrar).
+
+\paragraph{Back-to-back User Agent.}
+
+DA QUI
 
 \subsection{Gestione delle sessioni SIP}
 
