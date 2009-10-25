@@ -318,12 +318,15 @@ un contesto di mobilità urbana attraverso reti eterogenee per
 tecnologia, amministrazione e costo, in presenza di NAT e firewall,
 garantendo QoE e sicurezza.
 
-\section{Session Initiation Protocol e Real Time Protocol}
+\section{Session Initiation Protocol}
 
-L'uno usato per instaurare sessioni, l'altro per trasportare dati in
-comunicazioni multimediali.
+Breve panoramica con pro e contro.
 
-\section{Gestione delle sessioni}
+\subsection{Agenti}
+
+User Agent, SIP Server, B2B Agent.
+
+\subsection{Gestione delle sessioni SIP}
 
 In uno scenario VoIP, l'applicazione utilizza il protocollo SIP per
 inviare al server SIP un messaggio REGISTER, che segnala che l'utente
@@ -352,7 +355,7 @@ ABPS definisce delle scorciatoie di segnalazione per rendere il
 procedimento di REINVITE diretto tra i due partecipanti, quindi senza
 che sia necessario interpellare il server SIP.
 
-\section{Firewall e NAT}
+\subsection{Problematiche dovute a Firewall e NAT}
 
 Il protocollo SIP si occupa soltanto di instaurare il contesto della
 comunicazione, permettendo ai partecipanti di specificare le
@@ -393,6 +396,12 @@ Gli obiettivi di ABPS sono:
 Inoltre, perché la soluzione sia applicabile nella pratica, è
 necessario che ABPS non richieda modifiche né agli apparecchi harware,
 né alle attuali applicazioni.
+
+\section {Architettura proposta}
+L'architettura ABPS propone tre linee guida per affrontare le
+problematiche descritte precedentemente.
+
+\subsection{}
 
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
