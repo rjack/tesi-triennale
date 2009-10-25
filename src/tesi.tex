@@ -339,7 +339,7 @@ conversazione, l'applicazione invia un messaggio REINVITE con i nuovi
 parametri, per permettere al server di reinstaurare la sessione con le
 caratteristiche aggiornate.
 
-TODO: controllare meccanismo REINVITE.Il meccanismo REINVITE è
+TODO: controllare meccanismo REINVITE. Il meccanismo REINVITE è
 intrinsecamente lento: il mittente deve contattare il server, il
 server deve a sua volta contattare il destinatario e solo a quel punto
 la comunicazione tra mittente e destinatario può continuare nella
@@ -349,8 +349,51 @@ comunicazione vocale deve essere interrotta finché non viene
 instaurata la nuova sessione e questo rovina l'esperienza utente.
 
 ABPS definisce delle scorciatoie di segnalazione per rendere il
-procedimento di REINVITE diretto tra i due partecipanti, senza che sia
-quindi necessario interpellare il server SIP.
+procedimento di REINVITE diretto tra i due partecipanti, quindi senza
+che sia necessario interpellare il server SIP.
+
+\section{Firewall e NAT}
+
+Il protocollo SIP si occupa soltanto di instaurare il contesto della
+comunicazione, permettendo ai partecipanti di specificare le
+caratteristiche della sessione, instaurata la quale lo scambio di dati
+avviene in maniera diretta tra i due host. Alla luce di ciò, NAT e
+firewall sono impedimenti perché non permettono a un host di essere
+direttamente raggiungibile dalla controparte. Firewall e NAT sono
+spesso di proprietà dell'organizzazione che offre connettività,
+soprattutto in un contesto WAN, per cui l'utente non ha possibilità di
+impostare soluzioni di port-forwarding. Il metodo più comune prevede
+che l'utente imposti l'applicazione con l'indirizzo di un server STUN
+o TURN in modo da utilizzare uno di questi servizi. Purtroppo STUN
+richiede un certo tempo per funzionare, mentre TURN è un vero e
+proprio collo di bottiglia, quindi entrambi i metodi non sono
+compatibili con la necessità di effettuare handover in tempi
+estremamente brevi.
+
+ABPS modifica il server SIP in modo che sia anche relay opaco, ovvero
+che nasconda l'indirizzo IP del sistema utente. In questo modo il
+server ABPS-SIP si occupa di rappresentare pubblicamente il MN, che
+può essere così raggiungibile da altri nodi.
+
+\section {Obiettivi di ABPS}
+
+Gli obiettivi di ABPS sono:
+
+\begin{itemize}
+\item identificare ogni MN in modo univoco in ogni momento, a
+  prescindere dalle reti a cui è connesso,
+\item permettere a un MN di essere raggiungibile da qualsiasi altro
+  host e in particolare da altri MN,
+\item monitorare la qualità di servizio di ogni canale di un MN per
+  predire la necessità di un handover,
+\item effettuare detto handover in maniera trasparente, senza che la
+  QoE ne risenta.
+\end{itemize}
+
+Inoltre, perché la soluzione sia applicabile nella pratica, è
+necessario che ABPS non richieda modifiche né agli apparecchi harware,
+né alle attuali applicazioni.
+
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
