@@ -463,8 +463,37 @@ indirizzo noto, raggiungibile da Internet e indipendente da una
 singola rete di accesso.
 
 \subsection{Uso simultaneo di tutte le interfacce dei MN}
+La caratteristica chiave di ABPS è la capacità di instradare ogni
+pacchetto su interfacce potenzialmente differenti, includendo nella
+scelta le caratteristiche del pacchetto stesso. Le altre soluzioni di
+handover invece effettuano la scelta a un livello più alto,
+selezionando l'interfaccia di rete su cui instradare la sessione di
+comunicazione e mantenendo la scelta fino a che il collegamento viene
+giudicato soddisfacente.
+
+Effettuare a scelta a livello di pacchetto permette ad ABPS--client di
+collaborare con ABPS--server per implementare le politiche di
+bilanciamento di traffico e di recupero d'errore al più fine dei
+livelli di granularità possibili.
 
 \subsection{Segnalazioni rapide tra partecipanti a una sessione}
+L'handover, ovvero la commutazione del collegamento in uso da
+un'interfaccia a un'altra, è un momento estremamente delicato e deve
+essere eseguito in modo trasparente per garantire un'esperienza utente
+soddisfacente. Nelle architetture che selezionano un collegamento e lo
+usano in maniera esclusiva, l'handover è un avvenimento relativamente
+raro perché una volta che il client sceglie un'interfaccia per l'invio
+dei dati, la scelta persiste finché la qualità del collegamento resta
+soddisfacente. L'interfaccia scelta può restare tale per un periodo di
+tempo che varia dall'ordine dei giorni all'ordine dei minuti,
+dipendentemente dal grado di mobilità dell'utente. In ABPS invece le
+interfacce sono continuamente connesse e la scelta viene effettuata
+pacchetto per pacchetto; questo significa che la frequenza
+dell'handover si riduce all'ordine dei millisecondi. Con tempi di
+handover così ristretti, ogni soluzione di gestione mediante
+segnalazioni end-to-end non è utilizzabile. In particolare la
+procedura SIP prevede un meccanismo di re-INVITE che
+
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
