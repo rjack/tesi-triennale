@@ -179,11 +179,45 @@ quindi non sono applicabili meccanismi come broadcasting e
 multicasting.
 
 \subsection{Sicurezza}
+In molti scenari domestici e aziendali la sicurezza della
+comunicazione è spesso affidata alla sicurezza del medium in uso, ad
+esempio il cavo ethernet o la crittografia della rete WiFi, e il
+riconoscimento dell'identità dell'host è basata sull'indirizzo IP
+dell'interfaccia di rete attiva. Queste assunzioni non sono più valide
+nello scenario del problema in esame, dove numerosi MN con interfacce
+di rete multiple eseguono numerosi handover attraverso reti senza
+fili. Poiché queste reti verranno utilizzate da un grande numero di
+individui che non possono avere relazioni di mutua fiducia, la
+sicurezza è un problema centrale. Le soluzioni dovranno quindi fornire
+sia meccanismi per garantire la riservatezza e l'integrità dei singoli
+flussi di dati per ogni MN, sia meccanismi di identificazione e
+autenticazione di ogni MN che sia indipendente dall'indirizzo IP della
+rete di accesso.
 
 \subsection{Praticità}
+Nello scenario del problema sono coinvolte un gran numero di
+tecnologie hardware e software che devono essere modificate il meno
+possibile per permettere una realizzazione effettiva delle soluzioni
+proposte in tempi e costi il più possibile contenuti.
 
+In particolare è importante che le soluzioni siano in grado di
+funzionare sui dispositivi hardware di rete esistenti, come interfacce
+di rete, access point e router. Inoltre è vitale che la soluzione si
+adatti ai più diversi scenari di topologia di rete, soprattutto in
+quelle situazioni in cui esistono firewall e NAT che possono limitare
+il traffico e la raggiungibilità degli host. Infine le applicazioni
+software esistenti, dovrebbero essere in grado di funzionare senza
+modifiche.
 
-\chapter{Panoramica delle soluzioni}1
+Per aiutare il passaggio graduale dell'utenza dalle soluzioni
+tradizionali alle soluzioni proposte, è auspicabile che queste ultime
+siano in grado di convivere con le prime utilizzando meccanismi di
+fallback che garantiscano l'interoperabilità.
+
+% Non numera l'ultima pagina a sinistra.
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\chapter{Panoramica delle soluzioni}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
 \pagenumbering{arabic}
 L'obiettivo è di permettere a un MN di muoversi attraverso reti
