@@ -76,18 +76,18 @@ interfaccia di rete senza fili. Dette interfacce di rete (NIC) si
 potranno associare a diverse reti e dovranno essere monitorate con
 continuità per determinare in ogni momento quale di queste sia la più
 adatta ad effettuare l'invio dei dati. La scelta di questa interfaccia
-designata si potrà basare su numerosi criteri di scelta tra cui la
-qualità del segnale radio, la percentuale di pacchetti persi, la
-larghezza di banda offerta dal canale, la latenza di comunicazione,
-esigenze di sicurezza, eventuale costi economici legati all'accesso
-alla rete e possibili preferenze specificate direttamente
-dall'utente. L'insieme dei criteri di scelta definisce le politiche di
-QoS in uso, ovvero l'insieme di regole e vincoli che devono essere
-rispettati per garantire all'utente del MN un'esperienza soddisfacente
-di utilizzo dei servizi. Le soluzioni dovranno fornire sia i
-meccanismi per permettere all'utente, o alle applicazioni da lui
-utilizzate, di specificare quali siano dette politiche, sia meccanismi
-che le implementino.
+designata si potrà basare su numerosi criteri tra cui qualità del
+segnale radio, percentuale di pacchetti persi, larghezza di banda
+offerta dal canale, latenza di comunicazione, esigenze di sicurezza,
+eventuale costi economici legati all'accesso alla rete e possibili
+preferenze specificate direttamente dall'utente. L'insieme dei criteri
+di scelta definisce le politiche di qualità del servizio (QoS) in uso,
+ovvero l'insieme di regole e vincoli che devono essere rispettati per
+garantire all'utente del MN un'esperienza soddisfacente di utilizzo
+dei servizi. Le soluzioni dovranno fornire sia i meccanismi per
+permettere all'utente, o alle applicazioni da lui utilizzate, di
+specificare quali siano dette politiche, sia meccanismi che le
+implementino.
 
 TODO: immagine che mostri un MN che attraversa più reti e che mostra i
 punti di handover.
@@ -106,13 +106,48 @@ servizi di Video-on-Demand (VoD), che offrono contenuti multimediali
 in streaming, mentre un esempio della seconda classe è rappresentato
 dai servizi Voice-over-IP (VoIP), che offrono la possibilità agli
 utenti di comunicare tra di loro con chiamate audio/video sia
-individuali che di gruppo. Le soluzioni dovranno adattarsi alle
-necessità delle varie applicazioni, cercando di rispettare le diverse
-politiche richieste da ognuna.
+individuali che di gruppo. Ulteriori requisiti possono imporre un
+limite superiore alla percentuale di pacchetti persi, per evitare che
+la qualità del servizio non degradi oltre il limite dell'accettabile.
+
+Le soluzioni dovranno quindi adattarsi alle necessità delle varie
+applicazioni, cercando di rispettare le diverse politiche richieste da
+ognuna.
 
 \subsection{Monitoraggio}
+Il concetto di qualità di servizio deve essere concretizzato in
+un'insieme di limiti riguardanti metriche di comunicazione. Ad esempio
+un'applicazione potrebbe richiedere che la comunicazione subisca una
+perdita di pacchetti non superiore al 3\%; in questo caso
+l'applicazione misura la qualità del servizio in termini di
+percentuale di pacchetti persi, e impone su questa metrica un vincolo
+del 3\%. Le soluzioni dovranno essere in grado di monitorare le
+comunicazioni sulle varie interfacce dei MN per controllare che i
+vincoli sulle metriche non vengano violati; questo richiede la
+capacità di collezionare dati riguardanti queste varie metriche e la
+capacità di prendere decisioni in base alle misurazioni effettuate e
+alle politiche ricevute dall'applicazione. Nell'esempio precedente,
+una soluzione che rilevasse una percentuale di pacchetti persi
+superiore al 3\% potrebbe decidere di utilizzare contemporaneamente
+due interfacce di rete per limitare gli errori di trasmissione, posto
+che le politiche specificate lo permettano.
 
 \subsection{Handover}
+Con \emph{handover} si intende il passaggio di associazione da una
+rete a un'altra. Lo scenario in cui le soluzioni si troveranno ad
+operare sarà caratterizzato da un grado di libertà dei MN molto ampio
+e gli handover saranno quindi molto frequenti. L'handover è per sua
+natura un'operazione distruttiva che interrompe le comunicazioni
+esistenti e richiede un tempo di completamento che può arrivare
+all'ordine dei secondi. Tipicamente i passi che una NIC deve
+completare per effettuare un handover sono:
+\begin{enumerate}
+\item scansione del canale per rilevare un nuovo access point,
+\item associazione con il nuovo access point,
+\item acquisizione di un nuovo indirizzo IP,
+\item comunicazione del nuovo indirizzo IP ai vari corrispondenti, in
+  modo che le comunicazioni possano continuare.
+\end{enumerate}
 
 \subsection{Sicurezza}
 
