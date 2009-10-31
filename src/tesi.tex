@@ -138,15 +138,21 @@ rete a un'altra. Lo scenario in cui le soluzioni si troveranno ad
 operare sarà caratterizzato da un grado di libertà dei MN molto
 ampio. Un possibile scenario è illustrato in \cite{bib:abc}: un utente
 di MN comincia la comunicazione sulla rete domestica; dopo un certo
-tempo esce di casa portando il MN con sè e continuando 
-momento
+tempo esce di casa a comunicazione in corso, portando il MN con
+sè. Durante il tragitto da casa alla fermata il MN si disconnette
+dalla rete domestica e si associa alla rete comunale, effettuando un
+primo handover. Quando pochi minuti più tardi l'utente entra in
+metropolitana, il MN effettua un ulteriore handover passando dalla
+rete comunale a quella della società dei trasporti pubblici. Le
+soluzioni dovranno gestire handover di questo tipo in maniera
+trasparente all'utente, ovvero senza che sia necessaria una
+riconfigurazione manuale dell'applicazione o del dispositivo mobile, e
+senza che venga intaccata la qualità del servizio.
 
-e gli handover
-saranno quindi molto frequenti. L'handover è per sua natura
-un'operazione distruttiva che interrompe le comunicazioni esistenti e
-richiede un tempo di completamento che può arrivare all'ordine dei
-secondi. Tipicamente i passi che una NIC deve completare per
-effettuare un handover sono:
+L'handover è per sua natura un'operazione distruttiva che interrompe
+le comunicazioni esistenti e richiede un tempo di completamento che
+può arrivare all'ordine dei secondi. Tipicamente i passi che una NIC
+deve completare per effettuare un handover sono:
 \begin{enumerate}
 \item scansione del canale per rilevare un nuovo access point,
 \item associazione con il nuovo access point,
@@ -154,7 +160,23 @@ effettuare un handover sono:
 \item comunicazione del nuovo indirizzo IP ai vari corrispondenti, in
   modo che le comunicazioni possano continuare.
 \end{enumerate}
+I punti uno e due sono operazioni che appartengono al secondo livello
+dello stack ISO/OSI, ovvero il livello \emph{data link}, e sono state
+misurate sperimentalmente nell'ordine dei 50--400 ms
+\cite{bib:misura-handoff-l2}. I punti tre e quattro sono operazioni
+che appartengono al terzo livello dello stack ISO/OS, ovvero il
+livello \emph{network}, e possono richiedere indicativamente almeno
+300 ms \cite{bib:misura-handoff-dhcp}, perché l'assegnamento
+dell'indirizzo IP da parte di un server DHCP e la comunicazione del
+nuovo indirizzo a tutti gli host in contatto con il MN sono operazioni
+legate alla latenza della rete.
 
+Le soluzioni dovranno implementare meccanismi sia per ridurre questi
+tempi in cui la connessione è inutilizzabile, sia per comunicare la
+nuova identità del MN agli altri nodi. È importante notare che gli
+altri nodi possono essere connessi a reti diverse da quella del MN e
+quindi non sono applicabili meccanismi come broadcasting e
+multicasting.
 
 \subsection{Sicurezza}
 
@@ -872,6 +894,13 @@ prova
 \addcontentsline{toc}{chapter}{Bibliografia}
 \bibitem{bib:mipv6} RFC3775, ``Mobility Support in IPv6'',
   http://tools.ietf.org/html/rfc3775, giugno 2004
+\bibitem{bib:misura-handoff-l2} A. Mishra, M. Shin, W. Arbaugh, An
+  Empirical Analysis of the IEEE 802.11 MAC Layer Handoff Process, ACM
+  SIGCOMM Computer Communication Review 33 (2), 2003.
+\bibitem{bib:misura-handoff-dhcp} A. Dutta, F. Vakil, J. Chen,
+  M. Tauil, S. Baba, N. Nakajima, H.  Schulzrinne, Application Layer
+  Mobility Management Scheme for Wireless Internet, Proc. of IEEE 3G
+  Wireless 2001, maggio 2001.
 \bibitem{bib:mcoa} RFC5648, ``Multiple Care-of Addresses
   Registration'', http://tools.ietf.org/html/rfc5648, ottobre 2009
 \bibitem{bib:hip} RFC5201 ``Host Identity Protocol'',
