@@ -525,18 +525,30 @@ né alle attuali applicazioni.
 
 \section {Architettura proposta}
 L'architettura ABPS propone tre linee guida per affrontare le
-problematiche descritte precedentemente.
+problematiche descritte alla sezione \ref{sec:punti-critici}: un
+server pubblico che funzioni come B2B SIP, l'uso simultaneo di tutte
+le NIC del MN e un metodo di segnalazione diretta tra nodi. I
+paragrafi successivi illustreranno i tre punti nel dettaglio.
 
-\subsection{Rappresentanza pubblica per MN}
-In un contesto di estrema mobilità, l'identificazione e la
-raggiungibilità del MN sono problematiche perché ad ogni handover il
-MN utilizza un indirizzo IP diverso da quello che utilizzava fino a
-quel momento. In ABPS il problema è escerbato dal fatto che il MN può
-decidere di inviare due pacchetti consecutivi appartenenti allo stesso
-flusso attraverso due interfacce diverse. In questo caso il ricevente
-non avrebbe modo di riconoscere il mittente, perché non avrebbe modo
-di ricondurre a un solo mittente i vari indirizzi sorgente presenti
-nel pacchetti ricevuti.
+\subsection{Proxy pubblico per MN}
+TODO: da riscrivere
+
+Normalmente le applicazioni si affidano alla coppia indirizzo IP e
+porta per identificare in modo univoco l'applicazione remota con cui
+condurre la comunicazione. Se l'applicazione viene eseguita da un host
+che appartiene a una configurazione di rete fissa, le procedure per
+garantire la raggiungibilità dell'host sono normalmente da eseguire
+una volta sola. In un contesto di estrema mobilità invece,
+l'identificazione e la raggiungibilità del MN sono estremamente
+problematiche perché ad ogni handover il dispositivo mobile comunica
+attraverso un indirizzo IP diverso da quello che utilizzava prima del
+cambio di associazione di rete, perdendo così l'identità precedente, e
+si trova ad operare in una rete gestita da un'organizzazione
+potenzialmente differente senza che sia possibile riconfigurare la
+rete per garantire la raggiungibilità dell'host. In ABPS il problema è
+escerbato dal fatto che il MN può decidere di inviare due pacchetti
+consecutivi appartenenti allo stesso flusso attraverso due interfacce
+diverse.
 
 ABPS definisce un servizio, chiamato ABPS--Server, che nasconde la
 mobilità del MN agli altri host. ABPS--Server è un servizio di
