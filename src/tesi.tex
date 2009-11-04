@@ -580,12 +580,15 @@ dei dati, la scelta persiste finché la qualità del collegamento resta
 soddisfacente. L'interfaccia scelta può restare tale per un periodo di
 tempo che varia dall'ordine dei giorni all'ordine dei minuti,
 dipendentemente dal grado di mobilità dell'utente. In ABPS invece le
-interfacce sono continuamente connesse e la scelta viene effettuata
+interfacce sono continuamente attive e la scelta viene effettuata
 pacchetto per pacchetto; questo significa che la frequenza
 dell'handover si riduce all'ordine dei millisecondi. Con tempi di
 handover così ristretti, ogni soluzione di gestione mediante
-segnalazioni end-to-end non è utilizzabile. In particolare la
-procedura SIP prevede un meccanismo di re-INVITE che
+segnalazioni end-to-end non è utilizzabile. In particolare le
+applicazioni del MN non possono affidarsi al meccanismo di re-INVITE
+previsto dal protocollo SIP, a causa del tempo che impiegherebbe ad
+essere completato: detti $D_{MS}$, $D_{SC}$ i delay di comunicazione
+rispettivamente tra MN e ABPS--Server e tra ABPS--Server e CN,
 
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
