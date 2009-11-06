@@ -380,7 +380,44 @@ Vantaggi delle due soluzioni rispetto a quelle single layer.
 
 
 \chapter{Media Optimization Network Architecture}
-Questo capitolo analizzerà nel dettaglio l'architettura MONA.
+
+\section{SCHEDATURA: A Quality Aware VoWLAN Architecture and Its
+  Quantitative Evaluations}
+
+\subsection{Intro}
+Scenario: reti WLAN e 3G pervasive, con coperture sovrapposte,
+presenza contemporanea di applicazioni TCP e VoIP.
+
+Affronta problema eterogeneità: usa flow multipli assicurando QoS per
+ogni flow. Supporto per servizi VoIP e TCP.
+
+Affronta problema handover: n. di ritrasmissioni L2 usato come metrica
+per decidere quando fare handover.
+
+Affronta problema asimmetria traffico up/downstream.
+
+Affronta problema traffic load imbalances tra AP multipli.
+
+\subsection{Media Optimization Network Architecture}
+Considerazione: linee attraverso Internet veloci, stabili, affidabili,
+economiche. Linee wireless tutto il contrario. Quindi first hop punto
+più critico del percorso dal punto di vista del QoS. Inoltre critico
+handover trasparente.
+
+MIP, SCTP, HIP non sono adatti perché non permettono di assegnare i
+diversi flow a diverse NIC.
+
+MONA crea un nuovo layer (association layer) e ne definisce il
+protocollo. Il nuovo layer è implementato tra i layer network e
+transport del MN, in modo da non dover modificare le socket
+API. Applicazioni funzionano automaticamente.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{img/mona-association-layer}
+\caption{Association layer di MONA}
+\label{fig:mona-association-layer}
+\end{figure}
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
