@@ -410,7 +410,15 @@ diversi flow a diverse NIC.
 MONA crea un nuovo layer (association layer) e ne definisce il
 protocollo. Il nuovo layer è implementato tra i layer network e
 transport del MN, in modo da non dover modificare le socket
-API. Applicazioni funzionano automaticamente.
+API. Applicazioni funzionano senza bisogno di modifiche.
+
+Association layer tiene traccia degli indirizzi IP per ogni
+Corresponding Host (CH).
+
+Selezione del medium di rete per il downlink e l'uplink (quest'ultimo
+con segnalazioni al CH).
+
+Mobilità, multihoming e QoS senza speciali istanze nella rete.
 
 \begin{figure}[t]
 \centering
@@ -418,6 +426,25 @@ API. Applicazioni funzionano automaticamente.
 \caption{Association layer di MONA}
 \label{fig:mona-association-layer}
 \end{figure}
+
+\subsection{The Association Layer and Its Management Protocol}
+AL nucleo di MONA.
+
+Associazione: insieme di flow tra due host.
+
+AL colleziona informazioni su media e flow per gestire QoS e coordina
+l'identità dell'host (transport layer) per distinguere i flussi e
+l'identità di ogni interfaccia (network layer) per la trasmissione dei
+pacchetti.
+
+AMP: Association Management Protocol, mantiene uno stato per
+l'association layer. Per ogni peer: niente comunicazioni = Idle,
+connessione avvenuta = Associated, non avvenuta = No association (peer
+non può o non vuole associarsi, fallback IPv4). Fine flow: segnale di
+rilascio associazione.
+
+AMP header inserito tra l'header IP e il suo payload, in ogni
+pacchetto che usa l'associazione.
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
