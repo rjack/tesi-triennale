@@ -8,8 +8,10 @@
 
 \pagestyle{fancy}
 
+
 \oddsidemargin=30pt
 \evensidemargin=20pt
+
 
 % Sillabazione
 \hyphenation{}
@@ -398,6 +400,16 @@ Affronta problema asimmetria traffico up/downstream.
 
 Affronta problema traffic load imbalances tra AP multipli.
 
+Propone tre requisiti: 1. iniziazione dell'handover basata sul
+rilevamento delle caratteristiche del link wireless, 2. eliminazione
+dell'interruzione dovuta all'handover, 3. selezione dell'interfaccia
+ottimale.
+
+Per rilevare i cambiamenti nella qualità del link usa il numero di
+ritrasmissioni L2, usa multihoming per evitare interruzione
+nell'handover, usa multi-path transmission fino a che non riesce a
+rilevare che uno dei link è diventato sufficientemente stabile.
+
 \subsection{Media Optimization Network Architecture}
 Considerazione: linee attraverso Internet veloci, stabili, affidabili,
 economiche. Linee wireless tutto il contrario. Quindi first hop punto
@@ -444,10 +456,19 @@ non può o non vuole associarsi, fallback IPv4). Fine flow: segnale di
 rilascio associazione.
 
 AMP header inserito tra l'header IP e il suo payload, in ogni
-pacchetto che usa l'associazione.
+pacchetto che usa l'associazione; nel caso di notifiche o
+segnalazioni, inviato in modo indipendentemente dal flusso di
+trasporto.
+
+\subsection{Performance Evaluation}
+L'efficacia di MONA misurata con simulazioni: aggiunta AMP e relativo
+layer a NS2 \cite{bib:ns-2}.
+
+Caratteristiche simulazione: MC comunica con CH attraverso 3G
+(384kb/s, 1ms) e IEEE 802.11b (11Mb/s, 1ms). Semplificazione: no
+effetti di interferenze e di errori di trasmissione sui link wireless.
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
-
 
 \chapter{Always Best Packet Switching}
 TODO: breve presentazione. Esempio: Always Best Packet Switching
