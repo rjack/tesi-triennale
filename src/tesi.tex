@@ -500,17 +500,47 @@ Meccanismo multihoming spiegato brevemente.
 No signal strenght: variazioni improvvise per distanza e ostacoli
 temporanei.
 
-Spiegazinone meccanismo MAC ACK 802.11 -> numero di ritrasmissioni L2
+Spiegazione meccanismo MAC ACK 802.11 -> numero di ritrasmissioni L2
 metrica scelta.
 
 \begin{figure}[h]
 \includegraphics[width=8cm]{img/mona-distance-signal-strength-simulation}
-\caption{Qualità del segnale in funzione della distanza dall'AP}
+\caption{Modello di simulazione (riduzione della qualità del segnale
+  in funzione della distanza)}
 \label{fig:mona-distance-signal-strength-simulation}
 \end{figure}
 
 Simulazione: signal strenght vs. frame retransmission.
 
+\begin{figure}[h]
+\includegraphics[width=8cm]{img/mona-packet-loss-distance}
+\caption{Percentuale di pacchetti ritrasmessi in funzione della
+  distanza tra MN e AP}
+\label{fig:mona-packet-loss-distance}
+\end{figure}
+
+Spiegazione simulazione -> conclusione = packet loss possono essere
+predetti contando le ritrasmissioni L2.
+
+Che succede con collisioni frame? Finchè c'è banda c'è speranza, dopo
+cominciano le ritrasmissioni (figure 4 e 5 del paper da
+screenshottare).
+
+Inoltre, le interferenze radio causano problemi non rilevabili
+attraverso la qualità del segnale, ma che causano comunque frame
+retransmission.
+
+\subsubsection{Cross--layer}
+MONA è cross layer perché le info collezionate a L2 vengono messe a
+disposizione a livello Handover Manager (HM, L5) per gestire
+l'handover (single/multi-path transmission).
+
+\subsubsection{Handover management}
+
+HM decide quando eseguire handover. 2 NIC: link in uso peggiora, HM
+passa a multi-path trasmission: stesso pacchetto inviato sui due
+link. Quando è sicuro che uno dei due link è buono, torna a single
+path transmission.
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
