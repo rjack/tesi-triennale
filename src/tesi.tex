@@ -309,7 +309,6 @@ Tutte soluzioni tranne MMUSE hanno problemi con NAT e
 firewall. Bisogna usare TURN e STUN. Tutte soluzioni senza
 multi-homing, tranne MCoA.
 
-
 \section{Soluzioni \emph{cross layer}}
 Le architetture presenti sono dette \emph{cross layer} perché agiscono
 a multipli livelli dello stack ISO/OSI, superando i limiti delle
@@ -467,6 +466,51 @@ layer a NS2 \cite{bib:ns-2}.
 Caratteristiche simulazione: MC comunica con CH attraverso 3G
 (384kb/s, 1ms) e IEEE 802.11b (11Mb/s, 1ms). Semplificazione: no
 effetti di interferenze e di errori di trasmissione sui link wireless.
+
+\section{SCHEDATURA: Handover management based on the number of data frame
+  retransmissions for VoWLAN}
+
+Si focalizza su handover, manca AP inbalances e downstream/uptream
+asimmetrici.
+
+\subsection{Introduction}
+(saltata, identica all'altro paper) Soliti tre obiettivi.
+
+\subsection{Two types of packet loss during handover}
+
+1) per handover di tipo L2 e L3, 2) per condizione link wireless.
+
+MIP handover usa una NIC, interruzione -> packet loss.
+
+Interferenze, contesa per accesso ad AP, collisioni, distanza AP ->
+packet loss (inerente al link)
+
+\subsection{Handover management based on the number of data frame
+  retransmissions on layer 2}
+
+Multihoming per supportare mobilità end-to-end. No need di struttura
+gerarchica o entità di rete aggiuntive come in MIP.
+
+\subsubsection{Reduction handover processing period}
+
+Meccanismo multihoming spiegato brevemente.
+
+\subsubsection{Criterion estimate wireless link condition}
+
+No signal strenght: variazioni improvvise per distanza e ostacoli
+temporanei.
+
+Spiegazinone meccanismo MAC ACK 802.11 -> numero di ritrasmissioni L2
+metrica scelta.
+
+\begin{figure}[h]
+\includegraphics[width=8cm]{img/mona-distance-signal-strength-simulation}
+\caption{Qualità del segnale in funzione della distanza dall'AP}
+\label{fig:mona-distance-signal-strength-simulation}
+\end{figure}
+
+Simulazione: signal strenght vs. frame retransmission.
+
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
