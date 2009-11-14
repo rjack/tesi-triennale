@@ -382,6 +382,49 @@ Vantaggi delle due soluzioni rispetto a quelle single layer.
 
 \chapter{Media Optimization Network Architecture}
 
+Media Optimization Network Architecture (MONA) è un progetto
+di... TODO
+
+In previsione dello sviluppo delle reti ubique, MONA affronta i
+problemi descritti nella sezione \ref{sec:punti-critici} con un
+approccio multihoming e cross layer.
+
+La maggior parte del sistema MONA si concentra sul QoS dei
+collegamenti \emph{first hop}, ovvero i link wireless.
+
+I requisiti di MONA per avere una buona qualità di servizio sono:
+1) iniziazione dell'handover basata sul rilevamento delle
+caratteristiche del link wireless, 2) eliminazione dell'interruzione
+dovuta all'handover, 3) selezione dell'interfaccia ottimale.
+
+Sfruttando più interfacce di rete, MONA affronta il problema
+dell'eterogeneità dei collegamenti, permettendo flussi di dati
+multipli e fornendo QoS per ognuno; le NIC multiple permettono inoltre
+di gestire l'handover in modo trasparente.
+
+L'handover viene effettuato quando il collegamento wireless in uso
+viene giudicato non più soddisfacente. Per determinare la qualità di
+un collegamento, MONA misura il numero di ritrasmissioni a livello
+data link.
+
+Per gestire la molteplicità di NIC e i cambi di indirizzo IP dovuti
+agli handover, MONA inserisce un nuovo layer chiamato
+\emph{association layer} tra il livelli rete e trasporto. Il
+protocollo relativo, denominato Association Layer Protocol (AMP),
+gestisce i flussi di dati tra gli endpoint inserendo segnalazioni di
+modifica di stato e informazioni di identificazione.
+
+Considerando che le applicazioni VoIP generano un traffico simmetrico
+in uplink e in downlink e che il protocollo 802.11 è stato progettato
+per ottimizzare il downlink, MONA propone una modifica al protocollo
+per migliorare la bidirezionalità del traffico.
+
+Per ultimo, per evitare che alcuni access point siano sovraccarichi di
+collegamenti mentre altri rimangono inutilizzati, MONA propone un
+algoritmo decentralizzato per distribuire i collegamenti tra gli
+access point.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             SCHEDATURE                            %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -391,39 +434,7 @@ Vantaggi delle due soluzioni rispetto a quelle single layer.
 \section{SCHEDATURA: A Quality Aware VoWLAN Architecture and Its
   Quantitative Evaluations}
 
-\subsection{Intro}
-Scenario: reti WLAN e 3G pervasive, con coperture sovrapposte,
-presenza contemporanea di applicazioni TCP e VoIP.
-
-Affronta problema eterogeneità: usa flow multipli assicurando QoS per
-ogni flow. Supporto per servizi VoIP e TCP.
-
-Affronta problema handover: n. di ritrasmissioni L2 usato come metrica
-per decidere quando fare handover.
-
-Affronta problema asimmetria traffico up/downstream.
-
-Affronta problema traffic load imbalances tra AP multipli.
-
-Propone tre requisiti: 1. iniziazione dell'handover basata sul
-rilevamento delle caratteristiche del link wireless, 2. eliminazione
-dell'interruzione dovuta all'handover, 3. selezione dell'interfaccia
-ottimale.
-
-Per rilevare i cambiamenti nella qualità del link usa il numero di
-ritrasmissioni L2, usa multihoming per evitare interruzione
-nell'handover, usa multi-path transmission fino a che non riesce a
-rilevare che uno dei link è diventato sufficientemente stabile.
-
 \subsection{Media Optimization Network Architecture}
-Considerazione: linee attraverso Internet veloci, stabili, affidabili,
-economiche. Linee wireless tutto il contrario. Quindi first hop punto
-più critico del percorso dal punto di vista del QoS. Inoltre critico
-handover trasparente.
-
-MIP, SCTP, HIP non sono adatti perché non permettono di assegnare i
-diversi flow a diverse NIC.
-
 MONA crea un nuovo layer (association layer) e ne definisce il
 protocollo. Il nuovo layer è implementato tra i layer network e
 transport del MN, in modo da non dover modificare le socket
