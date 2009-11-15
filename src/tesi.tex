@@ -411,8 +411,8 @@ Per gestire la molteplicità di NIC e i cambi di indirizzo IP dovuti
 agli handover, MONA inserisce un nuovo layer chiamato
 \emph{association layer} tra il livelli rete e trasporto. Il
 protocollo relativo, denominato Association Layer Protocol (AMP),
-gestisce i flussi di dati tra gli endpoint inserendo segnalazioni di
-modifica di stato e informazioni di identificazione.
+aggrega e gestisce i flussi di dati tra gli endpoint inserendo
+segnalazioni di modifica di stato e informazioni di identificazione.
 
 Considerando che le applicazioni VoIP generano un traffico simmetrico
 in uplink e in downlink e che il protocollo 802.11 è stato progettato
@@ -424,6 +424,61 @@ collegamenti mentre altri rimangono inutilizzati, MONA propone un
 algoritmo decentralizzato per distribuire i collegamenti tra gli
 access point.
 
+Le sezioni successive analizzeranno in dettagli questi punti.
+
+\section{Association layer}
+
+L'Association Layer (AL) di MONA è uno strato di associazione inserito
+tra i livelli rete e trasporto AL è stato implementato in questa
+posizione della pila dei protocolli per motivi di compatibilità. Come
+mostrato dalla figura \ref{fig:mona-association-layer}, lo strato di
+associazione è superiore allo strato di rete e non interferisce con lo
+stack di protocolli di dispositivi come router e access point; in
+questo modo MONA può funzionare senza modifiche agli apparati di rete.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{img/mona-association-layer}
+\caption{Association layer di MONA}
+\label{fig:mona-association-layer}
+\end{figure}
+
+Il protocollo Association Management Protocol (AMP) viene impiegato
+dall'association layer per gestire gli stati delle associazioni tra i
+vari host. Lo stato di ciascuna associazione può essere Inattivo
+(Idle) quando non c'è comunicazione tra peer, Associato (Associated)
+quando i due peer stabiliscono un'associazione attraverso il
+three--way handshake di AMP, oppure Non Associato (No Association),
+quando uno dei due peer non è in grado o rifiuta di stabilire
+un'associazione. In quest'ultimo caso il layer di associazione
+permette comunque la comunicazione tra gli host, assumendo un
+comportamento trasparente; in altre parole, quando il tentativo di
+associazione non va a buon fine, i peer comunicano attraverso lo stack
+tradizionale, senza che l'estensione di associazione venga
+utilizzata. Questo non permette di avere QoS tra i due peer, ma almeno
+non impedisce le comunicazioni tra i dispositivi che implementano
+l'Association Layer e i dispositivi tradizionali. Questa scelta
+dovrebbe aiutare l'inserimento graduale dell'architettura nel mercato.
+
+Quando due peer effettuano con successo un handshake AMP, lo strato di
+associazione crea un'astrazione in cui tutti i flussi di rete tra i
+due peer vengono raggruppati. Tale astrazione viene semplicemente
+chiamata associazione e permette di ottimizzare le risorse di rete
+condividendo le informazioni di identità dell'host tra i vari flussi
+associati. L'associazione evita quindi all'host di dover ricorrere a
+segnalazioni individuali per flusso ogniqualvolta venga eseguito un
+handover: è infatti AL che, attraverso AMP, notifica le identità dei
+flussi e delle interfacce di rete ai vari peer.
+
+Nel caso in cui tra due peer venga stabilita un'associazione, il layer
+inserisce in ogni pacchetto in uscita un header AMP posto tra l'header
+e il payload IP, in modo da marcare ogni pacchetto dei flussi
+dell'associazione. Tuttavia, secondo il protocollo AMP, i pacchetti di
+controllo e di gestione, come le notifiche di instaurazione e di
+terminazione dell'associazione, possono essere inviati
+indipendentemente dai pacchetti di traffico, in modo che il layer di
+associazione non debba attendere l'invio dei dati da parte degli
+strati superiori per notificare il peer di eventi urgenti.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             SCHEDATURE                            %
@@ -433,27 +488,6 @@ access point.
 
 \section{SCHEDATURA: A Quality Aware VoWLAN Architecture and Its
   Quantitative Evaluations}
-
-\subsection{Media Optimization Network Architecture}
-MONA crea un nuovo layer (association layer) e ne definisce il
-protocollo. Il nuovo layer è implementato tra i layer network e
-transport del MN, in modo da non dover modificare le socket
-API. Applicazioni funzionano senza bisogno di modifiche.
-
-Association layer tiene traccia degli indirizzi IP per ogni
-Corresponding Host (CH).
-
-Selezione del medium di rete per il downlink e l'uplink (quest'ultimo
-con segnalazioni al CH).
-
-Mobilità, multihoming e QoS senza speciali istanze nella rete.
-
-\begin{figure}[t]
-\centering
-\includegraphics[width=\textwidth]{img/mona-association-layer}
-\caption{Association layer di MONA}
-\label{fig:mona-association-layer}
-\end{figure}
 
 \subsection{The Association Layer and Its Management Protocol}
 AL nucleo di MONA.
