@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper,openright,twoside]{book}
+\documentclass[12pt,a4paper,openright,twoside,draft]{book}
 \usepackage[italian]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
@@ -484,13 +484,67 @@ strati superiori per notificare il peer di eventi urgenti.
 \section{QoS}
 
 La parte più interessante di MONA è la gestione della qualità del
-servizio durante gli handover. MONA considera gli handover come il
-punto cruciale in cui si verifica la maggior percentuale di pacchetti
-persi per un tempo abbastanza lungo da rendere impossibile la
+servizio durante gli handover. MONA indica negli handover il punto
+cruciale in cui si verifica la maggior percentuale di pacchetti persi
+per un tempo abbastanza lungo da rendere impossibile la
 comunicazione. Vengono considerati due tipi di packet loss: il primo
 dovuto esplicitamente alla procedura di disattivazione e riattivazione
-dell'interfaccia wireless, il secondo dovuto a interferenze e
-collisioni tra pacchetti inviati da MN diversi.
+dell'interfaccia wireless durante il cambio di access point, come
+descritto nella sezione \ref{sec:handover}, il secondo dovuto a
+interferenze e collisioni tra pacchetti inviati da MN diversi.
+
+Per evitare il periodo di inattività dovuto all'handover, MONA propone
+di utilizzare più di un'interfaccia di rete sul MN, in modo che
+durante il periodo di inattività di una, le altre siano in grado di
+comunicare. Per esempio, mentre il MN sta comunicando con un peer
+attraverso un'interfaccia di rete IF1, l'interfaccia di rete IF2
+potrebbe cercare un'associazione di rete con un altro access point,
+senza che questa attività influenzi la trasmissione dei dati
+attraverso IF1. Se IF2 dovessere trovare un access point disponibile,
+MN avrebbe due NIC collegate a Internet attraverso due reti
+differenti; qualora il collegamento wireless di IF1 dovesse diventare
+insoddisfacente, MN potrebbe dirottare il traffico in uscita da IF1 a
+IF2, senza dover subire alcuna interruzione in quanto l'interfaccia
+sarebbe già pronta all'uso.
+
+MONA presenta un algoritmo per decidere quando è necessario passare
+da l'invio di traffico su un'interfaccia all'invio di traffico su di
+un'altra. Questo algoritmo misura la qualità del collegamento
+attraverso il numero di ritrasmissioni a livello data link. Per
+provare la validità di questo approccio, l'association layer di MONA e
+il relativo protocollo AMP sono stati implementati nel simulatore di
+rete Network Simulator 2 e sono stati condotti diversi esperimenti
+virtuali per misurare l'efficacia dell'algoritmo e per determinare i
+valori migliori di alcuni parametri.
+
+Per prima cosa è necessario mostrare che il numero di ritrasmissioni a
+livello data link sono una metrica per la misura della qualità di un
+link più adatta dell'intensità del segnale radio.
+
+\subsection{Ritrasmissioni L2 e intensità del segnale}
+
+Secondo il protocollo 802.11 \cite{bib:802.11}, un nodo deve inviare
+un ACK al peer ogniqualvota riceva un frame, in modo da confermare
+l'avvenuta ricezione. Se il mittente non vede arrivare un ACK, ovvero
+se il frame inviato o l'ACK stesso sono andati persi, allora
+ritrasmette il frame. Questo meccanismo tenta la ritrasmissione del
+frame fino a un numero prestabilito di volte: se il frame è più grande
+di 2347 byte, viene ritrasmesso al massimo quattro volte, altrimenti
+sette. Nel caso dell'architettura in questione il traffico in esame è
+costituito da pacchetti VoIP, che sono di dimensione inferiore ai 400
+byte; quindi ogni interfaccia ha a disposizione sette tentativi per
+poter inviare il datagram VoIP all'access point. Se un link wireless è
+in condizioni ottime, allora non si verificano mai errori di
+trasmissione e i frame vengono inviati con successo al primo
+tentativo. Quando le condizioni del link wireless cominciano a
+peggiorare, possono cominciare a manifestarsi i primi packet loss, che
+causeranno ritrasmissioni sporadiche. Infine, quando il link sarà in
+condizioni critiche, le ritrasmissioni diverranno così frequenti da
+raggiungere il limite di tentativi, provocando la perdita definitiva
+del datagram.
+
+Il primo esperimento simulato si interroga sulla relazione tra
+distanza tra MN e AP e pacchetti persi.
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
