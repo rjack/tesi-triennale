@@ -486,38 +486,6 @@ strati superiori per notificare il peer di eventi urgenti.
 
 \begin{comment}
 
-\section{SCHEDATURA: A Quality Aware VoWLAN Architecture and Its
-  Quantitative Evaluations}
-
-\subsection{The Association Layer and Its Management Protocol}
-AL nucleo di MONA.
-
-Associazione: insieme di flow tra due host.
-
-AL colleziona informazioni su media e flow per gestire QoS e coordina
-l'identità dell'host (transport layer) per distinguere i flussi e
-l'identità di ogni interfaccia (network layer) per la trasmissione dei
-pacchetti.
-
-AMP: Association Management Protocol, mantiene uno stato per
-l'association layer. Per ogni peer: niente comunicazioni = Idle,
-connessione avvenuta = Associated, non avvenuta = No association (peer
-non può o non vuole associarsi, fallback IPv4). Fine flow: segnale di
-rilascio associazione.
-
-AMP header inserito tra l'header IP e il suo payload, in ogni
-pacchetto che usa l'associazione; nel caso di notifiche o
-segnalazioni, inviato in modo indipendentemente dal flusso di
-trasporto.
-
-\subsection{Performance Evaluation}
-L'efficacia di MONA misurata con simulazioni: aggiunta AMP e relativo
-layer a NS2 \cite{bib:ns-2}.
-
-Caratteristiche simulazione: MC comunica con CH attraverso 3G
-(384kb/s, 1ms) e IEEE 802.11b (11Mb/s, 1ms). Semplificazione: no
-effetti di interferenze e di errori di trasmissione sui link wireless.
-
 \section{SCHEDATURA: Handover management based on the number of data frame
   retransmissions for VoWLAN}
 
