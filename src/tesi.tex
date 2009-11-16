@@ -136,6 +136,7 @@ due interfacce di rete per limitare gli errori di trasmissione, posto
 che le politiche specificate lo permettano.
 
 \subsection{Handover}
+\label{sec:handover}
 Con \emph{handover} si intende il passaggio di associazione da una
 rete a un'altra. Lo scenario in cui le soluzioni si troveranno ad
 operare sarà caratterizzato da un grado di libertà dei MN molto
@@ -480,6 +481,18 @@ indipendentemente dai pacchetti di traffico, in modo che il layer di
 associazione non debba attendere l'invio dei dati da parte degli
 strati superiori per notificare il peer di eventi urgenti.
 
+\section{QoS}
+
+La parte più interessante di MONA è la gestione della qualità del
+servizio durante gli handover. MONA considera gli handover come il
+punto cruciale in cui si verifica la maggior percentuale di pacchetti
+persi per un tempo abbastanza lungo da rendere impossibile la
+comunicazione. Vengono considerati due tipi di packet loss: il primo
+dovuto esplicitamente alla procedura di disattivazione e riattivazione
+dell'interfaccia wireless, il secondo dovuto a interferenze e
+collisioni tra pacchetti inviati da MN diversi.
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             SCHEDATURE                            %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -488,12 +501,6 @@ strati superiori per notificare il peer di eventi urgenti.
 
 \section{SCHEDATURA: Handover management based on the number of data frame
   retransmissions for VoWLAN}
-
-Si focalizza su handover, manca AP inbalances e downstream/uptream
-asimmetrici.
-
-\subsection{Introduction}
-(saltata, identica all'altro paper) Soliti tre obiettivi.
 
 \subsection{Two types of packet loss during handover}
 
