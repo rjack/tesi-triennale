@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper,openright,twoside,draft]{book}
+\documentclass[12pt,a4paper,openright,twoside]{book}
 \usepackage[italian]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
@@ -67,7 +67,7 @@ INDICE}}
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
 \chapter{Definizione del problema}
-
+\pagenumbering{arabic}
 Def problema: in un ambiente con numerose reti senza fili eterogenee
 per tecnologia, politica di accesso e proprietà, si vuole dare a un
 dispositivo di rete mobile la possibilità di attraversare i campi
@@ -223,7 +223,6 @@ fallback che garantiscano l'interoperabilità.
 
 \chapter{Panoramica delle soluzioni}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
-\pagenumbering{arabic}
 L'obiettivo è di permettere a un MN di muoversi attraverso reti
 wireless di natura eterogenea in maniera trasparente, ovvero senza
 interrompere eventuali connessioni attive durante la transizione da
@@ -543,9 +542,35 @@ condizioni critiche, le ritrasmissioni diverranno così frequenti da
 raggiungere il limite di tentativi, provocando la perdita definitiva
 del datagram.
 
-Il primo esperimento simulato si interroga sulla relazione tra
-distanza tra MN e AP e pacchetti persi.
+Il primo esperimento simulato mira a trovare una relazione tra numero
+di ritrasmissioni L2 e distanza del MN dall'AP. Se le due grandezze
+sono correlate, allora le ritrasmissioni possono essere utilizzate al
+posto della qualità del segnale. Il modello simulativo è costituito da
+un MN che comunica con un CN via VoIP attraverso una rete 802.11b in
+modalità infrastruttura. Entrambi i due host inviano pacchetti di 200
+byte ad un intervallo di 20ms.
 
+\begin{figure}[hbt]
+\includegraphics[width=\textwidth]{img/mona-distance-signal-strength-simulation}
+\caption{Relazione tra distanza MN--AP e numero di ritrasmissioni e
+  pacchetti persi: schema dello scenario e grafico dei risultati}
+\label{fig:mona-distance-signal-strength-simulation}
+\end{figure}
+
+Il grafico della figura
+\ref{fig:mona-distance-signal-strength-simulation} mostra come la
+percentuale di pacchetti persi, ovvero di pacchetti scartati perché
+hanno superato il numero massimo di ritrasmissioni, cresca rapidamente
+a partire dalla distanza di 17 metri. Tuttavia si può notare che a
+partire dai 15m le percentuali di pacchetti ritrasmessi aumentano fino
+a poco sopra il 20\%. In questo scenario i 17m sono quindi la soglia
+oltre la quale il segnale non è più abbastanza buono da garantire una
+trasmissione senza packet loss; la simulazione mostra come il numero
+di ritrasmissioni L2 permettono di rilevare questo problema prima di
+incorrere nella perdita dei pacchetti. Come conclusione è lecito
+affermare che il numero di ritrasmissioni L2 è una buona metrica su
+cui basarsi per predirre il peggioramento del collegamento dovuto
+all'indebolimento del segnale.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             SCHEDATURE                            %
