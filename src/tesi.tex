@@ -574,15 +574,40 @@ all'indebolimento del segnale.
 
 \subsection{Ritrasmissioni L2 e collisioni tra frame}
 
-Un secondo motivo per cui l'interfaccia di rete può dover
-ritrasmettere i pacchetti è la collisione tra frame spediti
-simultaneamente da due o più MN.
+Poiché un secondo motivo per cui la qualità di un link wireless può
+deteriorarsi è il verificarsi di collisioni tra frame spediti
+simultaneamente da due o più MN, è stato condotto un esperimento per
+indagare la relazione tra numero di ritrasmissioni L2 e collisioni tra
+frame. Scopo della simulazione è mostrare che, eccedendo la banda
+offerta da una rete wireless in modo da provocare collisioni, le
+ritrasmissioni L2 aumentano di pari passo.
+
+Lo scenario descritto in figura \ref{fig:mona-collision-simulation} è
+costituito da una rete 802.11b in cui vengono effettuate chiamate VoIP
+con un numero progressivamente superiore di MN. Il traffico è
+costituito da pacchetti di 200 byte inviati a intervalli di 20 ms. Dal
+grafico si può notare che negli scenari in cui i MN sono presenti in
+numero minore o uguale a dieci il numero di ritrasmissioni è prossimo
+allo zero, mentre negli scenari in cui i MN sono undici o più il
+numero di ritrasmissioni diventa via via sempre più considerevole.
 
 \begin{figure}[tbh]
 \includegraphics[width=\textwidth]{img/mona-collision-simulation}
-\caption{TODO DESCRIZIONE IMG: schema dello scenario e grafico dei risultati}
+\caption{Percentuale di pacchetti che vengono ritrasmessi in relazione
+  al numero di MN: schema dello scenario e grafico dei risultati}
 \label{fig:mona-collision-simulation}
 \end{figure}
+
+Considerando che una WLAN con banda 11MB/s può accomodare
+approssimativamente 10 chiamate in cui pacchetti da 200 byte vengono
+spediti a intervalli di 20ms \cite{bib:banda-wlan}, si vede che il
+numero di ritrasmissioni aumenta proprio negli scenari in cui i MN
+sono da undici a venti, ovvero le situazioni in cui la banda della
+rete WiFI non è più in grado di reggere il carico di traffico. Questo
+suggerisce che il numero di ritrasmissioni L2 è una buona metrica per
+rilevare le condizioni in cui i link wireless sperimentano un alto
+numero di collisioni perché la banda totale della rete wireless è
+stata superata.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                             SCHEDATURE                            %
@@ -592,22 +617,6 @@ simultaneamente da due o più MN.
 
 \section{SCHEDATURA: Handover management based on the number of data frame
   retransmissions for VoWLAN}
-
-\subsubsection{Criterion estimate wireless link condition}
-
-No signal strenght: variazioni improvvise per distanza e ostacoli
-temporanei.
-
-Spiegazione meccanismo MAC ACK 802.11 $\rightarrow$ numero di
-ritrasmissioni L2 metrica scelta.
-
-Che succede con collisioni frame? Finchè c'è banda c'è speranza, dopo
-cominciano le ritrasmissioni (figure 4 e 5 del paper da
-screenshottare).
-
-Inoltre, le interferenze radio causano problemi non rilevabili
-attraverso la qualità del segnale, ma che causano comunque frame
-retransmission.
 
 \subsubsection{Cross--layer}
 MONA è cross layer perché le info collezionate a L2 vengono messe a
@@ -1218,6 +1227,9 @@ prova
   http://tools.ietf.org/html/rfc5201, aprile 2008
 \bibitem{bib:itu-t} ITU--T Recommendation G. 114, ``One--way
   Transmission'', maggio 2003
+\bibitem{bib:banda-wlan} K. Medepalli, P. Gopalakrishnan, D. Famolari,
+  and T. Kodama, Voice Capacity of IEEE 802.11b, 802.11a and 802.11g
+  Wireless LANs, Proc. of Globecom 2004, pp.1549–1553, December 2004.
 \bibitem{bib:abps} V. Ghini, G. Lodi, F. Panzieri, ``Always Best
   Packet Switching: the Mobile VoIP Case Study'', Achademy Plublisher,
   Journal of Communications, accepted for publication.
