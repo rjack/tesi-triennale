@@ -581,25 +581,6 @@ all'indebolimento del segnale.
 \section{SCHEDATURA: Handover management based on the number of data frame
   retransmissions for VoWLAN}
 
-\subsection{Two types of packet loss during handover}
-
-1) per handover di tipo L2 e L3, 2) per condizione link wireless.
-
-MIP handover usa una NIC, interruzione $\rightarrow$ packet loss.
-
-Interferenze, contesa per accesso ad AP, collisioni, distanza AP
-$\rightarrow$ packet loss (inerente al link)
-
-\subsection{Handover management based on the number of data frame
-  retransmissions on layer 2}
-
-Multihoming per supportare mobilità end-to-end. No need di struttura
-gerarchica o entità di rete aggiuntive come in MIP.
-
-\subsubsection{Reduction handover processing period}
-
-Meccanismo multihoming spiegato brevemente.
-
 \subsubsection{Criterion estimate wireless link condition}
 
 No signal strenght: variazioni improvvise per distanza e ostacoli
@@ -607,25 +588,6 @@ temporanei.
 
 Spiegazione meccanismo MAC ACK 802.11 $\rightarrow$ numero di
 ritrasmissioni L2 metrica scelta.
-
-\begin{figure}[h]
-\includegraphics[width=8cm]{img/mona-distance-signal-strength-simulation}
-\caption{Modello di simulazione (riduzione della qualità del segnale
-  in funzione della distanza)}
-\label{fig:mona-distance-signal-strength-simulation}
-\end{figure}
-
-Simulazione: signal strenght vs. frame retransmission.
-
-\begin{figure}[h]
-\includegraphics[width=8cm]{img/mona-packet-loss-distance}
-\caption{Percentuale di pacchetti ritrasmessi in funzione della
-  distanza tra MN e AP}
-\label{fig:mona-packet-loss-distance}
-\end{figure}
-
-Spiegazione simulazione $\rightarrow$ conclusione = packet loss
-possono essere predetti contando le ritrasmissioni L2.
 
 Che succede con collisioni frame? Finchè c'è banda c'è speranza, dopo
 cominciano le ritrasmissioni (figure 4 e 5 del paper da
