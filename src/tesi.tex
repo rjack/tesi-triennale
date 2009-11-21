@@ -24,7 +24,7 @@
 \cfoot{}
 
 % Interlinea
-\linespread{1.3}
+\linespread{1.6}
 
 \begin{document}
 
@@ -37,7 +37,7 @@
   \topmargin=6.5cm
   \raggedleft
   \large
-  \em A Chiara
+  %\em A Chiara
   \newpage
   % Non numera l'ultima pagina a sinistra.
   \clearpage{\pagestyle{empty}\cleardoublepage}
@@ -436,10 +436,10 @@ associazione è superiore allo strato di rete e non interferisce con lo
 stack di protocolli di dispositivi come router e access point; in
 questo modo MONA può funzionare senza modifiche agli apparati di rete.
 
-\begin{figure}[t]
+\begin{figure}[tb]
 \centering
 \includegraphics[width=\textwidth]{img/mona-association-layer}
-\caption{Association layer di MONA}
+\caption{\em Association layer di MONA}
 \label{fig:mona-association-layer}
 \end{figure}
 
@@ -551,9 +551,10 @@ un MN che comunica con un CN via VoIP attraverso una rete 802.11b in
 modalità infrastruttura. Entrambi i due host inviano pacchetti di 200
 byte ad un intervallo di 20ms.
 
-\begin{figure}[hbt]
+\begin{figure}[tb]
+\centering
 \includegraphics[width=\textwidth]{img/mona-distance-signal-strength-simulation}
-\caption{Relazione tra distanza MN--AP e numero di ritrasmissioni e
+\caption{\em Relazione tra distanza MN--AP e numero di ritrasmissioni e
   pacchetti persi: schema dello scenario e grafico dei risultati}
 \label{fig:mona-distance-signal-strength-simulation}
 \end{figure}
@@ -581,7 +582,7 @@ simultaneamente da due o più MN, è stato condotto un esperimento per
 indagare la relazione tra numero di ritrasmissioni L2 e collisioni tra
 frame. Scopo della simulazione è mostrare che, eccedendo la banda
 offerta da una rete wireless in modo da provocare collisioni, le
-ritrasmissioni L2 aumentano di pari passo.
+ritrasmissioni L2 aumentano di conseguenza.
 
 Lo scenario descritto in figura \ref{fig:mona-collision-simulation} è
 costituito da una rete 802.11b in cui vengono effettuate chiamate VoIP
@@ -592,9 +593,10 @@ numero minore o uguale a dieci il numero di ritrasmissioni è prossimo
 allo zero, mentre negli scenari in cui i MN sono undici o più il
 numero di ritrasmissioni diventa via via sempre più considerevole.
 
-\begin{figure}[tbh]
+\begin{figure}[tb]
+\centering
 \includegraphics[width=\textwidth]{img/mona-collision-simulation}
-\caption{Percentuale di pacchetti che vengono ritrasmessi in relazione
+\caption{\em Percentuale di pacchetti che vengono ritrasmessi in relazione
   al numero di MN: schema dello scenario e grafico dei risultati}
 \label{fig:mona-collision-simulation}
 \end{figure}
@@ -627,9 +629,10 @@ che appartiene al componente aggiuntivo definito da MONA come Handover
 Manager (HM). Questo componente viene implementato nello strato di
 trasporto e utilizza le informazioni provenienti dal livello MAC.
 
-\begin{figure}[tbh]
+\begin{figure}[tb]
+\centering
 \includegraphics[width=\textwidth]{img/mona-sp-mp}
-\caption{Diagrammi di flusso che descrivono gli algoritmi usati da
+\caption{\em Diagrammi di flusso che descrivono gli algoritmi usati da
   MONA per passare da Single Path Trasmission a Multi Path Trasmission
   (a sinistra) e viceversa (a destra).}
 \label{fig:mona:sp-mp}
@@ -984,12 +987,14 @@ l'uno dall'altro. Gli access point sono connessi a Internet attraverso
 una connessione via cavo. Il sistema B è un dispositivo fisso,
 connesso a Internet via cavo attraverso una comune allacciamento
 Internet a banda larga, come ADSL o fibra ottica.
-\begin{figure}[t]
+
+\begin{figure}[tb]
 \centering
 \includegraphics[width=\textwidth]{img/scenario}
-\caption{Scenario}
+\caption{\em Scenario}
 \label{fig:scenario}
 \end{figure}
+
 La comunicazione VoIP tra i sistemi A e B si affida quindi a due tipi
 di connessione: quella wireless, tra A e gli access point, e quella
 via cavo tra gli access point e B.
@@ -1050,10 +1055,10 @@ Il meccanismo RWMA è costituito da più componenti, schematizzati in
 figura \ref{fig:rwma}, che cooperano per risolvere i tre problemi di
 interattività, affidabilità e mobilità. Questa sezione presenta
 brevemente i componenti e illustra il loro ruolo nel progetto.
-\begin{figure}[t]
+\begin{figure}[tb]
 \centering
 \includegraphics[width=\textwidth]{img/rwma}
-\caption{Schema del meccanismo RWMA}
+\caption{\em Schema del meccanismo RWMA}
 \label{fig:rwma}
 \end{figure}
 
