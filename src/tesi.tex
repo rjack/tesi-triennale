@@ -481,6 +481,7 @@ associazione non debba attendere l'invio dei dati da parte degli
 strati superiori per notificare il peer di eventi urgenti.
 
 \section{QoS}
+\label{sec:mona:qos}
 
 La parte più interessante di MONA è la gestione della qualità del
 servizio durante gli handover. MONA indica negli handover il punto
@@ -611,11 +612,97 @@ stata superata.
 
 \section{Gestione dell'handover}
 
+L'approccio cross--layer seguito da MONA consiste nel collezionare
+informazioni sulla qualità dei link wireless a basso livello e fornire
+questa informazione a uno strato superiore che decida quando e come
+effettuare l'handover.
+
+Come descritto nella sezione \ref{sec:mona:qos}, analizzare il numero
+di ritrasmissioni di frame a livello data link può permettere di
+predire il deterioramento di qualità di un link wireless. Questa
+informazione è di basso livello, proveniendo appunto dal secondo
+livello dello stack ISO/OSI. Decidere se effettuare l'handover, sulla
+base di questa informazione, è invece una politica di alto livello,
+che appartiene al componente aggiuntivo definito da MONA come Handover
+Manager (HM). Questo componente viene implementato nello strato di
+trasporto e utilizza le informazioni provenienti dal livello MAC.
+
 \begin{figure}[tbh]
 \includegraphics[width=\textwidth]{img/mona-sp-mp}
-\caption{TODO}
-\label{fig:mona-sp-mp}
+\caption{Diagrammi di flusso che descrivono gli algoritmi usati da
+  MONA per passare da Single Path Trasmission a Multi Path Trasmission
+  (a sinistra) e viceversa (a destra).}
+\label{fig:mona:sp-mp}
 \end{figure}
+
+Nello schema proposto da MONA, quando un link viene rilevato come
+problematico, l'Handover Manager utilizza le interfacce del MN
+simultaneamente per prevenire il verificarsi di packet loss. Questo
+utilizzo simultaneo viene chiamato Multi Path Trasmission (MPT) e
+basilarmente offre sicurezza attraverso ridondanza. Quando uno dei
+collegamenti in uso viene rilevato come stabile HM lo utilizza in modo
+esclusivo, ritornando a quello che viene denominato Single Path
+Transmission (SPT). Idealmente la modalità MPT dovrebbe essere attiva
+per il tempo più breve possibile, perché l'utilizzo simultaneo di più
+NIC può provocare un aumento di collisioni tra frame e determina un
+aumento dei consumi di energia del dispositivo mobile.
+
+\subsection{Da Single Path a Multi Path}
+
+Come illustrato dal diagramma di flusso a sinistra nella figura
+\ref{fig:mona:sp-mp}, si immagini un MN dotato di due interfacce
+wireless IF1 e IF2. Allo stato iniziale MN comunica con il peer
+attraverso l'uso esclusivo dell'interfaccia IF1; IF2 è attiva e
+associata con un access point ma non riceve alcun datagram
+dall'applicazione. Nel caso in cui IF2 non sia associata a nessun AP,
+l'interfaccia scansiona alla ricerca di access point e si associa non
+appena un AP diventa disponibile.
+
+Durante l'uso di IF1, il MAC layer di IF1 informa HM del numero di
+ritrasmissioni L2 che sono state necessarie per inviare ogni frame,
+oppure comunica che il numero di ritrasmissioni massimo è stato
+superato e che il frame è stato scartato. In questo modo HM viene a
+conoscenza della condizione del link pacchetto per pacchetto ed è in
+grado di decidere se la qualità del collegamento è diventata
+insoddisfacente. Questa decisione viene presa confrontando il numero
+di ritrasmissioni dell'ultimo frame, che nel diagramma è denominato
+Ret\_IF1, con un valore soglia, superato il quale HM passa alla
+modalità Multi Path Trasmission.
+
+\subsection{Da Multi Path a Single Path}
+
+Quando HM utilizza la modalità Multi Path Trasmission invia ogni
+datagram ricevuto dall'applicazione a entrambe le interfacce,
+raddioppiando il carico di rete e causando un incremento nelle
+richieste energetiche del dispositivo mobile. Per questi motivi MPT
+viene considerata una modalità d'emergenza, in cui HM deve operare per
+il minor di tempo possibile.
+
+Come in modalità SPT un alto numero di ritrasmissioni di un frame
+viene considerato un indicatore del degrado di qualità del link, in
+modalità MPT l'assenza di ritrasmissioni L2 viene considerato un
+indice di stabilità del link. Il diagramma di destra della figura
+\ref{fig:mona:sp-mp} mostra questo processo: ogni pacchetto viene
+inviato simultaneamente su IF1 e IF2, che concorrentemente lo
+inoltrano sul link wireless. Se il numero di ritrasmissioni di
+un'interfaccia è zero, HM incrementa un valore denominato Stability
+Counter (SC\_IFi), altrimenti lo reimposta a zero. Il valore SC viene
+utilizzato come metrica discriminante per passare da MPT a SPT: quando
+oltrepassa un certo valore soglia $s$ significa che il collegamento
+wireless è stato in grado di inviare $s$ frame senza che fossero
+necessarie ritrasmissioni, per cui può essere considerato stabile. La
+prima interfaccia che giunge a una condizione in cui è considerata
+stabile, viene selezionata da HM per essere utilizzata nuovamente in
+modalità SPT.
+
+Un problema introdotto dalla modalità MPT riguarda la ricezione di
+paccheti duplicati dal peer del MN. Poiché lo stesso pacchetto viene
+inviato su due interfacce connesse a reti differenti, i pacchetti
+duplicati possono essere ricevuti fuori ordine, a causa delle diverse
+condizioni delle due reti. La soluzione utilizzata in MONA marca ogni
+pacchetto con un numero di sequenza, in modo che un nodo possa
+scartare pacchetti ricevuti che possiedono un numero di sequenza
+vecchio.
 
 % DA QUI
 
@@ -627,21 +714,6 @@ stata superata.
 
 \section{SCHEDATURA: Handover management based on the number of data frame
   retransmissions for VoWLAN}
-
-\subsubsection{Cross--layer}
-MONA è cross layer perché le info collezionate a L2 vengono messe a
-disposizione a livello Handover Manager (HM, L5) per gestire
-l'handover (single/multi-path transmission).
-
-\subsubsection{Handover management}
-
-HM decide quando eseguire handover. 2 NIC: link in uso peggiora, HM
-passa a multi-path trasmission: stesso pacchetto inviato sui due
-link. Quando è sicuro che uno dei due link è buono, torna a single
-path transmission.
-
-Spiegazione dettagliata su single-path / multi-path trasmission in
-base alle ritrasmissioni L2 (figure 7 e 8 per flowchart algoritmi).
 
 \subsubsection{Simulation model}
 
