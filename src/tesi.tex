@@ -630,12 +630,12 @@ Manager (HM). Questo componente viene implementato nello strato di
 trasporto e utilizza le informazioni provenienti dal livello MAC.
 
 \begin{figure}[tb]
-\centering
-\includegraphics[width=\textwidth]{img/mona-sp-mp}
-\caption{\em Diagrammi di flusso che descrivono gli algoritmi usati da
-  MONA per passare da Single Path Trasmission a Multi Path Trasmission
-  (a sinistra) e viceversa (a destra).}
-\label{fig:mona:sp-mp}
+  \centering
+  \includegraphics[width=\textwidth]{img/mona-sp-mp}
+  \caption{\em Diagrammi di flusso che descrivono gli algoritmi usati da
+    MONA per passare da Single Path Trasmission a Multi Path Trasmission
+    (a sinistra) e viceversa (a destra).}
+  \label{fig:mona:sp-mp}
 \end{figure}
 
 Nello schema proposto da MONA, quando un link viene rilevato come
@@ -706,6 +706,83 @@ condizioni delle due reti. La soluzione utilizzata in MONA marca ogni
 pacchetto con un numero di sequenza, in modo che un nodo possa
 scartare pacchetti ricevuti che possiedono un numero di sequenza
 vecchio.
+
+\section{Esperimenti simulati}
+
+Gli ideatori di MONA ne hanno valutato l'efficacia implementando
+l'Handover Manager nel Network Simulator Version 2 \cite{bib:ns-2}
+(versione 2.27) e conducendo una serie di simulazioni volte a
+determinare se l'approccio funziona e quali valori soglia sono più
+efficaci per gli algoritmi SPT/MPT.
+
+\begin{table}
+  \centering
+  \begin{tabular}[bt]{|llll|}
+    \hline
+    Qualità & Buona & Media & Scarsa          \\
+    \hline
+    Delay (ms) & $<150$ & $150-400$ & $>400$ \\
+    Jitter (ms) & $<20$ & $20-50$ & $>50$    \\
+    Packet loss (\%) & $<1$ & $1-3$ & $>3$   \\
+    \hline
+  \end{tabular}
+  \caption{\em Vincoli qualitativi considerati durante la simulazione.}
+  \label{tab:mona:vincoli}
+\end{table}
+
+I vincoli qualitativi che sono stati considerati durante lo
+svolgimento delle simulazioni per valutare la bontà dei risultati sono
+riassunti in tabella \ref{tab:mona:vincoli}; l'obiettivo è di
+mantenere la latenza tra i peer sotto i 150 ms, il jitter sotto i 20
+ms e la percentuale di pacchetti persi sotto il l'1\%.
+
+\subsection{Modello simulativo}
+
+Gli esperimenti sono stati condotti sul modello schematizzato in
+figura \ref{fig:mona:qos-sim-model}
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=\textwidth]{img/mona-qos-sim-model}
+  \caption{\em Modello per la simulazione in NS2.}
+  \label{fig:mona:qos-sim-model}
+\end{figure}
+
+Un Mobile Node (MN), equipaggiato con due interfacce di rete IF1 e
+IF2, si sposta attraverso due WLAN differenti, ovvero dalla WLAN A
+alla WLAN B. Durante l'handover vengono analizzati la percentuale di
+pacchetti persi e il traffico di rete. Le due WLAN sono di tipo
+802.11b e formano sottoreti differenti, in modo che le interfacce di
+rete ricevano indirizzi IP diversi da ogni WLAN. Dieci MN sono
+associati alla WLAN A e comunicano con altrettanti CN, mentre un solo
+MN si sposta dalla WLAN A alla WLAN B, alla velocità di 4 Km/h, ovvero
+a passo d'uomo. Tutti gli MN inviano pacchetti di 200 byte a
+intervalli di 20 ms. Il delay tra peer è diverso a seconda della WLAN
+a cui i MN sono associati: attraverso WLAN A è impostato a 35 ms,
+mentre WLAN B 10 ms.
+
+\subsection{Pacchetti persi}
+
+La prima analisi mira a individuare i valori migliori per le soglie di
+passaggio da Single Path a Multi Path $v_{MPT}$ e da Multi Path a
+Single Path $v_{SPT}$. Come da tabella \ref{tab:mona:vincoli} si
+devono selezionare i valori in cui il packet loss misurato è minore
+del 3\%.
+
+\begin{figure}
+  \centering
+  \begin{tabular}{cc}
+    a) & \includegraphics[width=9cm]{img/mona-sim-packet-loss-rate}  \\
+    b) & \includegraphics[width=9cm]{img/mona-sim-packet-loss-occur} \\
+    c) & \includegraphics[width=9cm]{img/mona-sim-packet-loss-rate}  \\
+  \end{tabular}
+  \caption{\em Misurazioni durante l'handover di a) percentuale di
+    pacchetti persi, b) numero medio di occorrenze di pacchetti persi,
+    c) distribuzione di pacchetti persi consecutivi.}
+  \label{fig:mona:qos-sim-model}
+\end{figure}
+
+\subsection{Carico di rete}
 
 % DA QUI
 
