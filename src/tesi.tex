@@ -763,26 +763,78 @@ mentre WLAN B 10 ms.
 
 \subsection{Pacchetti persi}
 
-La prima analisi mira a individuare i valori migliori per le soglie di
-passaggio da Single Path a Multi Path $v_{MPT}$ e da Multi Path a
-Single Path $v_{SPT}$. Come da tabella \ref{tab:mona:vincoli} si
-devono selezionare i valori in cui il packet loss misurato è minore
-del 3\%.
+La prima analisi mira a individuare i valori migliori per le
+ritrasmissioni di frame da utilizzare per le soglie di passaggio da
+Single Path a Multi Path $v_{MPT}$ e da Multi Path a Single Path
+$v_{SPT}$. Come da tabella \ref{tab:mona:vincoli} si sono cercati
+valori in cui il packet loss misurato è minore del 3\%.
 
 \begin{figure}
   \centering
   \begin{tabular}{cc}
     a) & \includegraphics[width=9cm]{img/mona-sim-packet-loss-rate}  \\
     b) & \includegraphics[width=9cm]{img/mona-sim-packet-loss-occur} \\
-    c) & \includegraphics[width=9cm]{img/mona-sim-packet-loss-rate}  \\
+    c) & \includegraphics[width=9cm]{img/mona-sim-packet-loss-distrib}  \\
   \end{tabular}
   \caption{\em Misurazioni durante l'handover di a) percentuale di
     pacchetti persi, b) numero medio di occorrenze di pacchetti persi,
-    c) distribuzione di pacchetti persi consecutivi.}
-  \label{fig:mona:qos-sim-model}
+    c) distribuzione di pacchetti persi consecutivamente.}
+  \label{fig:mona:qos-sim-packet-loss}
 \end{figure}
 
+Nel grafico a) della figura \ref{fig:mona:qos-sim-packet-loss} sono
+mostrate le percentuali di pacchetti persi durante l'handover per
+tutte le combinazioni di valori di SPT e MTP.  Le percentuali minori
+del 2\% sono state misurate in corrispondenza dei valori 3 e 4 di MPT,
+indifferentemente dal valore di SPT.  Che nella misura dei pacchetti
+persi SPT sia un valore meno critico non stupisce, perché è il valore
+che determina il ritorno alla modalità Single Path. MPT invece
+determina il momento in cui HM passa alla modalità Multi Path e la
+tempistica giusta è fondamentale. In particolare, si vede che quando
+MPT è impostato a un valore troppo basso come 1 e 2, la percentuale di
+pacchetti persi è alta come quando il valore è troppo alto (maggiore
+di 4). Per approfondire il problema bisogna considerare il grafico b),
+dove viene mostrato il numero di occorrenze di pacchetti persi, dove
+ogni occorrenza è o un singolo pacchetto perso o una serie di
+pacchetti persi. Dall'andamento del grafico si vede che con valori MPT
+minori di 3 il numero di occorrenze è molto alto, ovvero ci sono
+tanti pacchetti persi singolarmente, mentre per valori di MPT maggiori
+di 4 il numero di occorrenze è molto basso; correlando questo dato con
+quello del grafico a) dove la percentuale di pacchetti persi per
+valori di MPT maggiori di 4 è molto alto, si conclude che con MPT alto
+la comunicazione soffre di perdita di sequenze intere di pacchetti.
+
+La spiegazione è da ricercarsi nella conformazione della rete: WLAN B
+ha una latenza minore di WLAN A e i paccheti inviati attraverso di
+essa arrivano prima dei pacchetti inviati attraverso la prima. Quando
+HM è nel suo stato iniziale, invia numerosi pacchetti attraverso
+l'interfaccia associata con WLAN A. L'access point relativo deve
+gestire questo traffico insieme a quello degli altri dieci MN, per cui
+i tempi di accodamento nel buffer del dispositivo cominceranno ad
+essere rilevanti. Quando MPT ha un valore alto, HM attende che le
+ritrasmissioni L2 arrivino al limite massimo e solo in quel momento
+passa alla modalità Multi Path; passando a tale modalità invia un
+frame attraverso WLAN B mentre nella coda di trasmissione dell'access
+point sono ancora presenti numerosi frame precedenti. Poiché WLAN B ha
+una latenza migliore e una congestione migliore di WLAN A, l'ultimo
+frame arriverà a destinazione prima dei frame precedenti ancora
+accodati; questi frame al loro arrivo verranno scartati come scaduti
+perché hanno un numero di sequenza minore dell'ultimo pacchetto
+ricevuto dal MN.
+
+Nelle comunicazioni VoIP la perdita di una sequenza di pacchetti è più
+grave della perdita di un pacchetto singolo. Analizzando la
+distribuzione delle sequenze di pacchetti persi nel grafico c) della
+figura \ref{fig:mona:qos-sim-packet-loss}, si nota che i valori più
+bassi si hanno con MPT uguale a 3 e SPT uguale a 4.
+
 \subsection{Carico di rete}
+
+Se da una parte è necessario trovare i valori di MPT e SPT che
+permettano di soddisfare al meglio i requisiti di QoS della tabella
+\ref{tab:mona:vincoli}, dall'altra la modalità Multi Path è onerosa in
+termini di carico di rete ed è necessario trovare un compromesso tra
+qualità e utilizzo del medium.
 
 % DA QUI
 
