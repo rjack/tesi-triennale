@@ -862,48 +862,61 @@ dell'incremento del carico di rete.
 
 \subsection{Variazione nel ritardo dei pacchetti}
 
+La variazione nel ritardo dei pacchetti, comunemente detta
+\emph{jitter}, è un fenomeno che influenza la qualità delle
+comunicazioni VoIP e dovrebbe essere al di sotto dei 50 ms, come da
+tabella \ref{tab:mona:vincoli}. Nonostante MONA punti a mitigare la
+perdita di pacchetti, è stato studiato l'effetto dei differenti valori
+di MPT sul jitter.
+
+\begin{table}
+  \centering
+  \begin{tabular}[bt]{|lllllll|}
+    \hline
+    Ritrasmissioni & 1 & 2 & 3 & 4 & 5 & 6                 \\
+    \hline
+    Jitter (ms) & 11,6 & 22,9 & 35,4 & 50,6 & 70,8 & 91    \\
+    \hline
+  \end{tabular}
+  \caption{\em Jitter medio in relazione alle ritrasmissioni L2.}
+  \label{tab:mona:jitter}
+\end{table}
+
+La tabella \ref{tab:mona:jitter} mostra i valori di jitter
+relativamente al numero di ritrasmissioni di frame. Per avere valori
+accettabili sotto i 50 ms è necessario che le ritrasmissioni siano al
+massimo tre. Oltre questo valore i pacchetti cominciano ad accodarsi
+nel buffer dell'interfaccia e subiscono variazioni nel ritardo. Il
+valore migliore di MPT selezionato dalle prove precedenti è tre,
+quindi l'utilizzo di MONA dovrebbe migliorare anche gli effetti sul
+jitter.
+
 \begin{figure}[tb]
   \centering
   \includegraphics[width=10cm]{img/mona-sim-queue-length}
-  \caption{\em Distribuzione cumulativa rispetto alla lunghezza della
-    coda di pacchetti nel buffer dell'interfaccia.}
+  \caption{\em Distribuzione cumulativa della lunghezza della coda di
+    pacchetti nel buffer dell'interfaccia.}
   \label{fig:mona:sim-queue-length}
 \end{figure}
 
-% DA QUI
+La figura \ref{fig:mona:sim-queue-length} mostra la distribuzione di
+probabilità della lunghezza della coda dei pacchetti nell'interfaccia
+IF1 quando HM passa alla modalità MTP. Si può notare come a valori di
+MTP crescenti la probabilità che la coda sia corta tenda a zero,
+ulteriore conferma che i valori di MTP e jitter sono direttamente
+correlati.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                             SCHEDATURE                            %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% POSSIBILI AGGIUNTE
 
-\begin{comment}
+% Fair uplink and downlink in a WLAN.
 
-\section{SCHEDATURA: Handover management based on the number of data frame
-  retransmissions for VoWLAN}
-
-\subsubsection{Simulation model}
-
-Figura 9, spiegazione scenario.
-
-Sottosezioni per i risultati: packet loss, network load.
-
-Ulteriori esperimenti: jitter e queue length.
-
-Considerazioni sotto differenti delay e traffic loads.
-
-\section{SCHEDATURA: A Quality Aware (Reprise)}
-
-Fair uplink and downlink in a WLAN.
-
-AP Selection: Load imbalance problem.
+% AP Selection: Load imbalance problem.
 
 \section{Conclusioni}
 
-\end{comment}
+TODO.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                           FINE SCHEDATURE                         %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% DA QUI
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
