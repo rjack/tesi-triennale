@@ -762,6 +762,7 @@ a cui i MN sono associati: attraverso WLAN A è impostato a 35 ms,
 mentre WLAN B 10 ms.
 
 \subsection{Pacchetti persi}
+\label{sec:mona:sim-packet-loss}
 
 La prima analisi mira a individuare i valori migliori per le
 ritrasmissioni di frame da utilizzare per le soglie di passaggio da
@@ -835,6 +836,39 @@ permettano di soddisfare al meglio i requisiti di QoS della tabella
 \ref{tab:mona:vincoli}, dall'altra la modalità Multi Path è onerosa in
 termini di carico di rete ed è necessario trovare un compromesso tra
 qualità e utilizzo del medium.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=10cm]{img/mona-sim-network-load}
+  \caption{\em Analisi del traffico di rete durante l'handover}
+  \label{fig:mona:sim-network-load}
+\end{figure}
+
+La figura \ref{fig:mona:sim-network-load} mostra i diversi carichi di
+rete in relazione alle varie combinazione di MPT e SPT. Quando sia MPT
+che SPT sono piccoli il carico di rete è relativamente basso, perché
+HM passa facilmente alla modalità Multi Path, ma ritorna altrettanto
+facilmente alla modalità Single Path. In contrasto, il carico di rete
+massimo si ha quando MPT è basso e SPT è alto, perché HM passa
+immediatamente in Multi Path e torna a Single Path con molta
+difficoltà. Dalle prove condotte precedentemente (sezione
+\ref{sec:mona:sim-packet-loss}) i valori più appropriati per MPT e SPT
+sono risultati rispettivamente 3 e 2 e con queste costanti il carico
+di rete durante il Multi Path è solo 1,004 volte il carico in Single
+Path; in numeri, con un traffico di 80 kb/s in Single Path si ha un
+traffico di 80,32 kb/s in Multi Path. Questo dimostra che i valori più
+adatti a fornire QoS sono pienamente accettabili dal punto di vista
+dell'incremento del carico di rete.
+
+\subsection{Variazione nel ritardo dei pacchetti}
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=10cm]{img/mona-sim-queue-length}
+  \caption{\em Distribuzione cumulativa rispetto alla lunghezza della
+    coda di pacchetti nel buffer dell'interfaccia.}
+  \label{fig:mona:sim-queue-length}
+\end{figure}
 
 % DA QUI
 
