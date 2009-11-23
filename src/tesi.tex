@@ -96,7 +96,9 @@ punti di handover.
 
 \section{Punti critici}
 \label{sec:punti-critici}
-Le sezioni successive presentano gli aspetti critici del problema. La bontà di una soluzione deve essere valutata sulla base di come risolve le problematiche seguenti.
+Le sezioni successive presentano gli aspetti critici del problema. La
+bontà di una soluzione deve essere valutata sulla base di come risolve
+le problematiche seguenti.
 
 \subsection{Adattabilità}
 Ogni applicazione in uso sul MN può avere le proprie esigenze di QoS,
@@ -239,7 +241,15 @@ raggruppando e catalogando per tipo i vari approcci e mostrando come
 ogni soluzione affronti ognuno dei quattro punti chiave.
 
 Le architetture si possono suddividere in due gruppi: soluzioni
-\emph{single layer} e soluzioni \emph{cross layer}. Le soluzioni
+\emph{single layer} e soluzioni \emph{cross layer}.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=10cm]{img/panoramica-soluzioni}
+  \caption{\em Panoramica delle soluzioni e loro collocazione ai vari
+    livelli dello stack ISO/OSI}
+  \label{fig:panoramica}
+\end{figure}
 
 \section{Soluzioni \emph{single layer}}
 Le architetture seguenti sono dette \emph{single layer} perché hanno
@@ -1069,6 +1079,13 @@ server pubblico che funzioni come B2B SIP, l'uso simultaneo di tutte
 le NIC del MN e un metodo di segnalazione diretta tra nodi. I
 paragrafi successivi illustreranno i tre punti nel dettaglio.
 
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=\textwidth]{img/abps-arch}
+  \caption{\em Architettura di ABPS}
+  \label{fig:abps:arch}
+\end{figure}
+
 \subsection{Proxy pubblico per MN}
 TODO: da riscrivere
 
@@ -1133,6 +1150,13 @@ rispettivamente tra MN e ABPS--Server e tra ABPS--Server e CN,
 
 TODO
 
+\begin{figure}[tb]
+\centering
+\includegraphics[width=\textwidth]{img/rwma}
+\caption{\em Schema del meccanismo RWMA}
+\label{fig:abps:rwma}
+\end{figure}
+
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
 
@@ -1170,13 +1194,6 @@ l'uno dall'altro. Gli access point sono connessi a Internet attraverso
 una connessione via cavo. Il sistema B è un dispositivo fisso,
 connesso a Internet via cavo attraverso una comune allacciamento
 Internet a banda larga, come ADSL o fibra ottica.
-
-\begin{figure}[tb]
-\centering
-\includegraphics[width=\textwidth]{img/scenario}
-\caption{\em Scenario}
-\label{fig:scenario}
-\end{figure}
 
 La comunicazione VoIP tra i sistemi A e B si affida quindi a due tipi
 di connessione: quella wireless, tra A e gli access point, e quella
