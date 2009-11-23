@@ -965,23 +965,24 @@ Agent Server (UAS) e i Back-to-back User Agent (B2BUA).
 
 \paragraph{User Agent Client.}
 È definito come un'entità logica che crea nuove richieste SIP e le
-invia sulla rete all'User Agent Server. Per esempio, un softphone che
-inizi una chiamata VoIP prende il ruolo di UAC, perché genera e
-spedisce la richiesta di invito.
+invia attraverso la rete all'User Agent Server. Per esempio,
+un'applicazione VoIP che inizi una chiamata prende il ruolo di UAC,
+perché genera e spedisce la richiesta di invito.
 
 \paragraph{User Agent Server.}
 È definito come un'entità logica che crea le risposte alla richieste
 ricevute. Un esempio di UAS è il server che risponde alle richieste di
-registrazione (Registrar).
+registrazione degli utenti (Registrar).
 
 \paragraph{Back-to-back User Agent.}
 
-È definito come un'entità logica che riceve le richieste da un UAC e
-si comporta come se fosse un UAS, ma invece di rispondere
-direttamente, inoltra la richiesta a un UAS effettivo, comportandosi
-da UAC. In altre parole, un B2BUA è un intermediario tra UAC e UAS:
-UAC crede che il B2BUA sia l'UAS, dall'altra parte l'UAS crede che il
-B2BUA sia l'UAC.
+È definito come un'entità logica che riceve le richieste da un client
+(UAC) e si comporta come se fosse un server (UAS), ma invece di
+rispondere direttamente, inoltra la richiesta a un server (UAS); nel
+dialogo con il client si comporta come server, mentre nel dialogo con
+il server si comporta da client. In altre parole, un B2BUA è un
+intermediario tra UAC e UAS: UAC crede che il B2BUA sia l'UAS,
+dall'altra parte l'UAS crede che il B2BUA sia l'UAC.
 
 \subsection{Gestione delle sessioni SIP}
 
@@ -1125,6 +1126,9 @@ previsto dal protocollo SIP, a causa del tempo che impiegherebbe ad
 essere completato: detti $D_{MS}$, $D_{SC}$ i delay di comunicazione
 rispettivamente tra MN e ABPS--Server e tra ABPS--Server e CN,
 
+\subsection{ABPS--RWMA}
+
+TODO
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
