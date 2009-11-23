@@ -96,22 +96,21 @@ punti di handover.
 
 \section{Punti critici}
 \label{sec:punti-critici}
-Il problema presenta numerosi aspetti critici che dovranno essere
-affrontati dalle varie soluzioni.
+Le sezioni successive presentano gli aspetti critici del problema. La bontà di una soluzione deve essere valutata sulla base di come risolve le problematiche seguenti.
 
 \subsection{Adattabilità}
 Ogni applicazione in uso sul MN può avere le proprie esigenze di QoS,
 che possono variare dalla necessità di utilizzare consistenti
-quantitativi di banda, alla necessità di avere una buona
-interattività, misurata in termini di latenza di trasmissione dei
-dati. Un esempio della prima classe di applicazioni possono essere i
-servizi di Video-on-Demand (VoD), che offrono contenuti multimediali
-in streaming, mentre un esempio della seconda classe è rappresentato
-dai servizi Voice-over-IP (VoIP), che offrono la possibilità agli
-utenti di comunicare tra di loro con chiamate audio/video sia
-individuali che di gruppo. Ulteriori requisiti possono imporre un
-limite superiore alla percentuale di pacchetti persi, per evitare che
-la qualità del servizio non degradi oltre il limite dell'accettabile.
+quantitativi di banda alla necessità di avere una buona interattività,
+misurata in termini di latenza di trasmissione dei dati. Un esempio
+della prima classe di applicazioni possono essere i servizi di
+Video-on-Demand (VoD), che offrono contenuti multimediali in
+streaming, mentre un esempio della seconda classe è rappresentato dai
+servizi Voice-over-IP (VoIP), che offrono la possibilità agli utenti
+di comunicare tra di loro con chiamate audio/video sia individuali che
+di gruppo. Ulteriori requisiti possono imporre un limite superiore
+alla percentuale di pacchetti persi, per evitare che la qualità del
+servizio non degradi oltre il limite dell'accettabile.
 
 Le soluzioni dovranno quindi adattarsi alle necessità delle varie
 applicazioni, cercando di rispettare le diverse politiche richieste da
@@ -130,26 +129,26 @@ vincoli sulle metriche non vengano violati; questo richiede la
 capacità di collezionare dati riguardanti queste varie metriche e la
 capacità di prendere decisioni in base alle misurazioni effettuate e
 alle politiche ricevute dall'applicazione. Nell'esempio precedente,
-una soluzione che rilevasse una percentuale di pacchetti persi
-superiore al 3\% potrebbe decidere di utilizzare contemporaneamente
-due interfacce di rete per limitare gli errori di trasmissione, posto
-che le politiche specificate lo permettano.
+una soluzione che rilevi una percentuale di pacchetti persi superiore
+al 3\% potrebbe decidere di utilizzare contemporaneamente due
+interfacce di rete per limitare gli errori di trasmissione, posto che
+le politiche specificate lo permettano.
 
 \subsection{Handover}
 \label{sec:handover}
-Con \emph{handover} si intende il passaggio di associazione da una
-rete a un'altra. Lo scenario in cui le soluzioni si troveranno ad
-operare sarà caratterizzato da un grado di libertà dei MN molto
-ampio. Un possibile scenario è illustrato in \cite{bib:abc}: un utente
-di MN comincia la comunicazione sulla rete domestica; dopo un certo
-tempo esce di casa a comunicazione in corso, portando il MN con
-sè. Durante il tragitto da casa alla fermata il MN si disconnette
-dalla rete domestica e si associa alla rete comunale, effettuando un
-primo handover. Quando pochi minuti più tardi l'utente entra in
-metropolitana, il MN effettua un ulteriore handover passando dalla
-rete comunale a quella della società dei trasporti pubblici. Le
-soluzioni dovranno gestire handover di questo tipo in maniera
-trasparente all'utente, ovvero senza che sia necessaria una
+Con \emph{handover} si intende il passaggio di associazione del Mobile
+Node da una rete a un'altra. Lo scenario in cui le soluzioni si
+troveranno ad operare sarà caratterizzato da un grado di libertà dei
+MN molto ampio. Un possibile scenario è illustrato in \cite{bib:abc}:
+un utente di MN comincia la comunicazione sulla rete domestica; dopo
+un certo tempo esce di casa a comunicazione in corso, portando il MN
+con sè. Durante il tragitto da casa alla fermata della metropolitana
+il MN si disconnette dalla rete domestica e si associa alla rete
+comunale, effettuando un primo handover. Quando pochi minuti più tardi
+l'utente entra in metropolitana, il MN effettua un ulteriore handover
+passando dalla rete comunale a quella della società dei trasporti
+pubblici. Le soluzioni dovranno gestire handover di questo tipo in
+maniera trasparente all'utente, ovvero senza che sia necessaria una
 riconfigurazione manuale dell'applicazione o del dispositivo mobile, e
 senza che venga intaccata la qualità del servizio.
 
@@ -234,20 +233,19 @@ individuare la rete che offre le migliori garanzie di servizio e d)
 eseguire un cambio di associazione trasparente per assicurare una
 transizione senza interruzioni da una rete all'altra.
 
-Le architetture proposte non hanno una collocazione ben precisa
-all'interno dello stack di protocolli ISO/OSI.
+Questo capitolo presenterà le soluzioni più importanti presenti in
+letteratura, senza entrare nel merito dei singoli dettagli tecnici, ma
+raggruppando e catalogando per tipo i vari approcci e mostrando come
+ogni soluzione affronti ognuno dei quattro punti chiave.
 
-Questo capitolo presenterà brevemente le soluzioni più importanti
-presenti in letteratura, senza entrare nel merito dei singoli dettagli
-tecnici, ma raggruppando e catalogando per tipo i vari approcci e
-mostrando come ogni soluzione affronti ognuno dei quattro punti
-chiave.
+Le architetture si possono suddividere in due gruppi: soluzioni
+\emph{single layer} e soluzioni \emph{cross layer}. Le soluzioni
 
 \section{Soluzioni \emph{single layer}}
 Le architetture seguenti sono dette \emph{single layer} perché hanno
 una collocazione ben precisa nello stack ISO/OSI e operano soltanto al
-loro livello. L'analisi di queste soluzioni mostrerà i limiti
-dell'approccio single layer, limiti che saranno superati dagli
+loro livello di appartenenza. L'analisi di queste soluzioni mostrerà i
+limiti dell'approccio single layer, limiti che saranno superati dagli
 approcci \emph{cross layer} descritti nella sezione successiva.
 
 Queste architetture coprono i principali strati dello stack ISO/OSI:
@@ -310,13 +308,14 @@ firewall. Bisogna usare TURN e STUN. Tutte soluzioni senza
 multi-homing, tranne MCoA.
 
 \section{Soluzioni \emph{cross layer}}
-Le architetture presenti sono dette \emph{cross layer} perché agiscono
-a multipli livelli dello stack ISO/OSI, superando i limiti delle
+Queste architetture sono dette \emph{cross layer} perché agiscono a
+multipli livelli dello stack ISO/OSI, superando i limiti delle
 architetture \emph{single layer} descritte in precedenza.
 
 Il concetto di fondo di queste architetture è utilizzare le
-informazioni disponibili al livello \emph{network} per poter prendere
-decisioni efficaci di qualità di servizio ai livelli più alti.
+informazioni disponibili al livello \emph{data link} per poter
+prendere decisioni efficaci di qualità di servizio ai livelli più
+alti, come trasporto o sessione.
 
 Questa sezione confronterà le soluzioni ``Media Optimization Network
 Architecture'' (MONA) e ``Always Best Packet Switching'' (ABPS).
@@ -364,6 +363,8 @@ migliore \emph{throughput}.
 
 \subsection{Always Best Packet Switching}
 %% Breve panoramica di ABPS
+
+TODO
 
 Fixed server, rappresenta MN. Uso simultaneo di tutte le
 NIC. Scorciatoie SIP per evitare dialoghi lenti con server
@@ -945,17 +946,16 @@ Questa sezione presenta quindi una panoramica del protocollo SIP,
 mostrando i ruoli degli host, la gestione della sessione e alcuni
 limiti dovuti alla presenza di firewall e NAT. Successivamente verrà
 mostrato come ABPS estende il protocollo SIP per superare questi
-limiti.
+limiti e i dettagli della soluzione.
 
 \subsection{Panoramica}
 
 Il protocollo SIP è utilizzato per creare il contesto di una
-comunicazione tra due o più entità di rete.
-
-Per mezzo di SIP due host possono venire in contatto e accordarsi sui
-parametri della sessione di comunicazione, dopo di che il
-trasferimento dati avviene in modo diretto, secondo le modalità
-concordate.
+comunicazione tra due o più entità di rete. Per mezzo di SIP due host
+possono venire a conoscenza l'uno dell'altro (ovvero conoscere i
+rispettivi indirizzi IP) e accordarsi sui parametri della sessione di
+comunicazione, dopo di che il trasferimento dati avviene in modo
+diretto, secondo le modalità concordate.
 
 \subsection{Agenti SIP}
 
