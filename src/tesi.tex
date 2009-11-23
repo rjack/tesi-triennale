@@ -986,15 +986,16 @@ dall'altra parte l'UAS crede che il B2BUA sia l'UAC.
 
 \subsection{Gestione delle sessioni SIP}
 
-In uno scenario VoIP, l'applicazione UAC utilizza il protocollo SIP
-per inviare all'UAS un messaggio REGISTER, che segnala che l'utente è
-collegato e pronto a ricevere e inviare chiamate. Dopo che l'UAC si è
-registrato al servizio, può instaurare una sessione mediante un
-messaggio INVITE, che specifica l'identificativo dell'utente da
-contattare e i dati dell'utente chiamante; ricevuta la richiesta
-INVITE, il server recupera l'indirizzo IP dell'utente specificato e
-instaura una sessione tra i due partecipanti, che possono comunicare
-direttamente mediante protocollo RTP.
+In uno scenario VoIP, l'applicazione client, ovvero che opera nel
+ruolo di UAC, utilizza il protocollo SIP per inviare al server (UAS)
+un messaggio REGISTER, che segnala che l'utente è collegato e pronto a
+ricevere e inviare chiamate. Dopo che l'UAC si è registrato al
+servizio, può instaurare una sessione mediante un messaggio INVITE,
+che specifica l'identificativo dell'utente da contattare e i dati
+dell'utente chiamante; ricevuta la richiesta INVITE, il server
+recupera l'indirizzo IP dell'utente specificato e instaura una
+sessione tra i due partecipanti, che possono comunicare direttamente
+mediante protocollo RTP.
 
 Nel caso in cui il chiamante modifichi il proprio stato durante una
 conversazione, l'applicazione invia un nuovo messaggio INVITE
@@ -1010,35 +1011,37 @@ manuale dell'utente, la comunicazione vocale deve essere interrotta
 finché non viene instaurata la nuova sessione, condizionando
 l'esperienza utente.
 
-ABPS definisce delle scorciatoie di segnalazione per rendere diretto il
-procedimento di re-INVITE; i partecipanti possono modificare i
+ABPS definisce delle scorciatoie di segnalazione per rendere diretto
+il procedimento di re-INVITE; i partecipanti possono modificare i
 parametri della sessione in cui sono coinvolti senza dover
 interpellare il server e quindi evitando di dover attendere che la
-sessione sia reinstaurata.
+sessione sia reinstaurata, evitando di inserire nel procedimento i
+ritardi indesiderati che comprometterebbero la qualità della chiamata.
 
 \subsection{Problematiche dovute a Firewall e NAT}
 
 Il protocollo SIP si limita a creare il contesto della comunicazione,
-permettendo ai partecipanti di specificare le caratteristiche della
-sessione, instaurata la quale lo scambio di dati avviene in maniera
-diretta tra i due host. Alla luce di ciò, NAT e firewall sono
-impedimenti perché non permettono a un host di essere direttamente
-raggiungibile dalla controparte. Firewall e NAT sono spesso di
-proprietà dell'organizzazione che offre connettività, soprattutto in
-un contesto WAN, per cui l'utente non ha possibilità di impostare
-soluzioni di port-forwarding. Il metodo più comune prevede che
-l'utente imposti l'applicazione con l'indirizzo di un server STUN o
-TURN in modo da utilizzare uno di questi servizi. Purtroppo STUN
-richiede un certo tempo per funzionare, mentre TURN è un vero e
-proprio collo di bottiglia, quindi entrambi i metodi non sono
-compatibili con la necessità di effettuare handover in tempi
-estremamente brevi.
+permettendo ai partecipanti di conoscere i rispettivi indirizzi IP e
+di concordare le caratteristiche della comunicazione. Poiché il
+traffico di dati avviene in maniera diretta tra i due host, meccanismi
+come NAT e firewall sono impedimenti diretti perché non permettono
+agli host di essere direttamente raggiungibile dalla
+controparte. Firewall e NAT sono spesso di proprietà
+dell'organizzazione che offre connettività, soprattutto in un contesto
+WAN, per cui l'utente non ha possibilità di ricorrere a soluzioni di
+port-forwarding. Il metodo più comune prevede che l'utente imposti
+l'applicazione con l'indirizzo di un server STUN o TURN in modo da
+utilizzare uno di questi servizi. Purtroppo STUN richiede un certo
+tempo per funzionare, mentre TURN è un vero e proprio collo di
+bottiglia, quindi entrambi i metodi non sono compatibili con la
+necessità di effettuare handover in tempi estremamente brevi.
 
-ABPS impiega un B2BUA modificato, raggiungibile pubblicamente su
-Internet, che nasconde l'indirizzo IP del MN. Grazie a questo B2BUA, i
-MN possono essere rappresentati da un host pubblicamente raggiungibile
-su Internet, quindi evitando in maniera semplice e sicura i problemi
-di NAT e firewall.
+Per aggirare questi problemi di raggiungibilità tra gli host, ABPS
+impiega un B2BUA modificato, raggiungibile pubblicamente su Internet,
+che nasconde l'indirizzo IP del MN. Grazie a questo B2BUA, i MN
+possono essere rappresentati da un host pubblicamente raggiungibile su
+Internet, quindi evitando in maniera semplice e sicura i problemi di
+NAT e firewall.
 
 \section {Obiettivi di ABPS}
 
