@@ -1072,7 +1072,7 @@ Inoltre, perché la soluzione sia applicabile nella pratica, è
 necessario che ABPS non richieda modifiche né agli apparecchi harware,
 né alle attuali applicazioni.
 
-\section {Architettura proposta}
+\section {Panoramica dell'architettura}
 L'architettura ABPS propone tre linee guida per affrontare le
 problematiche descritte alla sezione \ref{sec:punti-critici}: un
 server pubblico che funzioni come B2B SIP, l'uso simultaneo di tutte
@@ -1146,16 +1146,33 @@ previsto dal protocollo SIP, a causa del tempo che impiegherebbe ad
 essere completato: detti $D_{MS}$, $D_{SC}$ i delay di comunicazione
 rispettivamente tra MN e ABPS--Server e tra ABPS--Server e CN,
 
-\subsection{ABPS--RWMA}
+\subsection{ABPS--RWMPC}
 
-TODO
+Il cuore della gestione della qualità del servizio di ABPS è il
+meccanismo Robust Wireless Multi--Path Channel, raffigurato nella
+figura \ref{fig:abps:rwmpc}. RWMPC è essenzialmente uno strato
+middleware che viene implementato negli host agli estremi di una
+comunicazione VoIP. La versione sperimentale di RWMPC è stata
+sviluppata nel kernel Linux 2.6.27.4, su una distribuzione Gentoo. I
+componenti che costituiscono il meccanismo sono Trasmission Error
+Detection (TED), UDP Load Balancer (ULB) e Monitor. TED si occupa di
+rilevare gli errori a livello MAC nell'invio dei dati sull'interfaccia
+di rete wireless, per poi notificare l'UDP Load Balancer. UDP Load
+Balancer si occupa di ritrasmettere i datagram persi in base alle
+notifiche di TED e decide qual è l'interfaccia wireless migliore da
+utilizzare per l'invio dei dati. Monitor è il componente che configura
+le interfacce del MN quando si attivano e si disattivano per
+notificare ULB delle interfacce wireless disponibili. Le sezioni
+successive analizzeranno il funzionamento dei componenti in dettaglio.
 
 \begin{figure}[tb]
 \centering
 \includegraphics[width=\textwidth]{img/rwma}
 \caption{\em Schema del meccanismo RWMA}
-\label{fig:abps:rwma}
+\label{fig:abps:rwmpc}
 \end{figure}
+
+\section{Dettagli implementativi}
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
