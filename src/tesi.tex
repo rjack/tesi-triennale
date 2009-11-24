@@ -936,14 +936,193 @@ TODO: breve presentazione. Esempio: Always Best Packet Switching
 (d'ora in avanti ABPS) è frutto di una ricerca in corso all'Università
 di Bologna, etc. etc.
 
-TODO: obiettivo in breve.
+Gli obiettivi di ABPS sono: 1) identificare ogni MN in modo univoco in
+ogni momento, a prescindere dalle reti a cui è connesso, 2) permettere
+a un MN di essere raggiungibile da qualsiasi altro host e in
+particolare da altri MN, 3) monitorare la qualità di servizio di ogni
+canale di un MN per predire la necessità di un handover, 4) effettuare
+detto handover in maniera trasparente, senza che la qualità del
+servizio ne risenta. Perché la soluzione sia applicabile nella pratica
+ABPS non richiede modifiche né agli apparecchi harware, né alle
+applicazioni software esistenti.
 
-L'architettura offre i servizi di QoE e sicurezza illustrati nella
+L'architettura offre i servizi di QoS e sicurezza illustrati nella
 sezione \ref{sec:punti-critici} alle applicazioni multimediali basate
 sui protocolli SIP e RTP, con l'obiettivo di permetterne l'utilizzo in
 un contesto di mobilità urbana attraverso reti eterogenee per
-tecnologia, amministrazione e costo, anche con topologie contemplanti la
-presenza di NAT e firewall.
+tecnologia, amministrazione e costo, anche con topologie di rete
+contemplanti la presenza di NAT e firewall.
+
+I vincoli di qualità del servizio che ABPS si impone di rispettare
+sono gli stessi dichiarati da MONA nella tabella
+\ref{tab:mona:vincoli} e indicati dalle raccomandazioni ITU-T G.1010
+\cite{bib:itu-t}, ovvero massimo 150 ms di ritardo tra un estremo
+della comunicazione all'altro e percentuale di pacchetti persi
+inferiore al 3\%.
+
+\section {Panoramica dell'architettura}
+I problemi descritti nella sezione \ref{sec:punti-critici} vengono
+affrontati da ABPS con un approccio cross--layer e distribuito. Cross
+layer perché, come avviene in MONA, le informazioni raccolte al
+livello MAC dei collegamenti wireless vengono messe a disposizione dei
+livelli superiori perché possano prendere decisioni per la
+salvaguardia della qualità del servizio; distribuito perché
+l'architettura è composta da vari meccanismi software che cooperano in
+diversi punti della rete per offrire i servizio di QoS, sicurezza e
+mobilità. La figura \ref{fig:abps:arch} mostra una panoramica
+dell'architettura.
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=\textwidth]{img/abps-arch}
+  \caption{\em Architettura di ABPS}
+  \label{fig:abps:arch}
+\end{figure}
+
+Nello scenario proposto da ABPS, il Mobile Node (MN) è dotato di più
+d'una interfaccia di rete senza fili ed esegue applicazioni
+multimediali basate sui protocolli SIP ed RTP. Le diverse reti senza
+fili possono essere gestite da organizzazioni differenti e impiegare
+apparati di rete che limitano la connettività, come firewall e NAT. Un
+server pubblico, indipendente dalle singole reti wireless, è presente
+e raggiungibile su Internet. Dall'altro estremo, il Correspondent Node
+(CN) comunica con MN utilizzando applicazioni compatibili; nella
+trattazione il CN è raffigurato come un sistema tradizionale e non
+mobile per semplicità d'esposizione, ma nulla vieta a un secondo MN di
+occupare il posto del CN.
+
+Il componente denominato ABPS Client Proxy viene eseguito sul sistema
+del MN e si occupa di rispettare i vincoli di QoS monitorando i
+collegamenti wireless e prendendo decisioni di recupero dagli
+errori. Il componente denominato ABPS Server Proxy è invece un
+servizio pubblico con cui ABPS--CP instaura un canale virtuale
+costituito dai vari percorsi attraverso le reti wireless a cui le NIC
+sono associate. Detto canale virtuale è un'astrazione fornita da
+ABPS--SIP ed ABPS--RTP, estensioni rispettivamente dei protocolli SIP
+ed RTP, ed è nascosto alla vista del CN dall'ABPS--SP; in questo modo
+il CN non deve occuparsi della mobilità del MN ma può comunicare con
+un rappresentante pubblico e dall'indirizzo IP fisso. Inoltre il
+canale virtuale multipercorso offre servizi di identificazione dei MN
+e di sicurezza dei flussi di traffico.
+
+La sezione successiva illustrerà la gestione della qualità del
+servizio in ABPS--CP, descrivendo come il meccanismo Robust Wireless
+Multi--Path Channel (RWMPC) individui i pacchetti persi e permetta la
+ritrasmissione in tempi utili.
+
+\section{Gestione della qualità del servizio}
+
+Il cuore della gestione della qualità del servizio di ABPS è il
+meccanismo Robust Wireless Multi--Path Channel, raffigurato nella
+figura \ref{fig:abps:rwmpc}. RWMPC è essenzialmente uno strato
+middleware che viene implementato negli host agli estremi di una
+comunicazione VoIP. La versione sperimentale di RWMPC è stata
+sviluppata nel kernel Linux 2.6.27.4, su una distribuzione Gentoo. I
+componenti che costituiscono il meccanismo sono Trasmission Error
+Detection (TED), UDP Load Balancer (ULB) e Monitor. TED si occupa di
+rilevare gli errori a livello MAC nell'invio dei dati sull'interfaccia
+di rete wireless, per poi notificare l'UDP Load Balancer. UDP Load
+Balancer si occupa di ritrasmettere i datagram persi in base alle
+notifiche di TED e decide qual è l'interfaccia wireless migliore da
+utilizzare per l'invio dei dati. Monitor è il componente che configura
+le interfacce del MN quando si attivano e si disattivano per
+notificare ULB delle interfacce wireless disponibili. Le sezioni
+successive analizzeranno il funzionamento dei componenti in dettaglio.
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=\textwidth]{img/rwma}
+\caption{\em Schema del meccanismo RWMPC}
+\label{fig:abps:rwmpc}
+\end{figure}
+
+\subsection{Transmission Error Detector}
+
+Il Transmission Error Detectior (TED) è un componente che agisce nello
+stack di protocollo del MN, operando nei livelli data link, rete e
+transporto. Responsabilità principale di TED è monitorare l'invio di
+ogni pacchetto e notificare UDP Load Balancer dell'esito di ogni
+trasmissione. Per svolgere questo proprio compito TED si basa sul
+meccanismo di ACK definito dal protocollo 802.11. A differenza di
+MONA, TED non conta il numero di ritrasmissioni di cui ogni frame
+necessita per essere inviato correttamente, ma si limita a notificare
+se l'invio sia riuscito o meno, osservando la ricezione delle frame di
+ACK inviate dall'access point da parte dei firmware delle singole
+schede wireless.
+
+Inoltre TED implementa una nuova system call, denominata
+\emph{sendmsg\_getID}, che invia il datagram agli stati trasporto,
+rete e data link, ritornando un identificativo univoco per il
+pacchetto appena inviato. Questo identificativo viene utilizzato da
+TED nella notifica di invio, ovvero in un messaggio che comunica al
+middleware se il frame in questione è stato ricevuto con successo
+dall'access point o se invece è stato scartato dal livello MAC a causa
+del superamento del numero massimo di ritrasmissioni L2.
+
+\subsection{UDP Load Balancer}
+
+\subsection{Monitor}
+
+
+\subsection{Proxy pubblico per MN}
+TODO: da riscrivere
+
+Normalmente le applicazioni si affidano alla coppia indirizzo IP e
+porta per identificare in modo univoco l'applicazione remota con cui
+condurre la comunicazione. Se l'applicazione viene eseguita da un host
+che appartiene a una configurazione di rete fissa, le procedure per
+garantire la raggiungibilità dell'host sono normalmente da eseguire
+una volta sola. In un contesto di estrema mobilità invece,
+l'identificazione e la raggiungibilità del MN sono estremamente
+problematiche perché ad ogni handover il dispositivo mobile comunica
+attraverso un indirizzo IP diverso da quello che utilizzava prima del
+cambio di associazione di rete, perdendo così l'identità precedente, e
+si trova ad operare in una rete gestita da un'organizzazione
+potenzialmente differente senza che sia possibile riconfigurare la
+rete per garantire la raggiungibilità dell'host. In ABPS il problema è
+escerbato dal fatto che il MN può decidere di inviare due pacchetti
+consecutivi appartenenti allo stesso flusso attraverso due interfacce
+diverse.
+
+ABPS definisce un servizio, chiamato ABPS--Server, che nasconde la
+mobilità del MN agli altri host. ABPS--Server è un servizio di
+indirizzo noto, raggiungibile da Internet e indipendente da una
+singola rete di accesso.
+
+\subsection{Uso simultaneo di tutte le interfacce dei MN}
+La caratteristica chiave di ABPS è la capacità di instradare ogni
+pacchetto su interfacce potenzialmente differenti, includendo nella
+scelta le caratteristiche del pacchetto stesso. Le altre soluzioni di
+handover invece effettuano la scelta a un livello più alto,
+selezionando l'interfaccia di rete su cui instradare la sessione di
+comunicazione e mantenendo la scelta fino a che il collegamento viene
+giudicato soddisfacente.
+
+Effettuare a scelta a livello di pacchetto permette ad ABPS--client di
+collaborare con ABPS--server per implementare le politiche di
+bilanciamento di traffico e di recupero d'errore al più fine dei
+livelli di granularità possibili.
+
+\subsection{Segnalazioni rapide di sessione}
+L'handover, ovvero la commutazione del collegamento in uso da
+un'interfaccia a un'altra, è un momento estremamente delicato e deve
+essere eseguito in modo trasparente per garantire un'esperienza utente
+soddisfacente. Nelle architetture che selezionano un collegamento e lo
+usano in maniera esclusiva, l'handover è un avvenimento relativamente
+raro perché una volta che il client sceglie un'interfaccia per l'invio
+dei dati, la scelta persiste finché la qualità del collegamento resta
+soddisfacente. L'interfaccia scelta può restare tale per un periodo di
+tempo che varia dall'ordine dei giorni all'ordine dei minuti,
+dipendentemente dal grado di mobilità dell'utente. In ABPS invece le
+interfacce sono continuamente attive e la scelta viene effettuata
+pacchetto per pacchetto; questo significa che la frequenza
+dell'handover si riduce all'ordine dei millisecondi. Con tempi di
+handover così ristretti, ogni soluzione di gestione mediante
+segnalazioni end-to-end non è utilizzabile. In particolare le
+applicazioni del MN non possono affidarsi al meccanismo di re-INVITE
+previsto dal protocollo SIP, a causa del tempo che impiegherebbe ad
+essere completato: detti $D_{MS}$, $D_{SC}$ i delay di comunicazione
+rispettivamente tra MN e ABPS--Server e tra ABPS--Server e CN,
 
 \section{Session Initiation Protocol}
 
@@ -1053,126 +1232,7 @@ possono essere rappresentati da un host pubblicamente raggiungibile su
 Internet, quindi evitando in maniera semplice e sicura i problemi di
 NAT e firewall.
 
-\section {Obiettivi di ABPS}
-
-Gli obiettivi di ABPS sono:
-
-\begin{itemize}
-\item identificare ogni MN in modo univoco in ogni momento, a
-  prescindere dalle reti a cui è connesso,
-\item permettere a un MN di essere raggiungibile da qualsiasi altro
-  host e in particolare da altri MN,
-\item monitorare la qualità di servizio di ogni canale di un MN per
-  predire la necessità di un handover,
-\item effettuare detto handover in maniera trasparente, senza che la
-  QoE ne risenta.
-\end{itemize}
-
-Inoltre, perché la soluzione sia applicabile nella pratica, è
-necessario che ABPS non richieda modifiche né agli apparecchi harware,
-né alle attuali applicazioni.
-
-\section {Panoramica dell'architettura}
-L'architettura ABPS propone tre linee guida per affrontare le
-problematiche descritte alla sezione \ref{sec:punti-critici}: un
-server pubblico che funzioni come B2B SIP, l'uso simultaneo di tutte
-le NIC del MN e un metodo di segnalazione diretta tra nodi. I
-paragrafi successivi illustreranno i tre punti nel dettaglio.
-
-\begin{figure}[tb]
-  \centering
-  \includegraphics[width=\textwidth]{img/abps-arch}
-  \caption{\em Architettura di ABPS}
-  \label{fig:abps:arch}
-\end{figure}
-
-\subsection{Proxy pubblico per MN}
-TODO: da riscrivere
-
-Normalmente le applicazioni si affidano alla coppia indirizzo IP e
-porta per identificare in modo univoco l'applicazione remota con cui
-condurre la comunicazione. Se l'applicazione viene eseguita da un host
-che appartiene a una configurazione di rete fissa, le procedure per
-garantire la raggiungibilità dell'host sono normalmente da eseguire
-una volta sola. In un contesto di estrema mobilità invece,
-l'identificazione e la raggiungibilità del MN sono estremamente
-problematiche perché ad ogni handover il dispositivo mobile comunica
-attraverso un indirizzo IP diverso da quello che utilizzava prima del
-cambio di associazione di rete, perdendo così l'identità precedente, e
-si trova ad operare in una rete gestita da un'organizzazione
-potenzialmente differente senza che sia possibile riconfigurare la
-rete per garantire la raggiungibilità dell'host. In ABPS il problema è
-escerbato dal fatto che il MN può decidere di inviare due pacchetti
-consecutivi appartenenti allo stesso flusso attraverso due interfacce
-diverse.
-
-ABPS definisce un servizio, chiamato ABPS--Server, che nasconde la
-mobilità del MN agli altri host. ABPS--Server è un servizio di
-indirizzo noto, raggiungibile da Internet e indipendente da una
-singola rete di accesso.
-
-\subsection{Uso simultaneo di tutte le interfacce dei MN}
-La caratteristica chiave di ABPS è la capacità di instradare ogni
-pacchetto su interfacce potenzialmente differenti, includendo nella
-scelta le caratteristiche del pacchetto stesso. Le altre soluzioni di
-handover invece effettuano la scelta a un livello più alto,
-selezionando l'interfaccia di rete su cui instradare la sessione di
-comunicazione e mantenendo la scelta fino a che il collegamento viene
-giudicato soddisfacente.
-
-Effettuare a scelta a livello di pacchetto permette ad ABPS--client di
-collaborare con ABPS--server per implementare le politiche di
-bilanciamento di traffico e di recupero d'errore al più fine dei
-livelli di granularità possibili.
-
-\subsection{Segnalazioni rapide tra partecipanti a una sessione}
-L'handover, ovvero la commutazione del collegamento in uso da
-un'interfaccia a un'altra, è un momento estremamente delicato e deve
-essere eseguito in modo trasparente per garantire un'esperienza utente
-soddisfacente. Nelle architetture che selezionano un collegamento e lo
-usano in maniera esclusiva, l'handover è un avvenimento relativamente
-raro perché una volta che il client sceglie un'interfaccia per l'invio
-dei dati, la scelta persiste finché la qualità del collegamento resta
-soddisfacente. L'interfaccia scelta può restare tale per un periodo di
-tempo che varia dall'ordine dei giorni all'ordine dei minuti,
-dipendentemente dal grado di mobilità dell'utente. In ABPS invece le
-interfacce sono continuamente attive e la scelta viene effettuata
-pacchetto per pacchetto; questo significa che la frequenza
-dell'handover si riduce all'ordine dei millisecondi. Con tempi di
-handover così ristretti, ogni soluzione di gestione mediante
-segnalazioni end-to-end non è utilizzabile. In particolare le
-applicazioni del MN non possono affidarsi al meccanismo di re-INVITE
-previsto dal protocollo SIP, a causa del tempo che impiegherebbe ad
-essere completato: detti $D_{MS}$, $D_{SC}$ i delay di comunicazione
-rispettivamente tra MN e ABPS--Server e tra ABPS--Server e CN,
-
-\subsection{ABPS--RWMPC}
-
-Il cuore della gestione della qualità del servizio di ABPS è il
-meccanismo Robust Wireless Multi--Path Channel, raffigurato nella
-figura \ref{fig:abps:rwmpc}. RWMPC è essenzialmente uno strato
-middleware che viene implementato negli host agli estremi di una
-comunicazione VoIP. La versione sperimentale di RWMPC è stata
-sviluppata nel kernel Linux 2.6.27.4, su una distribuzione Gentoo. I
-componenti che costituiscono il meccanismo sono Trasmission Error
-Detection (TED), UDP Load Balancer (ULB) e Monitor. TED si occupa di
-rilevare gli errori a livello MAC nell'invio dei dati sull'interfaccia
-di rete wireless, per poi notificare l'UDP Load Balancer. UDP Load
-Balancer si occupa di ritrasmettere i datagram persi in base alle
-notifiche di TED e decide qual è l'interfaccia wireless migliore da
-utilizzare per l'invio dei dati. Monitor è il componente che configura
-le interfacce del MN quando si attivano e si disattivano per
-notificare ULB delle interfacce wireless disponibili. Le sezioni
-successive analizzeranno il funzionamento dei componenti in dettaglio.
-
-\begin{figure}[tb]
-\centering
-\includegraphics[width=\textwidth]{img/rwma}
-\caption{\em Schema del meccanismo RWMA}
-\label{fig:abps:rwmpc}
-\end{figure}
-
-\section{Dettagli implementativi}
+% DA QUI
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
@@ -1186,331 +1246,6 @@ Propone scenari di test?
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                   DA QUI IN POI E' ROBA VECCHIA                   %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{comment}
-
-% Capitoli
-\chapter{Scenario}
-\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
-\pagenumbering{arabic}
-
-Lo scenario da considerare è illustrato in figura \ref{fig:scenario} e
-originariamente presentato negli articoli \emph{Robust Wireless Medium
-  Access for VoWLAN Applications: A Cross--Layer QoS Mechanism}
-\cite{bib:rwma} e \emph{Always Best Packet Switching: the mobile VoIP
-  case study} \cite{bib:abps}. Si assuma che esista una comunicazione
-vocale tra due sistemi A e B, in figura rappresentati come ``Alice'' e
-``Bob''. Il sistema A è un dispositivo mobile dotato di più di
-un'interfaccia wireless, ognuna delle quali è associata con un diverso
-access point. I vari access point possono appartenere a infrastrutture
-di rete e domini differenti e quindi essere completamente indipendenti
-l'uno dall'altro. Gli access point sono connessi a Internet attraverso
-una connessione via cavo. Il sistema B è un dispositivo fisso,
-connesso a Internet via cavo attraverso una comune allacciamento
-Internet a banda larga, come ADSL o fibra ottica.
-
-La comunicazione VoIP tra i sistemi A e B si affida quindi a due tipi
-di connessione: quella wireless, tra A e gli access point, e quella
-via cavo tra gli access point e B.
-
-\section{Vincoli qualitativi}
-Come mostrato, il percorso dei dati da un sistema VoIP all'altro deve
-attraversare segmenti camblati e altri senza fili; di questi gli
-ultimi sono i più problematici, perché soffrono di tre gravi
-inconvenienti: alta latenza, frequenti errori di trasmissione e
-interruzione e ripristino della connessione nel cambiare access
-point. Latenza ed errori frequenti possono degradare la qualità di una
-comunicazione VoIP via wireless fino a renderla inintelleggibile,
-mentre l'interruzione della connessione durante il passaggio da un
-access point a un altro impedisce la mobilità del sistema obbligando
-l'utente a restare nei pressi del ripetitore wireless in uso, pena la
-disconnessione e l'interruzione della comunicazione.
-
-Per garantire una buona qualità del servizio, il sistema RWMA deve
-operare soddisfando vincoli di interattività, affidabilità e mobilità.
-
-\subsection{Interattività}
-L'interattività di una conversazione VoIP è influenzata dalla latenza
-dei pacchetti che ne compongono il flusso di rete. La latenza di
-trasmissione è definita come il tempo trascorso dall'istante del
-campionamento della voce sul sistema di origine all'instante di
-riproduzione audio della stessa voce sul sistema di destinazione. Le
-raccomandazioni ITU--T \cite{bib:itu-t} indicano 150 ms come latenza
-massima di una comunicazione VoIP soddisfacente; al di sopra di questa
-soglia l'interattività della conversazione non è più accettabile.
-
-\subsection{Affidabilità}
-L'affidabilità di una conversazione VoIP dipende dalla capacità della
-rete di portare a destinazione quanti più pacchetti possibili. Un
-pacchetto è considerato perso quanto viene trasmesso dal sistema
-origine e non viene ricevuto dal sistema destinazione. Per condurre
-una conversazione comprensibile è necessario che la percentuale di
-pacchetti persi resti al di sotto del 10\% \cite{bib:itu-t}. Poiché
-per motivi di interattività le comunicazioni VoIP si svolgono su
-protocollo UDP, la rete non offre nessun tipo di servizio di
-trasmissione affidabile.
-
-\subsection{Mobilità}
-La mobilità dell'utente è fortemente limitata dallo scarso raggio
-d'azione offerto dalle attuali apparecchiature WiFi. Le interfacce
-WiFi sono in grado di interrompere l'associazione con l'access point
-in uso per crearne una nuova con un secondo solo quando i suddetti
-access point sono parte della stessa infrastruttura di rete. Questa
-limitazione deriva direttamente dal funzionamento del protocollo IP:
-cambiando rete di accesso l'interfaccia wireless riceve un nuovo
-indirizzo IP e deve reinstaurare la connessione da zero. Ciò che si
-vuole è invece un processo di disconnessione e riconnessione
-trasparente all'applicazione, in modo che la chiamata VoIP non venga
-interrotta, e rapido, in modo da non violare il requisito di
-interattività precedentemente esposto.
-
-\section{Il meccanismo RWMA}
-Il meccanismo RWMA è costituito da più componenti, schematizzati in
-figura \ref{fig:rwma}, che cooperano per risolvere i tre problemi di
-interattività, affidabilità e mobilità. Questa sezione presenta
-brevemente i componenti e illustra il loro ruolo nel progetto.
-\begin{figure}[tb]
-\centering
-\includegraphics[width=\textwidth]{img/rwma}
-\caption{\em Schema del meccanismo RWMA}
-\label{fig:rwma}
-\end{figure}
-
-\subsection{Transmission Error Detection (TED)}
-Questo componente software è integrato nel kernel del sistema
-operativo del dispositivo mobile e ha il compito di tenere sotto
-costante osservazione l'esito dell'invio dei pacchetti sulle
-interfaccie wireless. Ogni volta che un'interfaccia WiFi invia un
-\emph{frame} 802.11, questa deve attendere che l'access point risponda
-con un frame di \emph{acknowledgment} che confermi l'avvenuta
-ricezione. Nel caso in cui questo frame non venga ricevuto entro un
-certo periodo di tempo, l'interfaccia ritenta la trasmissione fino a
-un certo limite di volte, raggiunto il quale il frame viene
-scartato. Se l'interfaccia riceve l'ACK, il firmware notifica il
-kernel dell'avvenuta ricezione; al contrario, se il numero massimo di
-tentativi viene raggiunto senza che l'interfaccia abbia ricevuto un
-ACK, il firmware notifica il kernel del fallimento. Compito del TED è
-rilevare queste notifiche positive e negative inviate dal firmware
-dell'interfaccia e metterle a disposizione di applicazioni in
-\emph{user space}.
-
-\subsection{UDP Load Balancer (ULB)}
-Questo componente software è un'applicazione in \emph{user space}
-eseguita sul dispositivo mobile e ha il compito di rilevare le
-notifiche di TED, e in base a queste decidere se rispedire i datagram
-che non sono stati ricevuti dall'access point; inoltre deve valutare
-di volta in volta quale sia l'interfaccia WiFi migliore da impiegare
-per l'invio dei datagram.
-
-\subsection{Interface Monitor (IM)}
-Questo componente software lavora a stretto contatto con il gestore
-delle interfacce wireless del sistema mobile e notifica ULB
-dell'attivazione e della disattivazione di ogni interfaccia; dalle
-notifiche di IM, ULB è quindi in grado di conoscere in ogni momento
-quali interfacce wireless siano attive e associate a un'access point e
-tra queste scegliere la migliore da usare per l'inoltro dei datagram.
-
-\subsection{Proxy Server (PS)}
-Questo componente software ha il compito di nascondere la mobilità del
-sistema A, in modo che questo possa essere continuamente raggiungibile
-dal sistema B. Il sistema B è in comunicazione con PS ed è
-quest'ultimo a occuparsi di tenere traccia dei cambiamenti di
-indirizzo IP che occorrono quando il sistema A cambia rete WiFi o
-riattiva un'interfaccia di rete; come ULB, anche PS deve decidere a
-quale interfaccia inoltrare i datagram ricevuti da B, ma a differenza
-di ULB non si occupa di ritrasmettere eventuali pacchetti persi.
-
-\chapter{Simulazione}
-% Obiettivi a cui punto. Spiegazione soluzioni, algoritmi e scelte
-% effettuate.
-Tra i componenti del sistema RWMA descritti nel capitolo precedente,
-UDP Load Balancer e Proxy Server ospitano il meccanismo su cui si basa
-la qualità del servizio. Tutti gli altri meccanismi si occupano di
-rilevare e trasmettere notifiche di errori o successi durante l'invio
-di un datagram, quindi il comportamento è molto ben definito. ULB e PS
-invece hanno il compito molto generico di dover scegliere
-l'interfaccia \emph{migliore} per l'invio di ogni datagram. Gli
-algoritmi di ULB e PS devono pertanto scegliere una definizione
-operativa di ``migliore'' e applicarla alle interfacce WiFi in
-uso.
-
-In prima approssimazione un'interfaccia WiFi si può definire migliore
-di un'altra quando offre maggiori probabilità di soddisfare i vincoli
-di interattività e affidabilità descritti nel precedente capitolo; in
-altre parole quando le stime di latenza e percentuale di pacchetti
-persi per una data interfaccia sono le più basse tra le stime delle
-altre interfacce attive.
-
-Esistono vari modi per condurre queste stime, difficili da valutare
-senza condurre test e misurazioni sul campo. La simulazione vuole
-essere un banco di prova sperimentale virtuale, in cui condurre test
-in maniera più comoda ed economica che nel mondo reale.
-
-Scopo della simulazione è quindi confrontare diversi algoritmi di
-stima della qualità delle interfacce WiFi per i componenti UDP Load
-Balancer e Proxy Server.
-
-Le sezioni successive mostreranno i problemi incontrati e le soluzioni
-proposte.
-
-\section{UDP Load Balancer}
-Questa sezione illustra i problemi che devono essere affrontati dagli
-algoritmi implementati dal componente ULB.
-
-\subsection{Ritrasmissione in tempi brevi}
-ULB deve attendere le notifiche del TED e ritrasmettere i datagram che
-sono stati segnalati come persi, ma senza superare i 150 ms di
-ritardo. Dopo tale periodo di tempo, un datagram voce viene
-considerato \emph{stale} (scaduto) e quindi scartato. Inoltre la
-ritrasmissione di un datagram causa l'attesa di tutti gli altri
-datagram in coda; se ULB impiega troppi tentativi per ritrasmettere un
-datagram, quelli successivi hanno meno tempo a disposizione per uscire
-dal sistema prima di scadere. Il rischio è di far scadere una serie di
-pacchetti solo per aver impiegato troppo tempo nella ritrasmissione di
-uno. In particolare, ogni datagram contiene circa 40 ms di voce,
-quindi ULB riceve i datagram da inoltrare a intervalli di circa 40 ms;
-ogni datagram ha quindi 40 ms in cui può impegnare l'interfaccia
-designata senza rubare tempo agli altri datagram in coda. Se ULB
-dedica molto più di 40 ms all'invio di un datagram, rischia di
-compromettere l'intera coda.
-
-La soluzione proposta è di permettere una sola ritrasmissione per
-datagram e di assegnare una valutazione negativa all'interfaccia che
-ha ricevuto la notifica d'errore d'invio dal componente TED. In questo
-modo la ritrasmissione di un pacchetto non blocca lo smaltimento degli
-altri pacchetti in coda e la valutazione negativa all'interfaccia
-problematica permette all'altra interfaccia designata per l'invio.
-
-\subsection{Valutazione interfacce -- ULB}
-ULB deve stimare la qualità di ogni interfaccia WiFi osservando le
-notifiche ricevuto da TED.
-
-TODO: algoritmo valutazione interfaccia, lo scrivo per ultimo a scanso
-fix dell'ultimo momento.
-
-\subsection{Rilevazione delle capacità del firmware}
-I firmware delle schede di rete wireless sono in grado di notificare
-sia l'avvenuta trasmissione di un datagram (ACK), sia la mancata
-trasmissione (NACK). Normalmente le schede WiFi in commercio sono in
-grado di notificare entrambi i casi, ma alcuni firmware sono in grado
-di notificare solo ACK, oppure solo NACK. Mancando un meccanismo nel
-kernel Linux per conoscere con certezza le capacità di ogni firmware,
-ULB deve dedurrne il tipo dalle notifiche ricevute da TED. Conoscere a
-priori il tipo di notifiche che possono giungere da un'interfaccia è
-importante perché in caso di firmware che non possa segnalare i
-fallimenti, ULB deve supplire a questa mancanza impostando un timeout
-di ritrasmissione.
-
-\subsubsection{Il problema del firmware silenzioso}
-Il tipo di firmware si deduce dal tipo di notifiche ricevute dallo
-stesso ed è quindi un meccanismo banale. Esistono però due casi in cui
-il firmware può rimanere ``silenzioso'' e quindi impossibile da
-rilevare: quando una connessione pessima, cioè che perde tutti i
-pacchetti, viene gestita da un firmware ACK che notifica solo
-successi, oppure quando una connessione ottima, ovvero che non perde
-nessun pacchetto, viene gestita da un firmware NACK che notifica solo
-fallimenti.
-
-Non esiste un comportamento predefinito che soddisfi entrambe le
-situazioni: la strategia del ritrasmettere ogni datagram che non
-riceva notifiche entro un certo timeout funziona solo nella prima
-situazione e risulta completamente inadeguato nella seconda.
-
-\subsection{Valutazione interfacce -- PS}
-Poiché il sistema mobile è dotato di più interfacce, PS si trova
-nella necessità di scegliere a quale di queste debba inoltrare i dati
-ricevuti dal sistema fisso.
-
-La soluzione proposta consiste nel rispondere all'interfaccia che ha
-spedito gli ultimi dati ricevuti; in altre parole inviare i dati
-all'ultimo indirizzo IP da cui PS ha ricevuto traffico.
-
-Può però accadere che il sistema mobile non invii alcun dato perché
-l'utente si limita ad ascoltare; in questo caso il PS non ha
-cognizione di quale sia l'interfaccia a cui inviare i dati.
-
-TODO: soluzione PING, forse verrà già detta nella sezione ULB
-
-\chapter{Simulatore}
-Questo capitolo descrive brevemente l'implementazione del simulatore
-progettato per la valutazione degli algoritmi ULB e PS.
-
-Il simulatore è di tipo a eventi discreti ed è costituito da tre
-strati.
-
-Il primo strato è denominato \emph{de-sim} e costituisce un
-\emph{framework} generico che definisce le classi di base da estendere
-per modellare gli oggetti e i collegamenti, implementa la gestione di
-eventi ed errori, l'instaurazione di collegamenti tra oggetti e
-definisce primitive di input e output per lo scambio di oggetti tra
-attori collegati.
-
-Il secondo strato è denominato \emph{ulb-sim} e si basa su de-sim
-estendendone le classi e specializzandone i metodi, per modellare una
-versione semplificata del meccanismo RWMA.
-
-Il terzo strato è denominato \emph{ulb-snr} e descrive lo scenario da
-simulare instanziando le classi definite in ulb-sim e inizializzando
-gli oggetti e gli eventi di partenza.
-
-In altre parole, de-sim definisce come i meccanismi della simulazione,
-ulb-sim gli oggetti partecipanti e infine ulb-snr dispone i
-partecipanti nello scenario che si vuole raffigurare.
-
-L'architettura a strati serve a mantenere indipendenza tra ciò che
-definisce il ``cosa'' (ulb-sim) e ciò che definisce il ``come''
-(ulb-snr): per esempio è possibile costruire nuovi scenari basati su
-ulb-sim senza modificarne il codice.
-
-Questra struttura è simile a quella del simulatore ns-2, in cui gli
-oggetti della simulazione sono definiti da una gerarchia di classi in
-C++, mentre gli scenari vengono definiti attraverso script Tcl
-\cite{bib:ns-2}.
-
-I tre strati sono scritti in Common Lisp \cite{bib:clhs}.
-
-È importante notare che, a questo stadio di sviluppo, il simulatore
-non punta al realismo fisico della simulazione. Per esempio, nelle
-comunicazioni wireless non venendo presi in considerazione parametri
-fisici come la qualità del segnale radio in relazione alla distanza
-del client dall'access point. Tutti i dettagli di una connessione
-wireless sono astratti dietro ai parametri di banda, latenza e
-probabilità di errore; in particolare la rilevazione dell'ultimo
-parametro sarà fondamentale per determinare la scelta dell'interfaccia
-migliore. In quest'ottica, per simulare un calo di qualità del segnale
-wireless dovuto all'aumentare della distanza tra client e access point
-è sufficiente decidere quanto questo evento incida sulla probabilità
-d'errore del collegamento e modificarla di conseguenza.
-
-\chapter{Valutazioni}
-TODO: Metriche con cui valuto il mio sistema. Deduzioni su misurazioni
-effettuate. Perché ho misurato certe cose e non altre.
-
-TODO: qui non ho la più pallida idea di cosa scrivere.
-
-\chapter*{Conclusioni}
-\rhead[\fancyplain{}{\bfseries
-CONCLUSIONI}]{\fancyplain{}{\bfseries\thepage}}
-\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries
-CONCLUSIONI}}
-\addcontentsline{toc}{chapter}{Conclusioni}
-TODO: che concludo?
-
-\renewcommand{\chaptermark}[1]{\markright{\thechapter \ #1}{}}
-\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
-\appendix
-\chapter{Codice de-sim}
-\rhead[\fancyplain{}{\bfseries Appendice \thechapter: Codice de-sim}]{\fancyplain{}{\bfseries\thepage}}
-prova
-
-\chapter{Codice ulb-sim}
-\rhead[\fancyplain{}{\bfseries Appendice \thechapter: Codice ulb-sim}]{\fancyplain{}{\bfseries\thepage}}
-prova
-
-\end{comment}
 
 \begin{thebibliography}{90}
 \rhead[\fancyplain{}{\bfseries \leftmark}]{\fancyplain{}{\bfseries
@@ -1529,8 +1264,8 @@ prova
   Registration'', http://tools.ietf.org/html/rfc5648, ottobre 2009
 \bibitem{bib:hip} RFC5201 ``Host Identity Protocol'',
   http://tools.ietf.org/html/rfc5201, aprile 2008
-\bibitem{bib:itu-t} ITU--T Recommendation G. 114, ``One--way
-  Transmission'', maggio 2003
+\bibitem{bib:itu-t} ITU-T Recommendation G.1010, “End-user multimedia
+  QoS categories,” November 2001
 \bibitem{bib:banda-wlan} K. Medepalli, P. Gopalakrishnan, D. Famolari,
   and T. Kodama, Voice Capacity of IEEE 802.11b, 802.11a and 802.11g
   Wireless LANs, Proc. of Globecom 2004, pp.1549–1553, December 2004.
