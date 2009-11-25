@@ -730,7 +730,7 @@ efficaci per gli algoritmi SPT/MPT.
   \centering
   \begin{tabular}[bt]{|llll|}
     \hline
-    Qualità & Buona & Media & Scarsa          \\
+    Qualità & Buona & Media & Scarsa         \\
     \hline
     Delay (ms) & $<150$ & $150-400$ & $>400$ \\
     Jitter (ms) & $<20$ & $20-50$ & $>50$    \\
@@ -1028,10 +1028,18 @@ notificare ULB delle interfacce wireless disponibili. Le sezioni
 successive analizzeranno il funzionamento dei componenti in dettaglio.
 
 \begin{figure}[tb]
-\centering
-\includegraphics[width=\textwidth]{img/rwma}
-\caption{\em Schema del meccanismo RWMPC}
-\label{fig:abps:rwmpc}
+  \centering
+  \includegraphics[width=\textwidth]{img/rwma}
+  \caption{\em Meccanismi RWMPC del MN (a sinistra) e del CN (a
+    destra).}
+  \label{fig:abps:rwmpc}
+\end{figure}
+
+\begin{figure}[tb]
+  \centering
+  \includegraphics[width=\textwidth]{img/abps-rwmpc-funzionamento}
+  \caption{\em Dettaglio dei componenti di RWMPC}
+  \label{fig:abps:rwmpc-funzionamento}
 \end{figure}
 
 \subsection{Transmission Error Detector}
@@ -1085,7 +1093,26 @@ Il componente Monitor è responsabile della configurazione delle
 interfacce wireless del MN, notificando ogni cambiamento del loro
 stato a ULB.
 
-wpa\_supplicant
+Normalmente le reti wireless forniscono un servizio DHCP che assegna
+un indirizzo IP alle interfacce appena associate. Nei sistemi Linux
+uno dei software disponibili per la gestione delle schede di rete
+senza fili dei sistemi client è \emph{wpa--supplicant}; su di esso è
+basato Monitor, che sfrutta le funzionalità esistenti e ne definisce
+di nuove. Monitor eredita la gestione della sicurezza delle reti
+wireless, ad esempio WEP e WPA, la scansione dei canali per la ricerca
+di un access point disponibile e l'associazione con l'access
+point. Una modifica introdotta da Monitor impedisce che due interfacce
+si associno allo stesso access point, perché verrebbero a mancare
+tutti i vantaggi del multihoming. Completata l'associazione con un
+access point, Monitor utilizza un client DHCP per configurare
+l'indirizzo IP e l'instradamento verso il gateway fornito. Quando la
+NIC è configurata, Monitor invia una notifica di riconfigurazione
+(denominata ``Reconfiguration Notification'' in figura
+\ref{fig:abps:rwmpc-funzionamento}). Quando l'interfaccia wireless
+perde il segnale con l'access point, Monitor esegue il processo
+inverso, cancellando l'associazione, rimuovendo le informazioni di
+routing dell'interaccia e informando ULB con una nuova notifica di
+riconfigurazione.
 
 \subsection{Proxy pubblico per MN}
 TODO: da riscrivere
