@@ -927,8 +927,6 @@ correlati.
 
 TODO.
 
-% DA QUI
-
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
 \chapter{Always Best Packet Switching}
@@ -1060,6 +1058,26 @@ dall'access point o se invece è stato scartato dal livello MAC a causa
 del superamento del numero massimo di ritrasmissioni L2.
 
 \subsection{UDP Load Balancer}
+
+UDP Load Balancer è un'applicazione software eseguita dal sistema
+operativo del MN che è responsabile dell'instradamento sulle diverse
+interfacce di rete wireless dei pacchetti ricevuti dall'applicazione
+SIP/RTP. Obiettivo di ULB è trasmettere i pacchetti applicazione
+sull'interfaccia di rete che è giudicata essere la più adatta a
+rispettare i vincoli di QoS. Le notifiche ricevute dal TED informano
+dell'esito di ogni invio di pacchetto, perciò ULB è in grado di
+decidere se ritrasmettere o meno un pacchetto che è stato scartato dal
+livello MAC del MN. Inoltre le notifiche TED costituiscono una metrica
+che permette a ULB di valutare la qualità del collegamento di
+un'interfaccia di rete. Oltre alle notifiche ricevute dallo strato
+data link, che informano dello stato del collegamento al primo
+segmento di rete, ULB può ricevere notifiche ICMP che informano sullo
+stato degli invii dei datagram lungo tutto il percorso.  Una terza
+tipologia di notifica giunge dal componente Monitor, descritto in
+seguito, che comunica a ULB qualsiasi cambiamento nello stato delle
+interfacce di rete. Mediante questi tre tipi di notifiche ULB viene a
+conoscenza dello stato della situazione del MN e dei suoi collegamenti
+wireless e prende decisioni di salvaguradia della QoS.
 
 \subsection{Monitor}
 
@@ -1232,7 +1250,6 @@ possono essere rappresentati da un host pubblicamente raggiungibile su
 Internet, quindi evitando in maniera semplice e sicura i problemi di
 NAT e firewall.
 
-% DA QUI
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
