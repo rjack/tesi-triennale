@@ -1044,7 +1044,7 @@ successive analizzeranno il funzionamento dei componenti in dettaglio.
 
 \subsection{Transmission Error Detector}
 
-Il Transmission Error Detectior (TED) è un componente che agisce nello
+Il Transmission Error Detector (TED) è un componente che agisce nello
 stack di protocollo del MN, operando nei livelli data link, rete e
 transporto. Responsabilità principale di TED è monitorare l'invio di
 ogni pacchetto e notificare UDP Load Balancer dell'esito di ogni
@@ -1114,7 +1114,121 @@ inverso, cancellando l'associazione, rimuovendo le informazioni di
 routing dell'interaccia e informando ULB con una nuova notifica di
 riconfigurazione.
 
-\subsection{Proxy pubblico per MN}
+\section{Supporto per la mobilità}
+
+TODO
+
+ABPS utilizza il protocollo SIP e ne definisce un'estensione,
+denominata ABPS-SIP. Per illustrare ABPS è quindi necessario trattare
+il protocollo SIP nei punti salienti che riguardano l'architettura in
+esame.
+
+\subsection{Session Initiation Protocol}
+
+Questa sezione presenta quindi una panoramica del protocollo SIP,
+mostrando i ruoli degli host, la gestione della sessione e alcuni
+limiti dovuti alla presenza di firewall e NAT. Successivamente verrà
+mostrato come ABPS estende il protocollo SIP per superare questi
+limiti e i dettagli della soluzione.
+
+\subsubsection{Panoramica}
+
+Il protocollo SIP è utilizzato per creare il contesto di una
+comunicazione tra due o più entità di rete. Per mezzo di SIP due host
+possono venire a conoscenza l'uno dell'altro (ovvero conoscere i
+rispettivi indirizzi IP) e accordarsi sui parametri della sessione di
+comunicazione, dopo di che il trasferimento dati avviene in modo
+diretto, secondo le modalità concordate.
+
+\subsubsection{Agenti SIP}
+
+Tra i vari ruoli che SIP prevede per gli host in gioco, la trattazione
+di ABPS richiede di illustrare gli User Agent Client (UAC), gli User
+Agent Server (UAS) e i Back-to-back User Agent (B2BUA).
+
+\paragraph{User Agent Client.}
+È definito come un'entità logica che crea nuove richieste SIP e le
+invia attraverso la rete all'User Agent Server. Per esempio,
+un'applicazione VoIP che inizi una chiamata prende il ruolo di UAC,
+perché genera e spedisce la richiesta di invito.
+
+\paragraph{User Agent Server.}
+È definito come un'entità logica che crea le risposte alla richieste
+ricevute. Un esempio di UAS è il server che risponde alle richieste di
+registrazione degli utenti (Registrar).
+
+\paragraph{Back-to-back User Agent.}
+
+È definito come un'entità logica che riceve le richieste da un client
+(UAC) e si comporta come se fosse un server (UAS), ma invece di
+rispondere direttamente, inoltra la richiesta a un server (UAS); nel
+dialogo con il client si comporta come server, mentre nel dialogo con
+il server si comporta da client. In altre parole, un B2BUA è un
+intermediario tra UAC e UAS: UAC crede che il B2BUA sia l'UAS,
+dall'altra parte l'UAS crede che il B2BUA sia l'UAC.
+
+\subsubsection{Gestione delle sessioni SIP}
+
+In uno scenario VoIP, l'applicazione nel ruolo di UAC utilizza il
+protocollo SIP per inviare al server (UAS) un messaggio REGISTER, per
+segnalare che l'utente è collegato e pronto a ricevere e inviare
+chiamate. Dopo che l'UAC si è registrato al servizio, può instaurare
+una sessione mediante un messaggio INVITE, che specifica
+l'identificativo dell'utente da contattare e i dati dell'utente
+chiamante; ricevuta la richiesta INVITE, il server recupera
+l'indirizzo IP dell'utente specificato e instaura una sessione tra i
+due partecipanti, che possono comunicare direttamente mediante
+protocollo RTP.
+
+Nel caso in cui il chiamante modifichi il proprio stato durante una
+conversazione, l'applicazione invia un nuovo messaggio INVITE
+contentente i parametri aggiornati, per permettere al server di
+reinstaurare la sessione con le nuove caratteristiche.
+
+Il meccanismo di re-INVITE è intrinsecamente lento: il mittente deve
+contattare il server, il server deve a sua volta contattare il
+destinatario e solo a quel punto la comunicazione tra mittente e
+destinatario può continuare nella nuova sessione. Nonostante questo
+procedimento possa avvenire in automatico, ovvero senza intervento
+manuale dell'utente, la comunicazione vocale deve essere interrotta
+finché non viene instaurata la nuova sessione, condizionando
+l'esperienza utente.
+
+ABPS definisce delle scorciatoie di segnalazione per rendere diretto
+il procedimento di re-INVITE; i partecipanti possono modificare i
+parametri della sessione in cui sono coinvolti senza dover
+interpellare il server e quindi evitando di dover attendere che la
+sessione sia reinstaurata, evitando di inserire nel procedimento i
+ritardi indesiderati che comprometterebbero la qualità della chiamata.
+
+\subsubsection{Problematiche dovute a Firewall e NAT}
+
+Il protocollo SIP si limita a creare il contesto della comunicazione,
+permettendo ai partecipanti di conoscere i rispettivi indirizzi IP e
+di concordare le caratteristiche della comunicazione. Poiché il
+traffico di dati avviene in maniera diretta tra i due host, meccanismi
+come NAT e firewall sono impedimenti alla comunicazione perché non
+permettono a un host di essere direttamente raggiungibile dalla
+controparte. Nel contesto delle reti ubique, firewall e NAT sono
+verosimilmente di proprietà dell'organizzazione che offre la
+connettività, per cui l'utente non ha possibilità di ricorrere alle
+soluzioni di port-forwarding che sono disponibili in contesti Small
+Office/Home Office. Un client che non è in grado di essere
+direttamente raggiungibile su Internet può utilizzare servizi come
+Traversal Using Relay NAT (TURN) e Session Traversal Utilities for NAT
+(STUN). Purtroppo STUN richiede un certo tempo per funzionare, mentre
+TURN è un vero e proprio collo di bottiglia, quindi entrambi i metodi
+non sono compatibili con la necessità di effettuare handover in tempi
+estremamente brevi.
+
+Per aggirare questi problemi di raggiungibilità tra gli host, ABPS
+impiega un B2BUA modificato, raggiungibile pubblicamente su Internet,
+che nasconde l'indirizzo IP del MN. Grazie a questo B2BUA, i MN
+possono essere rappresentati da un host pubblicamente raggiungibile su
+Internet, quindi evitando in maniera semplice e sicura i problemi di
+NAT e firewall.
+
+\subsubsection{Proxy pubblico per MN}
 TODO: da riscrivere
 
 Normalmente le applicazioni si affidano alla coppia indirizzo IP e
@@ -1174,115 +1288,6 @@ previsto dal protocollo SIP, a causa del tempo che impiegherebbe ad
 essere completato: detti $D_{MS}$, $D_{SC}$ i delay di comunicazione
 rispettivamente tra MN e ABPS--Server e tra ABPS--Server e CN,
 
-\section{Session Initiation Protocol}
-
-ABPS utilizza il protocollo SIP e ne definisce un'estensione,
-denominata ABPS-SIP. Per illustrare ABPS è quindi necessario trattare
-il protocollo SIP nei punti salienti che riguardano l'architettura in
-esame.
-
-Questa sezione presenta quindi una panoramica del protocollo SIP,
-mostrando i ruoli degli host, la gestione della sessione e alcuni
-limiti dovuti alla presenza di firewall e NAT. Successivamente verrà
-mostrato come ABPS estende il protocollo SIP per superare questi
-limiti e i dettagli della soluzione.
-
-\subsection{Panoramica}
-
-Il protocollo SIP è utilizzato per creare il contesto di una
-comunicazione tra due o più entità di rete. Per mezzo di SIP due host
-possono venire a conoscenza l'uno dell'altro (ovvero conoscere i
-rispettivi indirizzi IP) e accordarsi sui parametri della sessione di
-comunicazione, dopo di che il trasferimento dati avviene in modo
-diretto, secondo le modalità concordate.
-
-\subsection{Agenti SIP}
-
-Tra i vari ruoli che SIP prevede per gli host in gioco, la trattazione
-di ABPS richiede di illustrare gli User Agent Client (UAC), gli User
-Agent Server (UAS) e i Back-to-back User Agent (B2BUA).
-
-\paragraph{User Agent Client.}
-È definito come un'entità logica che crea nuove richieste SIP e le
-invia attraverso la rete all'User Agent Server. Per esempio,
-un'applicazione VoIP che inizi una chiamata prende il ruolo di UAC,
-perché genera e spedisce la richiesta di invito.
-
-\paragraph{User Agent Server.}
-È definito come un'entità logica che crea le risposte alla richieste
-ricevute. Un esempio di UAS è il server che risponde alle richieste di
-registrazione degli utenti (Registrar).
-
-\paragraph{Back-to-back User Agent.}
-
-È definito come un'entità logica che riceve le richieste da un client
-(UAC) e si comporta come se fosse un server (UAS), ma invece di
-rispondere direttamente, inoltra la richiesta a un server (UAS); nel
-dialogo con il client si comporta come server, mentre nel dialogo con
-il server si comporta da client. In altre parole, un B2BUA è un
-intermediario tra UAC e UAS: UAC crede che il B2BUA sia l'UAS,
-dall'altra parte l'UAS crede che il B2BUA sia l'UAC.
-
-\subsection{Gestione delle sessioni SIP}
-
-In uno scenario VoIP, l'applicazione client, ovvero che opera nel
-ruolo di UAC, utilizza il protocollo SIP per inviare al server (UAS)
-un messaggio REGISTER, che segnala che l'utente è collegato e pronto a
-ricevere e inviare chiamate. Dopo che l'UAC si è registrato al
-servizio, può instaurare una sessione mediante un messaggio INVITE,
-che specifica l'identificativo dell'utente da contattare e i dati
-dell'utente chiamante; ricevuta la richiesta INVITE, il server
-recupera l'indirizzo IP dell'utente specificato e instaura una
-sessione tra i due partecipanti, che possono comunicare direttamente
-mediante protocollo RTP.
-
-Nel caso in cui il chiamante modifichi il proprio stato durante una
-conversazione, l'applicazione invia un nuovo messaggio INVITE
-contentente i parametri aggiornati, per permettere al server di
-reinstaurare la sessione con le nuove caratteristiche.
-
-Il meccanismo di re-INVITE è intrinsecamente lento: il mittente deve
-contattare il server, il server deve a sua volta contattare il
-destinatario e solo a quel punto la comunicazione tra mittente e
-destinatario può continuare nella nuova sessione. Nonostante questo
-procedimento possa avvenire in automatico, ovvero senza intervento
-manuale dell'utente, la comunicazione vocale deve essere interrotta
-finché non viene instaurata la nuova sessione, condizionando
-l'esperienza utente.
-
-ABPS definisce delle scorciatoie di segnalazione per rendere diretto
-il procedimento di re-INVITE; i partecipanti possono modificare i
-parametri della sessione in cui sono coinvolti senza dover
-interpellare il server e quindi evitando di dover attendere che la
-sessione sia reinstaurata, evitando di inserire nel procedimento i
-ritardi indesiderati che comprometterebbero la qualità della chiamata.
-
-\subsection{Problematiche dovute a Firewall e NAT}
-
-Il protocollo SIP si limita a creare il contesto della comunicazione,
-permettendo ai partecipanti di conoscere i rispettivi indirizzi IP e
-di concordare le caratteristiche della comunicazione. Poiché il
-traffico di dati avviene in maniera diretta tra i due host, meccanismi
-come NAT e firewall sono impedimenti diretti perché non permettono
-agli host di essere direttamente raggiungibile dalla
-controparte. Firewall e NAT sono spesso di proprietà
-dell'organizzazione che offre connettività, soprattutto in un contesto
-WAN, per cui l'utente non ha possibilità di ricorrere a soluzioni di
-port-forwarding. Il metodo più comune prevede che l'utente imposti
-l'applicazione con l'indirizzo di un server STUN o TURN in modo da
-utilizzare uno di questi servizi. Purtroppo STUN richiede un certo
-tempo per funzionare, mentre TURN è un vero e proprio collo di
-bottiglia, quindi entrambi i metodi non sono compatibili con la
-necessità di effettuare handover in tempi estremamente brevi.
-
-Per aggirare questi problemi di raggiungibilità tra gli host, ABPS
-impiega un B2BUA modificato, raggiungibile pubblicamente su Internet,
-che nasconde l'indirizzo IP del MN. Grazie a questo B2BUA, i MN
-possono essere rappresentati da un host pubblicamente raggiungibile su
-Internet, quindi evitando in maniera semplice e sicura i problemi di
-NAT e firewall.
-
-
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
 
@@ -1300,7 +1305,7 @@ Propone scenari di test?
 \rhead[\fancyplain{}{\bfseries \leftmark}]{\fancyplain{}{\bfseries
 \thepage}}
 \addcontentsline{toc}{chapter}{Bibliografia}
-\bibitem{bib:mipv6} RFC3775, ``Mobility Support in IPv6'',
+\bibitem{bib:mipv6} RFC3775, ``Mobility Support in IPv6'',\\
   http://tools.ietf.org/html/rfc3775, giugno 2004
 \bibitem{bib:misura-handoff-l2} A. Mishra, M. Shin, W. Arbaugh, An
   Empirical Analysis of the IEEE 802.11 MAC Layer Handoff Process, ACM
@@ -1310,8 +1315,8 @@ Propone scenari di test?
   Mobility Management Scheme for Wireless Internet, Proc. of IEEE 3G
   Wireless 2001, maggio 2001.
 \bibitem{bib:mcoa} RFC5648, ``Multiple Care-of Addresses
-  Registration'', http://tools.ietf.org/html/rfc5648, ottobre 2009
-\bibitem{bib:hip} RFC5201 ``Host Identity Protocol'',
+  Registration'',\\http://tools.ietf.org/html/rfc5648, ottobre 2009
+\bibitem{bib:hip} RFC5201 ``Host Identity Protocol'',\\
   http://tools.ietf.org/html/rfc5201, aprile 2008
 \bibitem{bib:itu-t} ITU-T Recommendation G.1010, “End-user multimedia
   QoS categories,” November 2001
@@ -1319,13 +1324,10 @@ Propone scenari di test?
   and T. Kodama, Voice Capacity of IEEE 802.11b, 802.11a and 802.11g
   Wireless LANs, Proc. of Globecom 2004, pp.1549–1553, December 2004.
 \bibitem{bib:abps} V. Ghini, G. Lodi, F. Panzieri, ``Always Best
-  Packet Switching: the Mobile VoIP Case Study'', Achademy Plublisher,
+  Packet Switching: the Mobile VoIP Case Study'', Achademy Publisher,
   Journal of Communications, accepted for publication.
 \bibitem{bib:abc} E. Gustafsson et al., ``Always Best Connected'',
   IEEE Comm. Mag., vol. 10, no. 1, Feb 2003, pp. 49--55.
-\bibitem{bib:ns-2} http://nsnam.isi.edu/nsnam/, ottobre 2009
-\bibitem{bib:clhs}
-  http://www.lispworks.com/documentation/HyperSpec/Front/,
-  ottobre 2009
+\bibitem{bib:ns-2} VINT Network Simulator 2, http://nsnam.isi.edu/nsnam/, ottobre 2009
 \end{thebibliography}
 \end{document}
