@@ -981,13 +981,14 @@ Nello scenario proposto da ABPS, il Mobile Node (MN) è dotato di più
 d'una interfaccia di rete senza fili ed esegue applicazioni
 multimediali basate sui protocolli SIP ed RTP. Le diverse reti senza
 fili possono essere gestite da organizzazioni differenti e impiegare
-apparati di rete che limitano la connettività, come firewall e NAT. Un
-server pubblico, indipendente dalle singole reti wireless, è presente
-e raggiungibile su Internet. Dall'altro estremo, il Correspondent Node
-(CN) comunica con MN utilizzando applicazioni compatibili; nella
-trattazione il CN è raffigurato come un sistema tradizionale e non
-mobile per semplicità d'esposizione, ma nulla vieta a un secondo MN di
-occupare il posto del CN.
+apparati di rete che limitano la connettività, come firewall e
+NAT. ABPS Server Proxy è un server pubblico raggiungibile direttamente
+da Internet e indipendente dalle singole reti wireless e media ogni
+comunicazione con il MN. Dall'altro estremo, il Correspondent Node
+(CN) comunica con MN attraverso il proxy. Nella trattazione il CN è
+raffigurato come un sistema tradizionale e non mobile per semplicità
+d'esposizione, ma nulla vieta a un secondo MN di occupare il posto del
+CN.
 
 Il componente denominato ABPS Client Proxy viene eseguito sul sistema
 del MN e si occupa di rispettare i vincoli di QoS monitorando i
