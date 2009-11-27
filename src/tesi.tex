@@ -1012,8 +1012,8 @@ ritrasmissione in tempi utili.
 \section{Gestione della qualità del servizio}
 
 Il cuore della gestione della qualità del servizio di ABPS è il
-meccanismo Robust Wireless Multi--Path Channel, raffigurato nella
-figura \ref{fig:abps:rwmpc}. RWMPC è essenzialmente uno strato
+meccanismo Robust Wireless Multi--Path Channel (RWMPC), raffigurato
+nella figura \ref{fig:abps:rwmpc}. RWMPC è essenzialmente uno strato
 middleware che viene implementato negli host agli estremi di una
 comunicazione VoIP. La versione sperimentale di RWMPC è stata
 sviluppata nel kernel Linux 2.6.27.4, su una distribuzione Gentoo. I
@@ -1050,21 +1050,16 @@ stack di protocollo del MN, operando nei livelli data link, rete e
 transporto. Responsabilità principale di TED è monitorare l'invio di
 ogni pacchetto e notificare UDP Load Balancer dell'esito di ogni
 trasmissione. Per svolgere questo proprio compito TED si basa sul
-meccanismo di ACK definito dal protocollo 802.11. A differenza di
-MONA, TED non conta il numero di ritrasmissioni di cui ogni frame
-necessita per essere inviato correttamente, ma si limita a notificare
-se l'invio sia riuscito o meno, osservando la ricezione delle frame di
-ACK inviate dall'access point da parte dei firmware delle singole
-schede wireless.
-
-Inoltre TED implementa una nuova system call, denominata
-\emph{sendmsg\_getID}, che invia il datagram agli stati trasporto,
-rete e data link, ritornando un identificativo univoco per il
-pacchetto appena inviato. Questo identificativo viene utilizzato da
-TED nella notifica di invio, ovvero in un messaggio che comunica al
-middleware se il frame in questione è stato ricevuto con successo
-dall'access point o se invece è stato scartato dal livello MAC a causa
-del superamento del numero massimo di ritrasmissioni L2.
+meccanismo di ACK definito dal protocollo 802.11: ogni volta che
+un'interfaccia wireless invia un frame, attende un frame di conferma
+di avvenuta ricezione dall'access point. Se il frame inviato o quello
+di conferma sono stati persi, l'interfaccia ha a disposizione dai
+quattro ai sette tentativi per inviare nuovamente il frame e ricevere
+conferma. Esauriti i tentativi, il frame è considerato perso e lo
+strato MAC lo scarta silenziosamente. Con TED la ricezione dell'ACK e
+la perdita del frame non sono più silenziosi ma vengono comunicati
+agli strati superiori, che possono così essere informati delle
+condizioni del collegamento wireless.
 
 \subsection{UDP Load Balancer}
 
@@ -1075,18 +1070,31 @@ SIP/RTP. Obiettivo di ULB è trasmettere i pacchetti applicazione
 sull'interfaccia di rete che è giudicata essere la più adatta a
 rispettare i vincoli di QoS. Le notifiche ricevute dal TED informano
 dell'esito di ogni invio di pacchetto, perciò ULB è in grado di
-decidere se ritrasmettere o meno un pacchetto che è stato scartato dal
-livello MAC del MN. Inoltre le notifiche TED costituiscono una metrica
-che permette a ULB di valutare la qualità del collegamento di
-un'interfaccia di rete. Oltre alle notifiche ricevute dallo strato
-data link, che informano dello stato del collegamento al primo
-segmento di rete, ULB può ricevere notifiche ICMP che informano sullo
-stato degli invii dei datagram lungo tutto il percorso.  Una terza
-tipologia di notifica giunge dal componente Monitor, descritto in
-seguito, che comunica a ULB qualsiasi cambiamento nello stato delle
-interfacce di rete. Mediante questi tre tipi di notifiche ULB viene a
-conoscenza dello stato della situazione del MN e dei suoi collegamenti
-wireless e prende decisioni di salvaguradia della QoS.
+decidere se ritrasmettere o meno un datagram che è stato scartato dal
+livello MAC del MN. In base alle notifiche ricevute dal TED, ULB può
+costruire una metrica su cui valutare la qualità del collegamento di
+un'interfaccia di rete.
+
+In aggiunta alle notifiche ricevute dallo strato data link, che
+informano dello stato del collegamento nel primo segmento di rete, ULB
+può ricevere le notifiche ICMP che informano sullo stato degli invii
+dei datagram lungo tutto il percorso. Per esempio, dopo un handover il
+MN si potrebbe ad inviare i dati attraverso una rete che per topologia
+o politiche di accesso non permette al traffico di giungere fino al
+CN. In questo caso, il link wireless potrebbe essere in condizioni
+ottime, ma la rete non dovrebbe comunque essere utilizzata. Se i
+messaggi ICMP non vengono bloccati, una notifica di tipo Destination
+Unreachable permetterebbe a ULB di venire a conoscenza del problema,
+mettendolo in condizione di agire in maniera correttiva (ad esempio
+selezionando un'altra interfaccia per l'invio dei dati).
+
+ULB riceve una terza tipologia di notifica dal componente Monitor,
+descritto in seguito, che comunica a ULB qualsiasi cambiamento nello
+stato delle interfacce di rete.
+
+Mediante questi tre tipi di notifiche ULB viene a conoscenza dello
+stato della situazione del MN e dei suoi collegamenti wireless e
+prende decisioni di salvaguradia della QoS.
 
 \subsection{Monitor}
 
@@ -1097,18 +1105,19 @@ stato a ULB.
 Normalmente le reti wireless forniscono un servizio DHCP che assegna
 un indirizzo IP alle interfacce appena associate. Nei sistemi Linux
 uno dei software disponibili per la gestione delle schede di rete
-senza fili dei sistemi client è \emph{wpa--supplicant}; su di esso è
-basato Monitor, che sfrutta le funzionalità esistenti e ne definisce
-di nuove. Monitor eredita la gestione della sicurezza delle reti
-wireless, ad esempio WEP e WPA, la scansione dei canali per la ricerca
-di un access point disponibile e l'associazione con l'access
-point. Una modifica introdotta da Monitor impedisce che due interfacce
-si associno allo stesso access point, perché verrebbero a mancare
-tutti i vantaggi del multihoming. Completata l'associazione con un
-access point, Monitor utilizza un client DHCP per configurare
-l'indirizzo IP e l'instradamento verso il gateway fornito. Quando la
-NIC è configurata, Monitor invia una notifica di riconfigurazione
-(denominata ``Reconfiguration Notification'' in figura
+senza fili dei sistemi client è \emph{wpa\_supplicant}
+\cite{bib:wpa_supplicant}; su di esso è basato Monitor, che sfrutta le
+funzionalità esistenti e ne definisce di nuove. Monitor eredita la
+gestione della sicurezza delle reti wireless, ad esempio WEP e WPA, la
+scansione dei canali per la ricerca di un access point disponibile e
+l'associazione con l'access point. Una modifica introdotta da Monitor
+impedisce che due interfacce si associno allo stesso access point,
+perché verrebbero a mancare tutti i vantaggi del
+multihoming. Completata l'associazione con un access point, Monitor
+utilizza un client DHCP per configurare l'indirizzo IP e
+l'instradamento verso il gateway fornito. Quando la NIC è configurata,
+Monitor invia una notifica di riconfigurazione (denominata
+``Reconfiguration Notification'' in figura
 \ref{fig:abps:rwmpc-funzionamento}). Quando l'interfaccia wireless
 perde il segnale con l'access point, Monitor esegue il processo
 inverso, cancellando l'associazione, rimuovendo le informazioni di
@@ -1329,6 +1338,9 @@ Propone scenari di test?
   Journal of Communications, accepted for publication.
 \bibitem{bib:abc} E. Gustafsson et al., ``Always Best Connected'',
   IEEE Comm. Mag., vol. 10, no. 1, Feb 2003, pp. 49--55.
-\bibitem{bib:ns-2} VINT Network Simulator 2, http://nsnam.isi.edu/nsnam/, ottobre 2009
+\bibitem{bib:ns-2} VINT Network Simulator 2,
+  http://nsnam.isi.edu/nsnam/, ottobre 2009
+\bibitem{bib:wpa_supplicant} wpa\_supplicant
+  http://hostap.epitest.fi/wpa\_supplicant/, novembre 2009.
 \end{thebibliography}
 \end{document}
