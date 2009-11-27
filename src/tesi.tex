@@ -1118,39 +1118,53 @@ utilizza un client DHCP per configurare l'indirizzo IP e
 l'instradamento verso il gateway fornito. Quando la NIC è configurata,
 Monitor invia una notifica di riconfigurazione (denominata
 ``Reconfiguration Notification'' in figura
-\ref{fig:abps:rwmpc-funzionamento}). Quando l'interfaccia wireless
-perde il segnale con l'access point, Monitor esegue il processo
-inverso, cancellando l'associazione, rimuovendo le informazioni di
-routing dell'interaccia e informando ULB con una nuova notifica di
-riconfigurazione.
+\ref{fig:abps:rwmpc-funzionamento}) al processo ULB.
+
+Quando l'interfaccia wireless perde il segnale con l'access point,
+Monitor esegue il processo inverso: mediante wpa\_supplicant anulla
+l'associazione con l'access poit, rimuove le informazioni di routing
+dell'interaccia dalla tabella di routing del MN e invia al processo
+ULB una nuova notifica di riconfigurazione che specifica quale
+interfaccia è stata disattivata in modo che ULB possa chiudere il
+socket relativo.
 
 \section{Supporto per la mobilità}
 
-TODO
+La mobilità di un MN e la conseguente capacità di cambiare rete
+wireless di appartenenza in maniera continuativa pongono i problemi di
+identificazione e raggiungibilità esposti nella sezione
+\ref{sec:punti-critici}. Come soluzione ABPS definisce delle
+estensioni per i protocolli SIP ed RTP per mezzo delle quali creare un
+canale virtuale multipercorso che collega il MN a un server proxy
+pubblico. Il canale è detto virtuale e multipercorso perché è il
+realtà un insieme di percorsi di rete che hanno hanno origine ognuno
+da una diversa interfaccia di rete del MN. Ogni percorso attraversa
+inizialmente la rete wireless a cui è associata l'interfaccia di rete,
+per poi raggiungere ABPS Server Proxy seguendo la topologia della rete
+in questione. Il canale virtuale permette di identificare i flussi di
+traffico del MN indipendentemente dalla rete di associazione, e quindi
+dall'indirizzo IP, della scheda di rete in uso, in modo che il
+procedimento di handover non renda irragiungibile il dispositivo
+mobile. I meccanismi del canale virtuale sono stati progettati per
+funzionare entro i limiti di tempo richiesti dai vincoli qualitativi,
+evitando quindi meccanismi intrinsecamente lenti come handshake e
+interrogazioni client/server.
 
-ABPS utilizza il protocollo SIP e ne definisce un'estensione,
-denominata ABPS-SIP. Per illustrare ABPS è quindi necessario trattare
-il protocollo SIP nei punti salienti che riguardano l'architettura in
-esame.
-
-\subsection{Session Initiation Protocol}
-
-Questa sezione presenta quindi una panoramica del protocollo SIP,
-mostrando i ruoli degli host, la gestione della sessione e alcuni
-limiti dovuti alla presenza di firewall e NAT. Successivamente verrà
-mostrato come ABPS estende il protocollo SIP per superare questi
-limiti e i dettagli della soluzione.
-
-\subsubsection{Panoramica}
+\subsection{Limiti del protocollo SIP}
 
 Il protocollo SIP è utilizzato per creare il contesto di una
 comunicazione tra due o più entità di rete. Per mezzo di SIP due host
 possono venire a conoscenza l'uno dell'altro (ovvero conoscere i
 rispettivi indirizzi IP) e accordarsi sui parametri della sessione di
 comunicazione, dopo di che il trasferimento dati avviene in modo
-diretto, secondo le modalità concordate.
-
-\subsubsection{Agenti SIP}
+diretto, secondo le modalità concordate. In questo approccio esistono
+due problemi: 1) l'instaurazione della sessione è un meccanismo che
+richiede un quantitativo di tempo che può essere accettabile
+all'inizio della conversazione VoIP ma che risulta deleterio quando
+deve essere effettuato nuovamente durante un handover; 2) la necessità
+che i sistemi in comunicazione siano mutuamente raggiungibili in modo
+diretto rende impossibile la comunicazione in reti che impiegano
+tecnologie di controllo del traffico come firewall e NAT.
 
 Tra i vari ruoli che SIP prevede per gli host in gioco, la trattazione
 di ABPS richiede di illustrare gli User Agent Client (UAC), gli User
@@ -1168,7 +1182,6 @@ ricevute. Un esempio di UAS è il server che risponde alle richieste di
 registrazione degli utenti (Registrar).
 
 \paragraph{Back-to-back User Agent.}
-
 È definito come un'entità logica che riceve le richieste da un client
 (UAC) e si comporta come se fosse un server (UAS), ma invece di
 rispondere direttamente, inoltra la richiesta a un server (UAS); nel
@@ -1176,8 +1189,6 @@ dialogo con il client si comporta come server, mentre nel dialogo con
 il server si comporta da client. In altre parole, un B2BUA è un
 intermediario tra UAC e UAS: UAC crede che il B2BUA sia l'UAS,
 dall'altra parte l'UAS crede che il B2BUA sia l'UAC.
-
-\subsubsection{Gestione delle sessioni SIP}
 
 In uno scenario VoIP, l'applicazione nel ruolo di UAC utilizza il
 protocollo SIP per inviare al server (UAS) un messaggio REGISTER, per
