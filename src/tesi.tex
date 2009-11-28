@@ -930,9 +930,9 @@ TODO.
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
 \chapter{Always Best Packet Switching}
-TODO: breve presentazione. Esempio: Always Best Packet Switching
-(d'ora in avanti ABPS) è frutto di una ricerca in corso all'Università
-di Bologna, etc. etc.
+
+Always Best Packet Switching è un progetto di ricerca dell'Università
+di Bologna.
 
 Gli obiettivi di ABPS sono: 1) identificare ogni MN in modo univoco in
 ogni momento, a prescindere dalle reti a cui è connesso, 2) permettere
@@ -1136,19 +1136,19 @@ identificazione e raggiungibilità esposti nella sezione
 \ref{sec:punti-critici}. Come soluzione ABPS definisce delle
 estensioni per i protocolli SIP ed RTP per mezzo delle quali creare un
 canale virtuale multipercorso che collega il MN a un server proxy
-pubblico. Il canale è detto virtuale e multipercorso perché è il
-realtà un insieme di percorsi di rete che hanno hanno origine ognuno
-da una diversa interfaccia di rete del MN. Ogni percorso attraversa
-inizialmente la rete wireless a cui è associata l'interfaccia di rete,
-per poi raggiungere ABPS Server Proxy seguendo la topologia della rete
-in questione. Il canale virtuale permette di identificare i flussi di
-traffico del MN indipendentemente dalla rete di associazione, e quindi
-dall'indirizzo IP, della scheda di rete in uso, in modo che il
-procedimento di handover non renda irragiungibile il dispositivo
-mobile. I meccanismi del canale virtuale sono stati progettati per
-funzionare entro i limiti di tempo richiesti dai vincoli qualitativi,
-evitando quindi meccanismi intrinsecamente lenti come handshake e
-interrogazioni client/server.
+pubblico, denominato ABPS Server Proxy. Il canale è detto virtuale e
+multipercorso perché è in realtà un insieme logico di percorsi di rete
+che hanno hanno origine ognuno da una diversa interfaccia di rete del
+MN. Ogni percorso attraversa inizialmente la rete wireless a cui è
+associata l'interfaccia di rete, per poi raggiungere ABPS Server Proxy
+seguendo la topologia della rete. Il canale virtuale permette di
+identificare i flussi di traffico del MN indipendentemente dalla rete
+di associazione, e quindi dall'indirizzo IP, della scheda di rete in
+uso, in modo che il procedimento di handover non renda irragiungibile
+il dispositivo mobile. I meccanismi del canale virtuale sono stati
+progettati per funzionare entro i limiti di tempo richiesti dai
+vincoli qualitativi, evitando quindi meccanismi intrinsecamente lenti
+come handshake e interrogazioni client/server.
 
 \subsection{Limiti del protocollo SIP}
 
@@ -1161,10 +1161,16 @@ diretto, secondo le modalità concordate. In questo approccio esistono
 due problemi: 1) l'instaurazione della sessione è un meccanismo che
 richiede un quantitativo di tempo che può essere accettabile
 all'inizio della conversazione VoIP ma che risulta deleterio quando
-deve essere effettuato nuovamente durante un handover; 2) la necessità
-che i sistemi in comunicazione siano mutuamente raggiungibili in modo
-diretto rende impossibile la comunicazione in reti che impiegano
-tecnologie di controllo del traffico come firewall e NAT.
+deve essere effettuato dopo un handover, in corso di conversazione; 2)
+la necessità che i sistemi in comunicazione siano mutuamente
+raggiungibili in modo diretto rende impossibile il trsferimento dati
+in reti che impiegano tecnologie di controllo del traffico come
+firewall e NAT.
+
+ABPS estende il protocollo SIP, utilizzato per l'istaurazione e il
+mantenimento della sessione, e il protocollo RTP, utilizzato per lo
+scambio di dati tra gli host, aggiungendo caratteristiche che mirano a
+superare detti limiti.
 
 Tra i vari ruoli che SIP prevede per gli host in gioco, la trattazione
 di ABPS richiede di illustrare gli User Agent Client (UAC), gli User
