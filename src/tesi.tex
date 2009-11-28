@@ -243,7 +243,7 @@ ogni soluzione affronti ognuno dei quattro punti chiave.
 Le architetture si possono suddividere in due gruppi: soluzioni
 \emph{single layer} e soluzioni \emph{cross layer}.
 
-\begin{figure}[tb]
+\begin{figure}
   \centering
   \includegraphics[width=10cm]{img/panoramica-soluzioni}
   \caption{\em Panoramica delle soluzioni e loro collocazione ai vari
@@ -447,7 +447,7 @@ associazione è superiore allo strato di rete e non interferisce con lo
 stack di protocolli di dispositivi come router e access point; in
 questo modo MONA può funzionare senza modifiche agli apparati di rete.
 
-\begin{figure}[tb]
+\begin{figure}
 \centering
 \includegraphics[width=\textwidth]{img/mona-association-layer}
 \caption{\em Association layer di MONA}
@@ -562,7 +562,7 @@ un MN che comunica con un CN via VoIP attraverso una rete 802.11b in
 modalità infrastruttura. Entrambi i due host inviano pacchetti di 200
 byte ad un intervallo di 20ms.
 
-\begin{figure}[tb]
+\begin{figure}
 \centering
 \includegraphics[width=\textwidth]{img/mona-distance-signal-strength-simulation}
 \caption{\em Relazione tra distanza MN--AP e numero di ritrasmissioni e
@@ -604,7 +604,7 @@ numero minore o uguale a dieci il numero di ritrasmissioni è prossimo
 allo zero, mentre negli scenari in cui i MN sono undici o più il
 numero di ritrasmissioni diventa via via sempre più considerevole.
 
-\begin{figure}[tb]
+\begin{figure}
 \centering
 \includegraphics[width=\textwidth]{img/mona-collision-simulation}
 \caption{\em Percentuale di pacchetti che vengono ritrasmessi in relazione
@@ -640,7 +640,7 @@ che appartiene al componente aggiuntivo definito da MONA come Handover
 Manager (HM). Questo componente viene implementato nello strato di
 trasporto e utilizza le informazioni provenienti dal livello MAC.
 
-\begin{figure}[tb]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{img/mona-sp-mp}
   \caption{\em Diagrammi di flusso che descrivono gli algoritmi usati da
@@ -752,7 +752,7 @@ ms e la percentuale di pacchetti persi sotto il l'1\%.
 Gli esperimenti sono stati condotti sul modello schematizzato in
 figura \ref{fig:mona:qos-sim-model}
 
-\begin{figure}[tb]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{img/mona-qos-sim-model}
   \caption{\em Modello per la simulazione in NS2.}
@@ -848,7 +848,7 @@ permettano di soddisfare al meglio i requisiti di QoS della tabella
 termini di carico di rete ed è necessario trovare un compromesso tra
 qualità e utilizzo del medium.
 
-\begin{figure}[tb]
+\begin{figure}
   \centering
   \includegraphics[width=10cm]{img/mona-sim-network-load}
   \caption{\em Analisi del traffico di rete durante l'handover}
@@ -902,7 +902,7 @@ valore migliore di MPT selezionato dalle prove precedenti è tre,
 quindi l'utilizzo di MONA dovrebbe migliorare anche gli effetti sul
 jitter.
 
-\begin{figure}[tb]
+\begin{figure}
   \centering
   \includegraphics[width=10cm]{img/mona-sim-queue-length}
   \caption{\em Distribuzione cumulativa della lunghezza della coda di
@@ -970,7 +970,7 @@ diversi punti della rete per offrire i servizio di QoS, sicurezza e
 mobilità. La figura \ref{fig:abps:arch} mostra una panoramica
 dell'architettura.
 
-\begin{figure}[tb]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{img/abps-arch}
   \caption{\em Architettura di ABPS}
@@ -1004,10 +1004,43 @@ un rappresentante pubblico e dall'indirizzo IP fisso. Inoltre il
 canale virtuale multipercorso offre servizi di identificazione dei MN
 e di sicurezza dei flussi di traffico.
 
-La sezione successiva illustrerà la gestione della qualità del
-servizio in ABPS--CP, descrivendo come il meccanismo Robust Wireless
-Multi--Path Channel (RWMPC) individui i pacchetti persi e permetta la
-ritrasmissione in tempi utili.
+Caratteristica peculiare del funzionamento di ULB è che la scelta
+dell'interfaccia più adatta viene effettuata pacchetto per
+pacchetto. Questo è diverso da ciò che accade per esempio in MONA,
+dove l'interfaccia viene selezionata solo quando offre garanzie di
+qualità in maniera stabile e viene utilizzata in modo esclusivo fino a
+che la qualità di servizio rimane accettabile; in ABPS un pacchetto
+può essere inoltrato attraverso un'interfaccia, il pacchetto
+successivo su un'altra e quello successivo su di un'altra ancora.
+
+Dalla selezione dell'interfaccia effettuata pacchetto per pacchetto
+nasce la possibilità di applicare politiche di instradamento
+personalizzate per flusso. Per esempio, un flusso di traffico che
+richieda una bassa latenza e poca banda potrebbe essere instradato su
+un'interfaccia connessa a una rete con tariffa a volume di
+traffico. Al traffico di una conversazione informale potrebbe invece
+essere negato l'accesso ad ogni interfaccia connessa alle reti a
+pagamento, permettendo l'instradamento esclusivamente sulle reti ad
+accesso gratuito.
+
+La possibilità di specificare politiche in termini di vincoli di
+banda, latenza e costo economico è una caratteristica che ABPS
+supporta mediante il concetto di canale virtuale. L'idea è che
+ABPS--CP possa offrire numerosi socket all'applicazione SIP, ognuno
+con una semantica di qualità di servizio diversa. In questo modo le
+applicazioni possono essere collegate al socket che offre il servizio
+desiderato. In altre parole, ad ogni socket viene associato un diverso
+algoritmo di manutenzione della qualità di servizio, permettendo
+all'applicazione e all'utente di decidere quale algoritmo debba essere
+utilizzato semplicemente specificando il socket appropriato.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{img/rwma}
+  \caption{\em Meccanismi RWMPC del MN (a sinistra) e del CN (a
+    destra).}
+  \label{fig:abps:rwmpc}
+\end{figure}
 
 \section{Gestione della qualità del servizio}
 
@@ -1028,15 +1061,7 @@ le interfacce del MN quando si attivano e si disattivano per
 notificare ULB delle interfacce wireless disponibili. Le sezioni
 successive analizzeranno il funzionamento dei componenti in dettaglio.
 
-\begin{figure}[tb]
-  \centering
-  \includegraphics[width=\textwidth]{img/rwma}
-  \caption{\em Meccanismi RWMPC del MN (a sinistra) e del CN (a
-    destra).}
-  \label{fig:abps:rwmpc}
-\end{figure}
-
-\begin{figure}[tb]
+\begin{figure}
   \centering
   \includegraphics[width=\textwidth]{img/abps-rwmpc-funzionamento}
   \caption{\em Dettaglio dei componenti di RWMPC}
@@ -1121,12 +1146,16 @@ Monitor invia una notifica di riconfigurazione (denominata
 \ref{fig:abps:rwmpc-funzionamento}) al processo ULB.
 
 Quando l'interfaccia wireless perde il segnale con l'access point,
-Monitor esegue il processo inverso: mediante wpa\_supplicant anulla
-l'associazione con l'access poit, rimuove le informazioni di routing
+Monitor esegue il processo inverso: mediante wpa\_supplicant annulla
+l'associazione con l'access point, rimuove le informazioni di routing
 dell'interaccia dalla tabella di routing del MN e invia al processo
 ULB una nuova notifica di riconfigurazione che specifica quale
 interfaccia è stata disattivata in modo che ULB possa chiudere il
 socket relativo.
+
+\subsection{Selezione dell'interfaccia di invio}
+
+TODO (working, suspected, disabled)
 
 \section{Supporto per la mobilità}
 
@@ -1236,92 +1265,137 @@ di concordare le caratteristiche della comunicazione. Poiché il
 traffico di dati avviene in maniera diretta tra i due host, meccanismi
 come NAT e firewall sono impedimenti alla comunicazione perché non
 permettono a un host di essere direttamente raggiungibile dalla
-controparte. Nel contesto delle reti ubique, firewall e NAT sono
-verosimilmente di proprietà dell'organizzazione che offre la
-connettività, per cui l'utente non ha possibilità di ricorrere alle
-soluzioni di port-forwarding che sono disponibili in contesti Small
-Office/Home Office. Un client che non è in grado di essere
-direttamente raggiungibile su Internet può utilizzare servizi come
-Traversal Using Relay NAT (TURN) e Session Traversal Utilities for NAT
-(STUN). Purtroppo STUN richiede un certo tempo per funzionare, mentre
-TURN è un vero e proprio collo di bottiglia, quindi entrambi i metodi
-non sono compatibili con la necessità di effettuare handover in tempi
-estremamente brevi.
+controparte.
+
+Nel contesto delle reti ubique, firewall e NAT sono verosimilmente di
+proprietà dell'organizzazione che offre la connettività, per cui
+l'utente non ha possibilità di ricorrere alle soluzioni di
+port-forwarding che sono disponibili in contesti Small Office/Home
+Office.
+
+Un client che non sia in grado di essere direttamente raggiungibile su
+Internet può utilizzare servizi come Traversal Using Relay NAT (TURN)
+e Session Traversal Utilities for NAT (STUN).
+
+STUN prevede che un server esterno, pubblicamente raggiungibile su
+Internet, tenti diversi metodi per attraversare il NAT dietro al quale
+si trova l'host che richiede connettività e, nel caso un metodo si
+riveli efficace, la comunicazione può avvenire direttamente tra i due
+host. L'algoritmo non è sempre efficace, in particolare non è in grado
+di attraversare firewall simmetrici, e soprattutto richiede un certo
+tempo per essere eseguito. Nel contesto delle reti ubique questo
+metodo dovrebbe essere eseguito ad ogni handover, che nel caso di ABPS
+avviene pacchetto per pacchetto; come conseguenza STUN non è una
+soluzione accettabile perché il ritardo di cui necessita violerebbe i
+vincoli di QoS.
+
+TURN prevede un server esterno che si comporta come un relay, facendo
+da intermediario per l'host schermato dal NAT per tutto il traffico
+della comunicazione. Nello scenario in esame l'host è un dispositivo
+mobile che cambia indirizzo IP in modo imprevedibile e TURN non ha
+supporto per questo tipo di esigenza.
 
 Per aggirare questi problemi di raggiungibilità tra gli host, ABPS
-impiega un B2BUA modificato, raggiungibile pubblicamente su Internet,
-che nasconde l'indirizzo IP del MN. Grazie a questo B2BUA, i MN
-possono essere rappresentati da un host pubblicamente raggiungibile su
-Internet, quindi evitando in maniera semplice e sicura i problemi di
-NAT e firewall.
-
-\subsubsection{Proxy pubblico per MN}
-TODO: da riscrivere
-
-Normalmente le applicazioni si affidano alla coppia indirizzo IP e
-porta per identificare in modo univoco l'applicazione remota con cui
-condurre la comunicazione. Se l'applicazione viene eseguita da un host
-che appartiene a una configurazione di rete fissa, le procedure per
-garantire la raggiungibilità dell'host sono normalmente da eseguire
-una volta sola. In un contesto di estrema mobilità invece,
-l'identificazione e la raggiungibilità del MN sono estremamente
-problematiche perché ad ogni handover il dispositivo mobile comunica
-attraverso un indirizzo IP diverso da quello che utilizzava prima del
-cambio di associazione di rete, perdendo così l'identità precedente, e
-si trova ad operare in una rete gestita da un'organizzazione
-potenzialmente differente senza che sia possibile riconfigurare la
-rete per garantire la raggiungibilità dell'host. In ABPS il problema è
-escerbato dal fatto che il MN può decidere di inviare due pacchetti
-consecutivi appartenenti allo stesso flusso attraverso due interfacce
-diverse.
-
-ABPS definisce un servizio, chiamato ABPS--Server, che nasconde la
-mobilità del MN agli altri host. ABPS--Server è un servizio di
-indirizzo noto, raggiungibile da Internet e indipendente da una
-singola rete di accesso.
-
-\subsection{Uso simultaneo di tutte le interfacce dei MN}
-La caratteristica chiave di ABPS è la capacità di instradare ogni
-pacchetto su interfacce potenzialmente differenti, includendo nella
-scelta le caratteristiche del pacchetto stesso. Le altre soluzioni di
-handover invece effettuano la scelta a un livello più alto,
-selezionando l'interfaccia di rete su cui instradare la sessione di
-comunicazione e mantenendo la scelta fino a che il collegamento viene
-giudicato soddisfacente.
-
-Effettuare a scelta a livello di pacchetto permette ad ABPS--client di
-collaborare con ABPS--server per implementare le politiche di
-bilanciamento di traffico e di recupero d'errore al più fine dei
-livelli di granularità possibili.
-
-\subsection{Segnalazioni rapide di sessione}
-L'handover, ovvero la commutazione del collegamento in uso da
-un'interfaccia a un'altra, è un momento estremamente delicato e deve
-essere eseguito in modo trasparente per garantire un'esperienza utente
-soddisfacente. Nelle architetture che selezionano un collegamento e lo
-usano in maniera esclusiva, l'handover è un avvenimento relativamente
-raro perché una volta che il client sceglie un'interfaccia per l'invio
-dei dati, la scelta persiste finché la qualità del collegamento resta
-soddisfacente. L'interfaccia scelta può restare tale per un periodo di
-tempo che varia dall'ordine dei giorni all'ordine dei minuti,
-dipendentemente dal grado di mobilità dell'utente. In ABPS invece le
-interfacce sono continuamente attive e la scelta viene effettuata
-pacchetto per pacchetto; questo significa che la frequenza
-dell'handover si riduce all'ordine dei millisecondi. Con tempi di
-handover così ristretti, ogni soluzione di gestione mediante
-segnalazioni end-to-end non è utilizzabile. In particolare le
-applicazioni del MN non possono affidarsi al meccanismo di re-INVITE
-previsto dal protocollo SIP, a causa del tempo che impiegherebbe ad
-essere completato: detti $D_{MS}$, $D_{SC}$ i delay di comunicazione
-rispettivamente tra MN e ABPS--Server e tra ABPS--Server e CN,
+impiega quindi ABPS Server Proxy, essenzialmente un B2BUA SIP
+modificato per supportare le estensioni SIP--ABPS e RTP--ABPS,
+raggiungibile pubblicamente su Internet, che nasconde l'indirizzo IP
+del MN e funge da intermediario pubblico per tutto il traffico del
+MN. Grazie a questo B2BUA, i MN possono essere rappresentati da un
+host pubblicamente raggiungibile su Internet, quindi evitando in
+maniera semplice e sicura i problemi di NAT e firewall.
 
 \section{Dettagli implementativi}
 
-TODO
+\subsection{ABPS Client Proxy}
+
+ULB manda datagram, serve notifica esito.
+
+TED usa 1) sendmsg\_getID che ritorna l'ID del datagram appena
+spedito; 2) sistema di notifiche che riceve esito dal firmware e lo
+comunica al socket applicazione attraverso error queue (abilitata con
+IP\_RECVERR).
+
+\subsection{ABPS Server Proxy}
+
+\subsubsection{ABPS--SIP}
+
+\subsubsection{ABPS--RTP}
 
 \section{Valutazione sperimentale}
 
-TODO
+Un prototipo del meccanismo RWMPC è stato valutato con un esperimento
+volto a determinare l'effettiva validità dell'algoritmo di
+mantenimento del QoS. In particolare le prove miravano a misurare le
+capacità di reazione di RWMPC ai cambiamenti di stato dei collegamenti
+wireless, controllando che i vincoli di QoS, ovvero massimo 150ms di
+ritardo nella consegna dei pacchetti e massimo 3\% di pacchetti persi,
+non venissero infranti.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{img/abps-simulazione}
+  \caption{\em Scenario della simulazione sperimentale di RWMPC}
+  \label{fig:abps:simulazione}
+\end{figure}
+
+L'esperimento si è svolto in uno scenario reale, raffigurato in figura
+\ref{fig:abps:simulazione}. Un MN esegue il prototipo di RWMPC e si
+muove in un ambiente in cui sono presenti quattro access point (in
+figura AP1, AP2, AP3, AP4 e AP5). Di questi access point, solo AP1 e
+AP2 forniscono connettività per MN, gli altri sono presenti solo per
+generare interferenza di segnale. Gli ostacoli vicino agli access
+point 1 e 2 sono posizionati in modo da schermare i segnali in modo
+che non siano sovrapposti: all'inizio del percorso MN è in grado di
+ricevere il segnale di AP1 ma non quello di AP2, mentre alla fine del
+percorso avviene l'opposto. I due access point attivi ricevono
+traffico di 5Mb/s da altri due MN, in modo da simulare la presenza di
+altri dispositivi mobili. Il router a cui gli access point sono
+connessi è stato impostato in modo da instradare i pacchetti che
+riceve dopo una latenza casuale tra i 70 e gli 80 ms. Alla fine del
+percorso c'è il CN fisso, che esegue una copia del prototipo RWMPC.
+
+Il MN si sposta dalla copertura di rete di AP1 verso quella di AP2
+inviando a intervalli di 40 ms dei frame di dimensione 160 B. Allo
+stesso tempo, il CN invia pacchetti verso il MN con gli stessi
+parametri di dimensione e tempo; il traffico simulato mira a ricreare
+il carico di rete tipico di una conversazione VoIP bidirezionale a
+32Kbps senza soppressione del silenzio. Durante lo spostamento del MN
+la forza del segnale di AP1 e AP2 si inverte come da figura
+\ref{fig:abps:delay-mn}. Come si può vedere, vicino ai 50 metri la
+forza di segnale dei due AP si inverte, segnando il punto più critico
+del percorso del MN.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{img/abps-delay-mn}
+  \caption{\em Grafico del ritardo di ogni pacchetto ricevuto dal MN}
+  \label{fig:abps:delay-mn}
+\end{figure}
+
+Le misurazioni effettuate sono mostrate nei grafici delle figure
+\ref{fig:abps:delay-mn} e \ref{fig:abps-delay-cn}. In questi grafici,
+ogni barra è il tempo impiegato dal pacchetto e una barra mancante
+significa che il pacchetto non è stato ricevuto dall'host
+corrispondente, perché si è perso durante il percorso e il meccanismo
+RWMPC del CN non ritrasmette i pacchetti persi. Il grafico di figura
+\ref{fig:abps:delay-mn} mostra il tempo che ogni pacchetto inviato dal
+CN ha impiegato per giungere fino al MN; si può vedere che tutti i
+pacchetti sono arrivati entro i 150 ms di limite e che solo una decina
+di pacchetti, contro un totale superiore a mille, non sono giunti a
+destinazione. Il grafico di figura \ref{fig:abps:delay-cn} mostra
+invece il ritardo con cui il CN ha ricevuto i pacchetti inviati dal
+MN; il meccanismo RWMPC del MN utilizza TED per rilevare gli errori di
+invio delle interfacce wireless e rispedisce i pacchetti che sono
+stati scartati dallo strato MAC, quindi tutti i datagram arrivano al
+CN. Di questi, solo tre giungono oltre il limite massimo di 150 ms, e
+sono da considerarsi persi perché in violazione dei limiti di QoS.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{img/abps-delay-cn}
+  \caption{\em Grafico del ritardo di ogni pacchetto ricevuto dal CN}
+  \label{fig:abps:delay-cn}
+\end{figure}
 
 \section{Conclusioni}
 
