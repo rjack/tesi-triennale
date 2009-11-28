@@ -36,8 +36,7 @@
   \thispagestyle{empty}
   \topmargin=6.5cm
   \raggedleft
-  \large
-  %\em A Chiara
+  \large \em A Chiara
   \newpage
   % Non numera l'ultima pagina a sinistra.
   \clearpage{\pagestyle{empty}\cleardoublepage}
@@ -393,8 +392,11 @@ Vantaggi delle due soluzioni rispetto a quelle single layer.
 
 \chapter{Media Optimization Network Architecture}
 
-Media Optimization Network Architecture (MONA) è un progetto
-di... TODO
+Media Optimization Network Architecture (MONA) è un progetto di un
+gruppo di ricercatori giapponesi appartenenti all'Institurte of
+Information and Communication Technology, Nara Institute of Science
+and Technology, Kyushu Institute of Technology e Tokio Institute of
+Technology.
 
 In previsione dello sviluppo delle reti ubique, MONA affronta i
 problemi descritti nella sezione \ref{sec:punti-critici} con un
@@ -1155,7 +1157,80 @@ socket relativo.
 
 \subsection{Selezione dell'interfaccia di invio}
 
-TODO (working, suspected, disabled)
+L'algoritmo chiave per la gestione della qualità del servizio risiede
+nel componente ULB, che ha la responsabilità di decidere per ogni
+pacchetto ricevuto dall'applicazione quale sia l'interfaccia di rete
+più adatta al suo invio.
+
+La selezione dell'interfaccia di invio costituisce un problema
+complicato perché richiede di valutare le varie interfacce secondo un
+numero molto alto di parametri, sia lato rete che lato applicazione.
+
+Lato rete ULB deve considerare le metriche di qualità del servizio di
+affidabilità e interattività già viste; basandosi sulle notifiche del
+componente TED, ULB può costruire una classifica di interfacce dalla
+più affidabile alla meno affidabile.
+
+Lato applicazione il problema è più complesso perché le richieste
+possono diventare arbitrariamente complicate. Ad esempio
+un'interfaccia di rete può avere un costo economico legato al volume
+di traffico inviato o al tempo di utilizzo. In questo caso l'utente
+potrebbe preferire che un'interfaccia di questo tipo venisse
+utilizzata solo in caso di estrema necessità, anche se dovesse essere
+l'interfaccia più affidabile; ULB si troverebbe quindi a dover
+scegliere tra due vincoli contraddittori: lato rete l'affidabilità
+dell'interfaccia la renderebbe ideale per l'invio dei pacchetti,
+mentre lato utente il costo economico la renderebbe poco desiderabile
+se non in particolari condizioni di estrema urgenza.
+
+Attualmente l'algoritmo di selezione di ULB si basa esclusivamente
+sulle metriche lato rete. ULB mantiene una lista di datagram da
+inoltrare al CN, ordinati in base all'instante di tempo in cui sono
+stati ricevuti dall'applicazione. Ogni interfaccia di rete ha un
+socket UDP legato ad essa, in modo che ULB possa decidere l'utilizzo
+di una NIC semplicemente selezionando il socket per l'invio del
+datagram. Ogni socket ha uno stato associato, che descrive la
+situazione della relativa interfaccia: \emph{working} significa che
+l'interfaccia è funzionante ed affidabile ed è lo stato iniziale,
+\emph{suspected} significa che l'interfaccia ha avuto un comportamento
+problematico, infine \emph{disabled} se il componente Monitor informa
+ULB che l'interfaccia non è più disponibile.
+
+ULB seleziona un'interfaccia tra quelle in stato \emph{working} e
+invia il datagram in cima alla lista attraverso il socket
+associato. Le notifiche ricevute da TED informano ULB dello stato
+dell'invio e possono scatenare un cambiamento di stato: se
+un'interfaccia \emph{working} riceve una notifica di errore a livello
+MAC, lo stato del socket associato diventa \emph{suspected}. Se invece
+la notifica è di tipo ICMP o una riconfigurazione ricevuta da Monitor,
+l'interfaccia diventa \emph{disabled}. Un'interfaccia in stato
+\emph{suspected} non viene scelta per l'invio dei dati finché è
+presente almeno un'altra interfaccia \emph{working}; in caso contrario
+può essere scelta e se l'invio va a buon fine oppure se riceve un
+datagram dal CN, ULB marca il socket associato come nuovamente
+\emph{working}.
+
+Per supplire alle mancanze di alcuni firmware di schede wireless che
+non sono in grado di notificare che un frame è stato scartato dal MAC
+layer, ULB mantiene un timeout di 30 ms ad ogni invio di frame. Se
+entro questi 30 ms ULB non riceve notifiche da TED riguardo il
+datagram appena inviato, ULB assume che il frame sia stato scartato e
+marca il socket utilizzato come \emph{suspected}.
+
+Il supporto per le politiche lato applicazione è in fase di studio e
+prevede che ULB metta a disposizione delle applicazioni più coppie di
+porte SIP/RTP, associando ad ogni coppia un algoritmo diverso di
+selezione dell'interfaccia di invio. Ad esempio una coppia di porte
+potrebbe essere utilizzata dalle applicazioni VoIP, che richiedono
+alta interattività, bassa latenza e scarsa disponibilità di banda e
+tutti i dati inviati attraverso quelle porte verrebbero trattati da un
+algoritmo adatto a questi requisiti; un'altra coppia di porte potrebbe
+invece essere utilizzata dalle applicazioni Video--on--Demand (VoD)
+che al contrario necessitano di un buon quantitativo di banda e di un
+differente algoritmo di QoS che si occupi di bilanciare il carico di
+rete piuttosto che di rilevare gli errori. Utilizzando questa
+soluzione si potrebbero implementare politiche lato utente e
+applicazione senza richiedere modifiche ai software esistenti.
 
 \section{Supporto per la mobilità}
 
@@ -1447,4 +1522,17 @@ Propone scenari di test?
   WPA2, RSN, IEEE 802.11i), http://hostap.epitest.fi/wpa\_supplicant/,
   novembre 2009.
 \end{thebibliography}
+
+\clearpage{\pagestyle{empty}\cleardoublepage}
+
+\chapter*{Ringraziamenti}
+\thispagestyle{empty}
+Grazie a Chiara per l'amore e la pazienza, ma soprattutto per l'amore
+e la pazienza.
+
+Grazie a Manuela, Claudio, Chiara, Tatiana e Michela.
+
+Grazie alla mia famiglia che mi ha mantenuto e pagato gli studi.
+
+Grazie al Dott. Vittorio Ghini per la disponibilità e la gentilezza.
 \end{document}
