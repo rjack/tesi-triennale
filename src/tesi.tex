@@ -1463,11 +1463,82 @@ Ricevuta una notifica di invio fallito, ULB decide se il pacchetto è
 in tempo utile per essere ritrasmesso e seleziona un'interfaccia di
 inoltro come specificato nella sezione \ref{abps:scelta-nic}.
 
-\subsection{Estensioni ai protocolli SIP e RTP}
+\subsection{Estensioni per i protocolli SIP e RTP}
+
+Nell'architettura ABPS il supporto alla mobilità del MN viene fornito
+dal canale virtuale multipercorso instaurato tra ABPS Client Proxy e
+ABPS Server Proxy. Questa astrazione viene realizzata mediante
+estensioni ai protocolli SIP e RTP, chiamate rispettivamente ABPS--SIP
+e ABPS--RTP, che permettono di garantire l'integrità e
+l'autenticazione di ogni pacchetto scambiato tra ABPS--CP e
+ABPS--SP. Inoltre ABPS--RTP permette di evitare il meccanismo di
+re--INVITE necessario al protocollo SIP tradizionale, in modo che i
+pacchetti di un flusso di comunicazione possano essere trasmessi
+indifferentemente dalle varie interfacce del MN.
 
 \subsubsection{ABPS--SIP}
 
+Il protocollo SIP viene utilizzato per instaurare e mantenere una
+sessione di comunicazione, pertanto i messaggi SIP scambiati tra
+ABPS--CP e ABPS--SP sono relativamente rari rispetto al numero di
+pacchetti RTP. La necessità che il protocollo ABPS--SIP deve
+soddisfare è quella dell'autenticazione e dell'integrità dei
+messaggi.
+
+Poiché non è possibile affidarsi alla coppia indirizzo IP e porta per
+identificare il MN, ABPS--SIP risolve il problema dell'autenticazione
+mediante crittografia, richiedendo che una \emph{pre-shared key} venga
+scambiata tra ABPS--SP e ABPS--CP. Questa chiave crittografica deve
+essere impostata nel client prima di ogni comunicazione con il server;
+per esempio si può immaginare che lo scambio avvenga via posta
+elettronica al termine dell'iscrizione al servizio e che la chiave
+venga impostata in ABPS--CP nella fase di setup iniziale.
+
+La pre-shared key viene utilizzata per generare una chiave temporanea
+di sessione, che verrà effettivamente utilizzata durante lo scambio
+dei dati. ABPS--CP aggiunge ad ogni pacchetto SIP un header di 36 byte
+in cui inserisce l'identificativo del mittente, un numero di sequenza
+e un fingerprint calcolato mediante la chiave di sessione. Il
+fingerprint viene generato sulla base del messaggio SIP, header
+aggiuntivo compreso, escluso il fingerprint stesso. ABPS--SP utilizza
+questo fingerprint per verificare l'integrità di ogni messaggio SIP
+ricevuto; nel contempo, mediante l'header aggiuntivo, può identificare
+il mittente del messaggio a prescindere dall'indirizzo IP da cui
+proviene. Il numero di sequenza è una precauzione di sicurezza per
+evitare i cosidetti \emph{replay attack}.
+
 \subsubsection{ABPS--RTP}
+
+La necessità primaria del traffico RTP tra ABPS--CP e ABPS--SP è la
+possibilità di essere indipendente dall'indirizzo di spedizione. In
+altre parole, ABPS--SP deve essere in grado di riconoscere che due
+pacchetti RTP provenienti da due coppie indirizzo IP e porta
+differenti sono in realtà appartenenti allo stesso flusso di
+comunicazione. Questo permette all'architettura ABPS di eliminare il
+meccanismo di re--INVITE tipico di SIP, la cui lentezza di esecuzione
+violerebbe i requisiti di QoS.
+
+Per identificare i pacchetti RTP appartenenti allo stesso flusso di
+traffico, ABPS--RTP utilizza un'estensione standard di RTP nota come
+Secure Real Time Protocol (SRTP) \cite{bib:srtp}. SRTP aggiunge un
+header di 4 byte ad ogni pacchetto RTP, inserendo un'identificativo di
+autenticazione che viene generato uguale per tutto il flusso di
+comunicazione; ogni flusso di comunicazione ha quindi un
+identificativo diverso e i pacchetti appartenenti ai vari flussi
+possono essere facilmente riconosciuti da ABPS--SP. L'identificativo
+viene generato utilizzando una chiave crittografica specifica per quel
+solo flusso di traffico, per cui all'inizio di ogni instaurazione di
+comunicazione è necessario una fase di accordo in cui ABPS--CP e
+ABPS--SP decidono quale chiave utilizzare.
+
+Poiché SRTP non specifica un algoritmo crittografico, la scelta è
+ricaduta su ZRTP \cite{bib:zrtp}, particolarmente efficiente. Durante
+l'instaurazione della sessione di comunicazione, viene inviato il
+messaggio SIP di INVITE; ZRTP calcola l'identificativo del flusso RTP
+in instaurazione e lo inserisce nel campo SDP del messaggio di
+INVITE. Poiché il messaggio di INVITE viene inviato utilizzando il
+protocollo ABPS--SIP, non è possibile per un attaccante manipolare il
+messaggio per sostituire l'identificativo del flusso di dati RTP.
 
 \section{Valutazione sperimentale}
 
@@ -1561,7 +1632,6 @@ Propone scenari di test?
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
 
-
 \begin{thebibliography}{90}
 \rhead[\fancyplain{}{\bfseries \leftmark}]{\fancyplain{}{\bfseries
 \thepage}}
@@ -1594,6 +1664,12 @@ Propone scenari di test?
 \bibitem{bib:wpa_supplicant} Linux WPA Supplicant (IEEE 802.1X, WPA,
   WPA2, RSN, IEEE 802.11i), http://hostap.epitest.fi/wpa\_supplicant/,
   novembre 2009.
+\bibitem{bib:srtp} M. Baughter, D. McGrew, M. Naslund, E. Carrara,
+  K. Norrman, ``The Secure Real--Time Transport Protocol (SRTP)'', RFC
+  3711, marzo 2004.
+\bibitem{bib:zrtp} P. Zimmerman et al., ``ZRTP: Media Path Key
+  Agreement for Secure RTP'', Internet Draft,
+  draft-zimmermann-avt-zrtp-16, novembre 2009.
 \end{thebibliography}
 
 \clearpage{\pagestyle{empty}\cleardoublepage}
