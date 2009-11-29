@@ -24,7 +24,7 @@
 \cfoot{}
 
 % Interlinea
-\linespread{1.6}
+\linespread{1.4}
 
 \begin{document}
 
@@ -1156,6 +1156,7 @@ interfaccia è stata disattivata in modo che ULB possa chiudere il
 socket relativo.
 
 \subsection{Selezione dell'interfaccia di invio}
+\label{abps:scelta-nic}
 
 L'algoritmo chiave per la gestione della qualità del servizio risiede
 nel componente ULB, che ha la responsabilità di decidere per ogni
@@ -1381,16 +1382,88 @@ maniera semplice e sicura i problemi di NAT e firewall.
 
 \section{Dettagli implementativi}
 
-\subsection{ABPS Client Proxy}
+Il funzionamento di ABPS si basa su tecnologie esistenti per evitare
+problemi di compatibilità e per riutilizzare le risorse già
+disponibili. Questa decisione architetturale mira a promuovere
+l'adozione della tecnologia minimizzando il costo economico iniziale.
 
-ULB manda datagram, serve notifica esito.
+Il prototipo sperimentale di RWMPC è basato sul kernel Linux
+2.6.27.4. È importante notare che dalla versione 2.6.24, il kernel
+implementa uno stack IEEE 802.11 utilizzabile da tutti i driver delle
+schede wireless; in particolare questa implementazione comprende il
+modulo per lo strato MAC, in figura \ref{fig:abps:rwmpc-funzionamento}
+indicato dal riquadro \emph{mac80211}. Questa implementazione separata
+e condivisa dello strato MAC ha permesso l'inserimento dei meccanismi
+TED in un solo punto del kernel Linux, permettendo a tutte le
+interfacce di rete che utilizzano lo stack IEEE 802.11 di beneficiarne
+automaticamente. In altre parole l'implementazione di TED, e quindi di
+RWMPC, è indipendente dall'hardware e quindi compatibile con tutte le
+schede WiFi i cui driver utilizzino il sottosistema IEEE 802.11
+implementato nel kernel Linux e modificato per RWMPC.
 
-TED usa 1) sendmsg\_getID che ritorna l'ID del datagram appena
-spedito; 2) sistema di notifiche che riceve esito dal firmware e lo
-comunica al socket applicazione attraverso error queue (abilitata con
-IP\_RECVERR).
+L'unico componente dipendente dal modello delle schede di rete
+utilizzate è il firmware dell'interfaccia. Il firmware è responsabile
+della notifica al livello MAC del successo e del fallimento dell'invio
+di ogni pacchetto; il meccanismo TED presente nel livello MAC è invece
+responsabile della propagazione della notifica verso i livelli
+superiori. Alcuni modelli di scheda di rete hanno un firmware che non
+notifica i fallimenti di invio, ovvero che scarta silenzisamente i
+pacchetti che superano il numero massimo di ritrasmissioni L2. Con
+queste interfacce ULB non può ricevere notifica dei pacchetti persi e
+deve implementare un timeout di controllo che consideri persi i
+pacchetti di cui non riceve notifica entro un certo numero di
+millisecondi (30 ms nel prototipo).
 
-\subsection{ABPS Server Proxy}
+\subsection{ABPS Client Proxy: notifica degli errori}
+
+Il meccanismo di notifica degli errori è una parte fondamentale
+dell'architettura ABPS, perché permette di costruire le metriche su
+cui valutare la qualità dei singoli collegamenti wireless.
+
+In RWMPC l'idea alla base della gestione della qualità è la
+ritrasmissione in tempo utile dei pacchetti persi nel tratto di rete
+wireless. La ritrasmissione di un pacchetto deve avvenire a livello
+applicazione per permettere la selezione di un'interfaccia wireless
+differente da quella utilizzata per il primo invio. Per raggiungere
+questo obiettivo sono necessari un sistema di notifica cross layer che
+rilevi gli errori a basso livello e comunichi l'accaduto ai livelli
+superiori e un sistema di identificazione dei pacchetti che permetta
+all'applicazione di determinare a quale pacchetto si riferisca una
+data notifica.
+
+Il meccanismo di identificazione dei pacchetti è stato sviluppato in
+una nuova chiamata di systema, denominata \emph{sendmsg\_getID}, che
+estende il comportamento della tradizionale \emph{sendmsg} ritornando
+un identificatore temporaneamente univoco per il pacchetto appena
+inviato. L'id generato per ogni pacchetto viene memorizzato nel campo
+ID dell'header IP; tale campo è inutilizzato perché serve a
+identificare i frammenti durante la procedura di frammentazione, che
+nello scenario in esame non viene mai eseguita. Quando un pacchetto
+supera il limite di ritrasmissioni L2, l'id memorizzato nell'header IP
+viene utilizzato per presentare la notifica a ULB.
+
+Utilizzando questa system call ULB è quindi in grado di
+tenere traccia di ogni pacchetto inviato, memorizzandolo in una
+struttura dati da cui recuperarlo in caso di necessità di
+ritrasmissione.
+
+Il sistema di notifica utilizza la coda di messaggi d'errore dei
+socket implementato nel kernel Linux. Questa coda è un buffer di
+messaggi abilitato impostando IP\_RECVERR nelle le opzioni del socket
+mediante la chiamata di sistema \emph{setsockopt}. Il kernel utilizza
+questa coda per inviare all'applicazione le notifiche ICMP e gli
+errori locali; utilizzando la chiamata di sistema \emph{select}, ULB
+può venire a conoscenza di eventuali messaggi presenti nella coda di
+errore di un socket e leggerli mediante una chiamata alla system call
+\emph{read} con l'opzione MSG\_ERRQUEUE. TED utilizza questa struttura
+dati del kernel per accodare i messaggi che notificano ULB dell'esito
+dell'invio di ogni pacchetto.
+
+Ricevuta una notifica di invio fallito, ULB decide se il pacchetto è
+in tempo utile per essere ritrasmesso e seleziona un'interfaccia di
+inoltro come specificato nella sezione \ref{abps:scelta-nic}.
+
+\subsection{Estensioni ai protocolli SIP e RTP}
 
 \subsubsection{ABPS--SIP}
 
