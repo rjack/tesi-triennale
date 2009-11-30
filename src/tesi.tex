@@ -291,19 +291,49 @@ fallback che garantiscano l'interoperabilità.
 
 \chapter{Panoramica delle soluzioni}
 \lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
-L'obiettivo è di permettere a un MN di muoversi attraverso reti
-wireless di natura eterogenea in maniera trasparente, ovvero senza
-interrompere eventuali connessioni attive durante la transizione da
-una rete all'altra. Perché questo sia possibile è necessario che ogni
-MN sia a) univocamente identificato e b) universalmente raggiungibile
-dagli altri nodi, in qualunque rete si trovi. Inoltre ogni MN dovrebbe
-c) monitorare la qualità di ogni connessione wireless per poter
-individuare la rete che offre le migliori garanzie di servizio e d)
-eseguire un cambio di associazione trasparente per assicurare una
-transizione senza interruzioni da una rete all'altra.
 
-Le architetture si possono suddividere in due gruppi: soluzioni
-\emph{single layer} e soluzioni \emph{cross layer}.
+Svariati protocolli si propongono come soluzione delle problematiche
+esposte nella sezione \ref{sec:punti-critici}, tuttavia nessuno riesce
+a soddisfare tutte le esigenze esposte.
+
+Le soluzioni si possono suddividere in due gruppi: soluzioni
+\emph{single layer} e soluzioni \emph{cross layer}. Le soluzioni
+single layer sono ben localizzate in un livello dello stack di
+protocolli ISO/OSI e il loro campo di azione è circoscritto al loro
+strato. Le soluzioni cross layer al contrario utilizzano meccanismi
+che rompono la separazione esistente tra i livelli dello stack,
+permettendo che informazioni collezionate agli strati inferiori
+vengano messe a disposizione degli stati superiori.
+
+Le soluzioni single player complessivamente coprono i principali
+strati dello stack ISO/OSI: Mobile IPv6 \cite{bib:mipv6} agisce a
+livello \emph{network}, Host Identity Protocol \cite{bib:hip}
+definisce un livello aggiuntivo tra \emph{network} e \emph{transport},
+Datagram Congestion Control Protocol \cite{bib:dccp} e Mobile Stream
+Control Transport Protocol \cite{bib:m-sctp} lavorano a livello
+\emph{transport}, infine Terminal Mobility Support Protocol
+\cite{bib:tmsp} e MMUSE \cite{bib:mmuse} agiscono a livello
+\emph{session}.
+
+Il principale problema di questi protocolli è che non sono in grado di
+agire sulla qualità del servizio dei collegamenti wireless, mentre il
+primo segmento di rete di uno scenario WLAN è il più critico. Inoltre
+le singole limitazioni li rendono inadatti. HIP per esempio richiede
+che entrambi gli host di una comunicazione implementino uno strato di
+protocollo aggiuntivo tra lo strato di rete e quello di transporto,
+rendendo impossibile un'adozione graduale della soluzione. Inoltre,
+utilizzando la crittografia per disaccoppiare l'identità del MN dal
+suo indirizzo IP fisico, HIP non funziona con la maggior parte dei
+NAT, perché modificando i campi degli indirizzi negli header dei
+pacchetti si rompe l'integrità delle firme crittografiche.
+
+\begin{figure}
+  \centering
+  \includegraphics[width=10cm]{img/panoramica-soluzioni}
+  \caption{\em Panoramica delle soluzioni e loro collocazione ai vari
+    livelli dello stack ISO/OSI}
+  \label{fig:panoramica}
+\end{figure}
 
 Come esempio delle soluzioni single layer è stato scelto Mobile IPv6
 perché ben si presta ad illustrare idee e problematiche per un
