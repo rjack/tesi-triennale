@@ -199,6 +199,7 @@ autenticazione di ogni MN che sia indipendente dall'indirizzo IP della
 rete di accesso.
 
 \subsection{Praticità}
+\label{sec:praticita}
 Nello scenario del problema sono coinvolte un gran numero di
 tecnologie hardware e software che devono essere modificate il meno
 possibile per permettere una realizzazione effettiva delle soluzioni
@@ -268,17 +269,54 @@ Transport Protocol \cite{bib:m-sctp} lavorano a livello
 \cite{bib:tmsp} e MMUSE \cite{bib:mmuse} agiscono a livello
 \emph{session}.
 
-\subsection{Mobile IPv6 e Multiple Care-of Addresses Registration}
-* Home Agent nella rete fa da LR\\
-* Host parlano IPv6\\
-* quindi infrastrutture di rete attuali non sono adatte\\
-* no multi homing, perche' il protocollo non lo permette\\
-* handover tribolato\\
-MCoA\\
-* estensione di MIPv6\\
-* permette a MN di registrare più IP address con il suo Home Agent\\
-* FlowMob permette di separare flussi di traffico tra le varie NIC\\
-* stessi problemi di MIPv6: tutte le infrastrutture da cambiare.
+\subsection{Mobile IPv6}
+
+Mobile IPv6 è un protocollo descritto nell'Internet Draft 3775
+``Mobility Support in IPv6'' \cite{bib:mipv6}, che aggiunge il
+supporto per la mobilità di un MN al protocollo IPv6.
+
+MIPv6 ha l'obiettivo di permettere una connettività IP sempre attiva
+anche per i dispositivi mobili che possono cambiare rete di
+appartenenza. L'idea è quindi di permettere il roaming tra reti
+che basate su diverse tecnologie L2, come Ethernet, WiFi, WiMAX,
+etc. e offrire supporto per l'handover attraverso reti e sottoreti
+differenti. Durante gli handover di tipo L2 e L3 MIPv6 permette alle
+applicazioni che utilizzano la rete di continuare a funzionare in modo
+trasparente.
+
+MIPv6 distingue tra la rete originaria del MN (home network) e ogni
+altra rete (foreign network) a cui il MN può associarsi durante i suoi
+spostamenti. Nella home network è presente un router denominato Home
+Agent (HA) che rappresenta il MN mentre questo è connesso a una
+foreign network.
+
+Il meccanismo di rappresentanza prevede due diversi indirizzi
+associati al MN: uno è denominato Home Address (HoA) ed è l'indirizzo
+di rappresentanza; l'altro è il Care-of Address (CoA) ed è l'indirizzo
+fisico che il MN riceve quando connesso ad una foreign network. Quando
+il MN si associa ad una foreign network, alla ricezione del CoA invia
+una notifica al suo HA per stabilire un'associazione tra l'HoA e il
+CoA. Tale associazione è denominata \emph{binding} e viene aggiornata
+mediante ulteriori notifiche, \emph{binding update}, ogniqualvolta il
+MN esegua un handover che risulti in un cambio di CoA.
+
+Un CN può comunicare con il MN indirizzando il traffico verso
+l'HoA. Se il CN non comunica attraverso MIPv6 ma soltanto via IPv6,
+l'HA riceve tutto il traffico e lo inoltra al MN risolvendo il binding
+HoA--CoA. Se invece CN utilizza anch'esso MIPv6, MN è in grado di
+evitare il routing triangolare e tutti gli svantaggi di prestazioni
+che comporta inviando una notifica di associazione direttamente al CN,
+in modo da instaurare una comunicazione diretta tra MN e CN. Tale
+comunicazione diretta è possibile perché l'adozione di IPv6 evita la
+presenza di NAT, ripristinando la possibilità di avere sempre
+comunicazioni end--to--end.
+
+MIPv6 eredita da IPv6 la difficoltà di adozione, perché necessita
+anch'esso del rimpiazzamento di tutte le strutture di rete. Questo
+problema vìola il requisito di praticità descritto nella sezione
+\ref{sec:praticita}. Purtroppo la conversione dell'intera Internet
+da IPv4 a IPv6 continua a sembrare molto lontana, rendendo
+inutilizzabili in tempi utili soluzioni come MIPv6.
 
 \subsection{Host Identity Protocol}
 * server tipo DNS opera fuori dalla rete di accesso\\
