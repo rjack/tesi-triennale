@@ -1,4 +1,4 @@
-\documentclass[12pt,a4paper,openright,twoside]{book}
+\documentclass[12pt,a4paper,openright,twoside,draft]{book}
 \usepackage[italian]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{fancyhdr}
@@ -66,6 +66,7 @@ INDICE}}
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
 \chapter{Definizione del problema}
+\lhead[\fancyplain{}{\bfseries\thepage}]{\fancyplain{}{\bfseries\rightmark}}
 \pagenumbering{arabic} Def problema: in un ambiente con numerose reti
 senza fili eterogenee per tecnologia, politica di accesso e proprietà,
 si vuole dare a un dispositivo di rete mobile la possibilità di
@@ -89,9 +90,6 @@ dei servizi. Le soluzioni dovranno fornire sia i meccanismi per
 permettere all'utente, o alle applicazioni da lui utilizzate, di
 specificare quali siano dette politiche, sia meccanismi che le
 implementino.
-
-TODO: immagine che mostri un MN che attraversa più reti e che mostra i
-punti di handover.
 
 \section{Punti critici}
 \label{sec:punti-critici}
@@ -235,43 +233,20 @@ individuare la rete che offre le migliori garanzie di servizio e d)
 eseguire un cambio di associazione trasparente per assicurare una
 transizione senza interruzioni da una rete all'altra.
 
-Questo capitolo presenterà le soluzioni più importanti presenti in
-letteratura, senza entrare nel merito dei singoli dettagli tecnici, ma
-raggruppando e catalogando per tipo i vari approcci e mostrando come
-ogni soluzione affronti ognuno dei quattro punti chiave.
-
 Le architetture si possono suddividere in due gruppi: soluzioni
 \emph{single layer} e soluzioni \emph{cross layer}.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=10cm]{img/panoramica-soluzioni}
-  \caption{\em Panoramica delle soluzioni e loro collocazione ai vari
-    livelli dello stack ISO/OSI}
-  \label{fig:panoramica}
-\end{figure}
+Come esempio delle soluzioni single layer è stato scelto Mobile IPv6
+perché ben si presta ad illustrare idee e problematiche per un
+confronto con le soluzioni cross layer.
 
-\section{Soluzioni \emph{single layer}}
-Le architetture seguenti sono dette \emph{single layer} perché hanno
-una collocazione ben precisa nello stack ISO/OSI e operano soltanto al
-loro livello di appartenenza. L'analisi di queste soluzioni mostrerà i
-limiti dell'approccio single layer, limiti che saranno superati dagli
-approcci \emph{cross layer} descritti nella sezione successiva.
+Le due soluzioni cross layer analizzate sono Media Optimization
+Network Architecture (capitolo \ref{cha:mona}) e Always Best Packet
+Switching (capitolo \ref{cha:abps}).
 
-Queste architetture coprono i principali strati dello stack ISO/OSI:
-Mobile IPv6 \cite{bib:mipv6} e la sua estensione Multiple Care-of
-Addresses Registration \cite{bib:mcoa} agiscono a livello
-\emph{network}, Host Identity Protocol \cite{bib:hip} definisce un
-livello aggiuntivo tra \emph{network} e \emph{transport}, Datagram
-Congestion Control Protocol \cite{bib:dccp} e Mobile Stream Control
-Transport Protocol \cite{bib:m-sctp} lavorano a livello
-\emph{transport}, infine Terminal Mobility Support Protocol
-\cite{bib:tmsp} e MMUSE \cite{bib:mmuse} agiscono a livello
-\emph{session}.
+\section{Esempio di soluzione \emph{single layer}: Mobile IPv6}
 
-\subsection{Mobile IPv6}
-
-Mobile IPv6 è un protocollo descritto nell'Internet Draft 3775
+Mobile IPv6 è un protocollo descritto nell'Internet Draft RFC 3775
 ``Mobility Support in IPv6'' \cite{bib:mipv6}, che aggiunge il
 supporto per la mobilità di un MN al protocollo IPv6.
 
@@ -317,42 +292,6 @@ problema vìola il requisito di praticità descritto nella sezione
 \ref{sec:praticita}. Purtroppo la conversione dell'intera Internet
 da IPv4 a IPv6 continua a sembrare molto lontana, rendendo
 inutilizzabili in tempi utili soluzioni come MIPv6.
-
-\subsection{Host Identity Protocol}
-* server tipo DNS opera fuori dalla rete di accesso\\
-* mappa identificatori a posizioni\\
-* il layer aggiuntivo deve essere installato sia nel MN che nel
-  CN.\\
-* Poco pratico! Non è detto che il CN si prenda la briga di installare\\
-  il layer aggiuntivo.\\
-
-\subsection{Datagram Congestion Control Protocol}
-* ogni MN annuncia il cambiamento di rete all'altro nodo\\
-* funziona solo se cambiano rete uno alla volta! Due MN che cambiano
-  rete simultaneamente sono irragiungibili.\\
-* richiedono modifica delle applicazioni.\\
-
-\subsection{Mobile Stream Control Transport Protocol}
-Idem a DCCP.
-
-\subsection{Terminal Mobility Support Protocol}
-* SIP user agent pubblico fuori dalle reti di accesso, mappa
-  user@foo.com a posizione\\
-* handover lento! ogni riconfigurazione interrompe la comunicazione
-  finchè MN non ha finito di comunicare con l'user agent pubblico.
-
-\subsection{MMUSE}
-* server SIP, Session Border Controller (SBC) all'interno del
-  sistema autonomo, che può essere composto da più reti wireless
-  eterogenee.\\
-* permette di attraversare i firewall e di spostarsi da una subnet
-  all'altra all'interno dello stesso AS.\\
-* MN non si può muovere tra reti di diversi AS.\\
-
-\subsection{Considerazioni}
-Tutte soluzioni tranne MMUSE hanno problemi con NAT e
-firewall. Bisogna usare TURN e STUN. Tutte soluzioni senza
-multi-homing, tranne MCoA.
 
 \section{Soluzioni \emph{cross layer}}
 Queste architetture sono dette \emph{cross layer} perché agiscono a
@@ -409,18 +348,27 @@ migliore \emph{throughput}.
 
 
 \subsection{Always Best Packet Switching}
-%% Breve panoramica di ABPS
 
-TODO
+Always Best Packet Switching è un'architettura distribuita e cross
+layer che utilizza un approccio multi--homing.
 
-Fixed server, rappresenta MN. Uso simultaneo di tutte le
-NIC. Scorciatoie SIP per evitare dialoghi lenti con server
-SIP. Sicurezza e identificazione: pre-shared key, flow-id e niente
-REINVITE. Meccanismi a disposizione per diverse politiche: VoIP usa
-error detection ed early retransmission, VoD usa più NIC
-contemporaneamente per maggior banda: virtual channels per selezionare
-politiche. Estensioni: ABPS-SIP e ABPS-RTP.
+ABPS risolve il problema della mobilità di un MN nascondendo i cambi
+di indirizzo IP dovuti agli handover mediante l'impiego di un server
+proxy che funge da rappresentante pubblico per il dispositivo
+mobile. Detto server permette al componente middleware eseguito
+dall'host mobile di instaurare un canale virtuale multipercorso che
+identifica in modo sicuro e affidabile i numerosi flussi di traffico
+appartenenti al MN. Tale canale virtuale è costruito sulla base dei
+protocolli SIP ed RTP, di cui ABPS definisce delle estensioni che
+permettono al MN di utilizzare un'interfaccia di rete differente per
+l'invio di ogni pacchetto senza dover effettuare modifiche alla
+sessione in corso.
 
+Dal punto di vista della qualità del servizio, ABPS introduce un
+meccanismo di rilevamento degli errori avvenuti a livello MAC 802.11 e
+un metodo di propagazione della notifica verso il livello
+applicazione, in modo che quest'ultimo possa prendere decisioni di
+recupero in base alle politiche dell'utente e del software in uso.
 
 \subsection{Considerazioni}
 Vantaggi delle due soluzioni rispetto a quelle single layer.
@@ -429,7 +377,7 @@ Vantaggi delle due soluzioni rispetto a quelle single layer.
 
 
 \chapter{Media Optimization Network Architecture}
-
+\label{cha:mona}
 Media Optimization Network Architecture (MONA) è un progetto di un
 gruppo di ricercatori giapponesi appartenenti all'Institurte of
 Information and Communication Technology, Nara Institute of Science
@@ -574,25 +522,24 @@ link più adatta dell'intensità del segnale radio.
 
 \subsection{Ritrasmissioni L2 e intensità del segnale}
 
-Secondo il protocollo 802.11 \cite{bib:802.11}, un nodo deve inviare
-un ACK al peer ogniqualvota riceva un frame, in modo da confermare
-l'avvenuta ricezione. Se il mittente non vede arrivare un ACK, ovvero
-se il frame inviato o l'ACK stesso sono andati persi, allora
-ritrasmette il frame. Questo meccanismo tenta la ritrasmissione del
-frame fino a un numero prestabilito di volte: se il frame è più grande
-di 2347 byte, viene ritrasmesso al massimo quattro volte, altrimenti
-sette. Nel caso dell'architettura in questione il traffico in esame è
-costituito da pacchetti VoIP, che sono di dimensione inferiore ai 400
-byte; quindi ogni interfaccia ha a disposizione sette tentativi per
-poter inviare il datagram VoIP all'access point. Se un link wireless è
-in condizioni ottime, allora non si verificano mai errori di
-trasmissione e i frame vengono inviati con successo al primo
-tentativo. Quando le condizioni del link wireless cominciano a
-peggiorare, possono cominciare a manifestarsi i primi packet loss, che
-causeranno ritrasmissioni sporadiche. Infine, quando il link sarà in
-condizioni critiche, le ritrasmissioni diverranno così frequenti da
-raggiungere il limite di tentativi, provocando la perdita definitiva
-del datagram.
+Secondo il protocollo IEEE 802.11, un nodo deve inviare un ACK al peer
+ogniqualvota riceva un frame, in modo da confermare l'avvenuta
+ricezione. Se il mittente non vede arrivare un ACK, ovvero se il frame
+inviato o l'ACK stesso sono andati persi, allora ritrasmette il
+frame. Questo meccanismo tenta la ritrasmissione del frame fino a un
+numero prestabilito di volte: se il frame è più grande di 2347 byte,
+viene ritrasmesso al massimo quattro volte, altrimenti sette. Nel caso
+dell'architettura in questione il traffico in esame è costituito da
+pacchetti VoIP, che sono di dimensione inferiore ai 400 byte; quindi
+ogni interfaccia ha a disposizione sette tentativi per poter inviare
+il datagram VoIP all'access point. Se un link wireless è in condizioni
+ottime, allora non si verificano mai errori di trasmissione e i frame
+vengono inviati con successo al primo tentativo. Quando le condizioni
+del link wireless cominciano a peggiorare, possono cominciare a
+manifestarsi i primi packet loss, che causeranno ritrasmissioni
+sporadiche. Infine, quando il link sarà in condizioni critiche, le
+ritrasmissioni diverranno così frequenti da raggiungere il limite di
+tentativi, provocando la perdita definitiva del datagram.
 
 Il primo esperimento simulato mira a trovare una relazione tra numero
 di ritrasmissioni L2 e distanza del MN dall'AP. Se le due grandezze
@@ -682,7 +629,7 @@ trasporto e utilizza le informazioni provenienti dal livello MAC.
 
 \begin{figure}
   \centering
-  \includegraphics[width=\textwidth]{img/mona-sp-mp}
+  \includegraphics[width=12cm]{img/mona-sp-mp}
   \caption{\em Diagrammi di flusso che descrivono gli algoritmi usati da
     MONA per passare da Single Path Trasmission a Multi Path Trasmission
     (a sinistra) e viceversa (a destra).}
@@ -696,7 +643,9 @@ utilizzo simultaneo viene chiamato Multi Path Trasmission (MPT) e
 basilarmente offre sicurezza attraverso ridondanza. Quando uno dei
 collegamenti in uso viene rilevato come stabile HM lo utilizza in modo
 esclusivo, ritornando a quello che viene denominato Single Path
-Transmission (SPT). Idealmente la modalità MPT dovrebbe essere attiva
+Transmission (SPT).
+
+Idealmente la modalità MPT dovrebbe essere attiva
 per il tempo più breve possibile, perché l'utilizzo simultaneo di più
 NIC può provocare un aumento di collisioni tra frame e determina un
 aumento dei consumi di energia del dispositivo mobile.
@@ -794,7 +743,7 @@ figura \ref{fig:mona:qos-sim-model}
 
 \begin{figure}
   \centering
-  \includegraphics[width=\textwidth]{img/mona-qos-sim-model}
+  \includegraphics[width=12cm]{img/mona-qos-sim-model}
   \caption{\em Modello per la simulazione in NS2.}
   \label{fig:mona:qos-sim-model}
 \end{figure}
@@ -970,6 +919,7 @@ TODO.
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
 \chapter{Always Best Packet Switching}
+\label{cha:abps}
 
 Always Best Packet Switching è un progetto di ricerca dell'Università
 di Bologna.
@@ -1637,7 +1587,7 @@ del percorso del MN.
 \end{figure}
 
 Le misurazioni effettuate sono mostrate nei grafici delle figure
-\ref{fig:abps:delay-mn} e \ref{fig:abps-delay-cn}. In questi grafici,
+\ref{fig:abps:delay-mn} e \ref{fig:abps:delay-cn}. In questi grafici,
 ogni barra è il tempo impiegato dal pacchetto e una barra mancante
 significa che il pacchetto non è stato ricevuto dall'host
 corrispondente, perché si è perso durante il percorso e il meccanismo
@@ -1661,7 +1611,7 @@ TODO
 \clearpage{\pagestyle{empty}\cleardoublepage}
 
 
-\chapter{Considerazioni finali}
+\chapter{Conclusioni}
 Riprende superiorità di cross layer su single layer e confronta punti
 forti e deboli di MONA e ABPS.
 
