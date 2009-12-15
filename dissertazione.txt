@@ -1,0 +1,24 @@
+Dissertazione
+
+###############
+# 1. Scenario #
+###############
+
+Problema mantenimento connettività e QoS in uno scenario in cui un Mobile Node è in grado di spostarsi attraverso reti wireless eterogenee durante l'utilizzo di applicazioni VoIP.
+
+Reti dense: sovrapposizione raggio d'azione.
+
+Reti eterogenee per tecnologia L2, rete L3, banda, latenza, congestione, costo economico, etc.
+
+Esempio reale: rete verde = luogo di ristorazione, blu = comunale, rosso = dipartimento
+
+Conseguenza eterogeneità + movimento:
+
+1. interruzione durante handover (scan, associazione, acquisizione IP, comunicazione identità)
+
+2. cambio indirizzo IP (tradizionalmente IPaddr = identità + raggiungibilità: assunzione non più valida)
+
+
+################
+# 2. Requisiti #
+################
