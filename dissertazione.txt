@@ -134,3 +134,9 @@ I grafici mostrano che i pacchetti inviati dal Mobile Node sono arrivati entro i
 ###################
 # 11. Conclusioni #
 ###################
+
+Le soluzioni illustrate mostrano che il problema è molto complesso, per una serie di fattori combinati che vanno dai limiti architetturali del protocollo IP ai vincoli stringenti richiesti dalle applicazioni VoIP che trovano nella tecnologia wireless un terreno poco affidabile. Altri fattori come la necessità di sicurezza e i dispositivi NAT complicano ulteriormente lo scenario.
+
+In questo contesto così sfaccettato, gli approcci single layer sono risultati insufficienti perché agiscono in maniera troppo localizzata per essere efficienti su tutti i fronti.
+
+Gli approcci cross layer sono invece risultati più soddisfacenti, perché ad alto livello riescono ad astrarre l'utilizzo di più interfacce di rete per gestire gli handover in maniera continua, mentre a basso livello possono mantenere la qualità di servizio sul primo segmento di rete wireless che risulta essere il più problematico.
