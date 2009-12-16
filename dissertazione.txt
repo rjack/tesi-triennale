@@ -1,24 +1,136 @@
 Dissertazione
 
+Buongiorno, mi chiamo Giacomo Ritucci.
+Il titolo della mia tesi è "Qualità del servizio a supporto della mobilità di sistemi Voice-Over-Wireless LAN"
+
 ###############
 # 1. Scenario #
 ###############
 
-Problema mantenimento connettività e QoS in uno scenario in cui un Mobile Node è in grado di spostarsi attraverso reti wireless eterogenee durante l'utilizzo di applicazioni VoIP.
+Il problema di cui mi sono occupato è rappresentato in figura: un dispositivo mobile è connesso a Internet attraverso una rete senza fili ed effettua una chiamata Voce-Over-IP con un nodo corrispondente.
 
-Reti dense: sovrapposizione raggio d'azione.
+Durante la conversazione il dispositivo è in grado di spostarsi di rete in rete. Si assume che questi access point appartengano a reti distinte, per cui nel passaggio da una all'altra l'interfaccia wireless del dispositivo deve acquisire un nuovo indirizzo IP, ovvero deve effettuare un "handover".
 
-Reti eterogenee per tecnologia L2, rete L3, banda, latenza, congestione, costo economico, etc.
+Il problema è effettuare gli handover mantentendo la connettività e la qualità del servizio.
 
-Esempio reale: rete verde = luogo di ristorazione, blu = comunale, rosso = dipartimento
+L'handover per sua natura è un processo distruttivo, che interrompe la comunicazione per qualche secondo, a scapito della QoS.
 
-Conseguenza eterogeneità + movimento:
+Inoltre nella nuova rete il dispositivo riceve un nuovo indirizzo e quindi una nuova identità e non è più raggiungibile dal corrispondente.
 
-1. interruzione durante handover (scan, associazione, acquisizione IP, comunicazione identità)
-
-2. cambio indirizzo IP (tradizionalmente IPaddr = identità + raggiungibilità: assunzione non più valida)
+Infine il medium wireless per sua natura è soggetto a inteferenze, a cali di segnale e collisioni di pacchetti, tutti problemi che peggiorano la qualità della chiamata e l'esperienza utente.
 
 
 ################
 # 2. Requisiti #
 ################
+
+Sono state analizzate varie soluzioni, che hanno requisiti comuni.
+
+Le soluzioni devono funzionare il maniera trasparente, ovvero gli handover devono essere effettuati automaticamente senza l'intervento dell'utente e devono garantire al dispositivo il mantenimento dell'identità e della raggiungibilità nonostante i cambi di indirizzo IP.
+
+Inoltre devono fornire qualità di servizio, rispettando le necessità di banda, latenza, affidabilità delle applicazioni in uso, ma soprattutto rispettando due vincoli irrinunciabili: latenza inferiore ai 150 ms e percentuale di pacchetti persi inferiore al 3%. Violati questi vincoli la qualità della chiamata VoIP è da considerarsi insoddisfacente.
+
+Le soluzioni devono essere concretamente realizzabili; quindi devono essere compatibili con le infrastrutture di rete e le applicazioni esistenti, devono fornire meccanismi di sicurezza e devono essere NAT-friendly, ovvero funzionare anche in presenza di NAT.
+
+
+################
+# 3. Soluzioni #
+################
+
+Le tre soluzioni in esame sono Mobile IP versione 6, Media Optimization Network Architecture e Always Best Packet Switching.
+
+Mobile IPv6 agisce a livello rete ed è considerato un approccio single layer perché rispetta l'incapsulamento dei livelli dello stack ISO/OSI.
+
+Media Optimization Network Architecture e Always Best Packet Switching sono invece approcci cross layer perché, pur lavorando principalmente a un livello dello stack, utilizzano le informazioni raccolte a livello data link per prendere decisioni di salvaguardia della qualità del servizio.
+
+Entrambe le soluzioni utilizzano un dispositivo multi-homed, ovvero con più d'una interfaccia di rete. Le informazioni di ogni interfaccia provenienti dal livello data link vengono messe a disposizione dei livelli superiori perché utilizzino le varie interfacce nella maniera più opportuna.
+
+C'è quindi una violazione dell'incapsulamento, da qui la denominazione "cross layer".
+
+
+####################################
+# 4. Soluzioni single layer: MIPv6 #
+####################################
+
+Mobile IPv6 definisce un'entità di rete, denominata Home Agent, che agisce da intermediario fisso per il dispositivo mobile. L'Home Agent risiede nella Home Network del Mobile Node ed è raggiungibile su Internet attraverso il proprio Home Address, che è un indirizzo immutabile.
+
+Quando il dispositivo visita una Foreign Network, riceve un nuovo indirizzo IP e lo comunica all'Home Agent.
+
+Conoscendo il nuovo indirizzo IP, l'Home Agent riceve tutto il traffico dei nodi corrispondenti e lo inoltra al Mobile Node. Se il nodo corrispondente parla MIPv6 può ricevere direttamente le segnalazioni del Mobile Node, in modo da evitare il routing triangolare con l'Home Agent; questo è possibile perché in un mondo IPv6 non esistono NAT.
+
+I problemi di questa soluzione sono la mancanza di compatibilità con le infrastrutture di rete esistenti e l'impossibilità di monitoraggio dello stato del link wireless. Una soluzione single layer non conosce lo stato dei livelli sottostanti e in particolare la qualità del collegamento senza fili.
+
+
+##############################################
+# 5. Media Optimization Network Architecture #
+##############################################
+
+Media Optimization Network Architecture implementa un nuovo livello Associazione tra gli strati rete e trasporto. Il protocollo associato gestisce i flussi di traffico ricevuti dall'applicazione, instradandoli sulle interfacce multiple del Mobile Node.
+
+I flussi vengono identificati indipendentemente dall'indirizzo IP di provenienza aggiungendo un identificativo nell'header dell'Association Management Protocol.
+
+Ogni interfaccia viene monitorata a livello data link utilizzando come metrica il numero di ritrasmissioni necessario per spedire ogni frame. Se un'interfaccia è giudicata stabile viene utilizzata in maniera esclusiva e si ha la modalità Single Path Transmission. Se il numero di ritrassmissioni L2 supera una certa soglia, il livello associazione passa alla modalità Multi Path Tramsission, dove tutte le interfacce vengono utilizzate simultaneamente.
+
+
+##############################################
+# 6. Media Optimization Network Architecture #
+##############################################
+
+Questi diagrammi mostrano l'algoritmo di gestione della qualità del servizio.
+
+Nella modalità Single Path Transmission, un pacchetto viene spedito su una sola interfaccia. Lo strato data link informa lo strato associazione del numero di ritrasmissioni che sono state necessarie per inviare il frame: se è più grande una certa soglia MPT, il collegamento wireless dell'interfaccia non viene giudicato soddisfacente e si passa a Multi Path Transmission, altrimenti si continua a usare la singola interfaccia.
+
+Nella modalità Multi Path, lo stesso pacchetto viene inviato su entrambe le intrefacce di rete. Se il numero di ritrasmissioni è zero, ovvero l'interfaccia riesce a spedire il frame al primo tentativo, viene incremenetato un contatore di stabilità. La prima interfaccia che riesce a spedire un certo numero di frame al primo tentativo viene giudicata stabile e viene scelta per tornare in modalità Single Path.
+
+
+##############################################
+# 7. Media Optimization Network Architecture #
+##############################################
+
+Per valutare la soluzione e per determinare quali valori di soglia sono i più efficaci, sono stati condotti degli esperimenti simulati.
+
+Un Mobile Node possiede due interfacce di rete e si sposta dalla rete A alla rete B. Dieci Mobile Node associati alla rete A simulano interferenze e contesa al mezzo. Ogni Mobile Node comunica con un nodo corrispondente inviando 200 byte ogni 20 ms, per simulare il traffico di una comunicazione VoIP.
+
+Come si vede dal grafico, l'algoritmo riesce a mantenere la percentuale di pacchetti persi inferiore al 2% nelle prove in cui la modalità Multi Path veniva attivata se i frame erano ritrasmessi due o tre volte.
+
+L'approccio sembra quindi essere efficace e le ritrasmissioni L2 sono effettivamente una buona metrica su cui basare le decisioni di recupero della qualità del servizio.
+
+
+###################################
+# 8. Always Best Packet Switching #
+###################################
+
+Always Best Packet Switching è una soluzione cross layer distribuita per applicazioni SIP/RTP.
+
+Come nell'architettura precedente, il Mobile Node utilizza più interfacce di rete. In più ABPS definisce un server fisso, pubblicamente raggiungibile su Internet, che fa da intermediario per tutto il traffico del Mobile Node.
+
+Il server fa da rappresentante pubblico per il Mobile Node e ne nasconde i movimenti agli occhi del Corrispondent Node. In altre parole, il Corrispondent Node non deve preoccuparsi dei cambiamenti di indirizzo IP del dispositivo perché comunica esclusivamente con il server che ha un indirizzo immutabile.
+
+Dalla parte opposta, il Mobile Node aggiunge ai pacchetti SIP ed RTP degli identificativi di host e di flusso firmati crittograficamente, in modo che il server possa risalire all'identità del mittente a prescindere dall'indirizzo IP di provenienza.
+
+I meccanismi di gestione della qualità del servizio sono implementati nel Mobile Node e nel server fisso.
+
+
+###################################
+# 9. Always Best Packet Switching #
+###################################
+
+Questo schema rappresenta i meccanismi di gestione della qualità del servizio implementati nel Mobile Node.
+
+L'applicazione UDP Load Balancer riceve il traffico dall'applicazione VoIP e decide l'interfaccia di rete da utilizzare per l'invio. A livello data link, il componente Transmission Error Detector rileva l'esito dell'invio di ogni frame e lo comunica a ULB. Quando ULB viene a conoscenza di un errore di trasmissione, può scegliere di ritrasmettere il pacchetto in questione su un'interfaccia di rete differente.
+
+
+####################################
+# 10. Always Best Packet Switching #
+####################################
+
+Un esperimento è stato condotto per testare il funzionamento dell'architettura.
+
+Un Mobile Node implementa il meccanismo di qualità del servizio e si sposta da una rete all'altra subendo interferenze e traffico di disturbo.
+
+I grafici mostrano che i pacchetti inviati dal Mobile Node sono arrivati entro il limite massimo di 150ms di latenza, tranne 3 che vengono considerati persi; dei pacchetti inviati dal server al Mobile Node i pochi persi sono ampiamente sotto il 3%.
+
+
+###################
+# 11. Conclusioni #
+###################
